@@ -6,8 +6,8 @@
     <div v-if="simulatedActions.length" class="mb-6">
       <h4 class="text-md font-semibold text-gray-700 mb-2">Sprint Aksiyonları</h4>
       <ul class="list-disc pl-5 space-y-1">
-        <li v-for="action in simulatedActions" :key="action.id">
-          ✅ {{ action.title }} → {{ action.impact }}
+        <li v-for="action in simulatedActions" :key="action.id" class="flex items-center gap-2">
+          <BadgeIcon name="check" cls="w-4 h-4 text-green-600" /> {{ action.title }} → {{ action.impact }}
         </li>
       </ul>
     </div>
@@ -15,12 +15,12 @@
     <!-- Kampanya Önerisi -->
     <div v-if="suggestion" class="space-y-2">
       <h4 class="text-md font-semibold text-gray-700">Kampanya Önerisi</h4>
-      <p><strong>🏷️ Kampanya:</strong> {{ suggestion.campaign }}</p>
-      <p><strong>📌 Tür:</strong> {{ suggestion.type }}</p>
-      <p><strong>📈 Skor:</strong> {{ suggestion.score }} / 100</p>
-      <p><strong>🔁 Dönüşüm:</strong> {{ suggestion.conversionRate }}%</p>
-      <p><strong><IconStar cls="w-4 h-4 text-yellow-400 inline-block mr-1" :filled="true" /> Ortalama Puan:</strong> {{ suggestion.avgRating }}</p>
-      <p><strong>🕒 Son Restart:</strong> {{ suggestion.lastRestart }}</p>
+      <p class="flex items-center gap-2"><BadgeIcon name="tag" cls="w-4 h-4" /> <strong>Kampanya:</strong> {{ suggestion.campaign }}</p>
+      <p class="flex items-center gap-2"><BadgeIcon name="bookmark" cls="w-4 h-4" /> <strong>Tür:</strong> {{ suggestion.type }}</p>
+      <p class="flex items-center gap-2"><BadgeIcon name="trending-up" cls="w-4 h-4" /> <strong>Skor:</strong> {{ suggestion.score }} / 100</p>
+      <p class="flex items-center gap-2"><BadgeIcon name="refresh-cw" cls="w-4 h-4" /> <strong>Dönüşüm:</strong> {{ suggestion.conversionRate }}%</p>
+      <p class="flex items-center gap-2"><IconStar cls="w-4 h-4 text-yellow-400" :filled="true" /> <strong>Ortalama Puan:</strong> {{ suggestion.avgRating }}</p>
+      <p class="flex items-center gap-2"><BadgeIcon name="clock" cls="w-4 h-4" /> <strong>Son Restart:</strong> {{ suggestion.lastRestart }}</p>
       <button @click="joinCampaign" class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded">
         Kampanyaya Katıl
       </button>
@@ -32,7 +32,10 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import IconStar from '@/components/icons/IconStar.vue'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const simulatedActions = ref([])
 const suggestion = ref(null)
 
@@ -51,7 +54,7 @@ onMounted(async () => {
 
 async function joinCampaign() {
   await axios.post('/api/seller/join-suggested-campaign')
-  alert('Kampanyaya başarıyla katıldınız ✅')
+  toast.success('Kampanyaya başarıyla katıldınız')
 }
 </script>
 

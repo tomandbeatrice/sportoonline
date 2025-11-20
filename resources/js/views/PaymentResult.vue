@@ -1,12 +1,12 @@
 <template>
   <div class="payment-result-page max-w-3xl mx-auto p-8 text-center">
     <div v-if="status === 'success'" class="success-container">
-      <div class="success-icon mb-6">
-        <svg class="w-24 h-24 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
+      <div class="success-icon mb-6 flex justify-center">
+        <BadgeIcon name="check-circle" cls="w-24 h-24 text-green-500" />
       </div>
-      <h1 class="text-4xl font-bold text-green-600 mb-4">✅ Ödeme Başarılı!</h1>
+      <h1 class="text-4xl font-bold text-green-600 mb-4 flex items-center justify-center gap-2">
+        <BadgeIcon name="check" cls="w-10 h-10" /> Ödeme Başarılı!
+      </h1>
       <p class="text-xl text-gray-700 mb-2">Siparişiniz alındı</p>
       <p class="text-gray-600 mb-8">Sipariş numaranız: <span class="font-bold">#{{ orderId }}</span></p>
       
@@ -34,12 +34,12 @@
     </div>
 
     <div v-else class="failure-container">
-      <div class="failure-icon mb-6">
-        <svg class="w-24 h-24 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
+      <div class="failure-icon mb-6 flex justify-center">
+        <BadgeIcon name="x-circle" cls="w-24 h-24 text-red-500" />
       </div>
-      <h1 class="text-4xl font-bold text-red-600 mb-4">❌ Ödeme Başarısız</h1>
+      <h1 class="text-4xl font-bold text-red-600 mb-4 flex items-center justify-center gap-2">
+        <BadgeIcon name="x" cls="w-10 h-10" /> Ödeme Başarısız
+      </h1>
       <p class="text-xl text-gray-700 mb-8">{{ failureMessage }}</p>
       
       <div class="bg-red-50 rounded-lg p-6 mb-8">
@@ -68,15 +68,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
-const status = ref<'success' | 'failure'>('success');
-const orderId = ref<string | null>(null);
-const failureMessage = ref('Ödeme işleminiz tamamlanamadı.');
+const status = ref<'success' | 'failure'>('success')
+const orderId = ref<string | null>(null)
+const failureMessage = ref('Ödeme işleminiz tamamlanamadı.')
 
 const failureReasons: Record<string, string> = {
   invalid_token: 'Geçersiz ödeme token\'ı',
@@ -86,36 +87,36 @@ const failureReasons: Record<string, string> = {
   payment_not_completed: 'Ödeme tamamlanmadı',
   callback_error: 'Ödeme doğrulama hatası',
   user_cancelled: 'Ödeme iptal edildi',
-};
+}
 
 function goToOrders() {
-  router.push('/orders');
+  router.push('/orders')
 }
 
 function goToHome() {
-  router.push('/');
+  router.push('/')
 }
 
 function goToCheckout() {
-  router.push('/checkout');
+  router.push('/checkout')
 }
 
 function goToCart() {
-  router.push('/cart');
+  router.push('/cart')
 }
 
 onMounted(() => {
-  const path = route.path;
+  const path = route.path
   
   if (path.includes('/success')) {
-    status.value = 'success';
-    orderId.value = route.query.order_id as string || 'Bilinmiyor';
+    status.value = 'success'
+    orderId.value = route.query.order_id as string || 'Bilinmiyor'
   } else {
-    status.value = 'failure';
-    const reason = route.query.reason as string;
-    failureMessage.value = failureReasons[reason] || failureMessage.value;
+    status.value = 'failure'
+    const reason = route.query.reason as string
+    failureMessage.value = failureReasons[reason] || failureMessage.value
   }
-});
+})
 </script>
 
 <style scoped>

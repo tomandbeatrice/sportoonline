@@ -1,6 +1,8 @@
 <template>
   <div class="final-checklist">
-    <h2>✅ Yayın Öncesi Test ve Dokümantasyon</h2>
+    <h2 class="flex items-center gap-2">
+      <BadgeIcon name="check-circle" cls="w-6 h-6 text-green-600" /> Yayın Öncesi Test ve Dokümantasyon
+    </h2>
     <v-list>
       <v-list-item
         v-for="modül in modüller" :key="modül.id"
@@ -20,6 +22,7 @@
 
 <script setup lang="ts">
 import { useFinalChecklist } from './final/useFinalChecklist'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const { modüller } = useFinalChecklist()
 </script>

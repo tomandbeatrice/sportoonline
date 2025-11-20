@@ -2,7 +2,9 @@
   <section class="p-4 space-y-6">
     <!-- Satıcıya özel kampanya takvimi -->
     <div>
-      <h2 class="text-lg font-bold text-indigo-700">📌 Kişisel Kampanya Takvimi</h2>
+      <h2 class="text-lg font-bold text-indigo-700 flex items-center gap-2">
+        <BadgeIcon name="calendar" cls="w-5 h-5" /> Kişisel Kampanya Takvimi
+      </h2>
       <ul class="space-y-3 text-sm">
         <li v-for="item in plan" :key="item.campaign" class="border p-3 rounded">
           {{ item.campaign }} ({{ item.type }})  
@@ -22,7 +24,9 @@
 
     <!-- Gelecek avantajlı kampanyalar -->
     <div>
-      <h2 class="text-lg font-bold text-green-700">📅 Gelecek Avantajlı Kampanyalar</h2>
+      <h2 class="text-lg font-bold text-green-700 flex items-center gap-2">
+        <BadgeIcon name="trending-up" cls="w-5 h-5" /> Gelecek Avantajlı Kampanyalar
+      </h2>
       <ul class="space-y-3 text-sm">
         <li v-for="c in upcoming" :key="c.code" class="border p-3 rounded bg-green-50">
           <strong>{{ c.title }}</strong>  
@@ -38,8 +42,8 @@
             Katıl
           </button>
 
-          <p v-if="joined[c.code]" class="text-green-700 mt-1">
-            ✅ Katıldınız! Yeni komisyon oranınız: %{{ joined[c.code] }}
+          <p v-if="joined[c.code]" class="text-green-700 mt-1 flex items-center gap-2">
+            <BadgeIcon name="check" cls="w-4 h-4" /> Katıldınız! Yeni komisyon oranınız: %{{ joined[c.code] }}
           </p>
         </li>
       </ul>
@@ -50,6 +54,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const plan = ref([])
 const msg = ref({})

@@ -1,6 +1,8 @@
 <template>
   <section class="p-6 bg-white rounded shadow">
-    <h2 class="text-xl font-bold text-indigo-700">📨 Davet Kodları</h2>
+    <h2 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
+      <BadgeIcon name="mail" cls="w-6 h-6" /> Davet Kodları
+    </h2>
 
     <div class="mt-4">
       <button @click="generateCode" class="px-4 py-2 bg-indigo-600 text-white rounded">
@@ -14,7 +16,10 @@
       <button @click="redeem" class="mt-2 px-4 py-2 bg-green-600 text-white rounded">
         Kodu Kullan
       </button>
-      <p v-if="redeemStatus" class="mt-2 text-sm text-green-700">{{ redeemStatus }}</p>
+      <p v-if="redeemStatus" class="mt-2 text-sm text-green-700 flex items-center gap-2">
+        <BadgeIcon :name="redeemStatus.includes('başarıyla') ? 'check' : 'x'" cls="w-4 h-4" />
+        {{ redeemStatus }}
+      </p>
     </div>
   </section>
 </template>
@@ -22,6 +27,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const code = ref(null)
 const redeemCode = ref('')
@@ -39,9 +45,9 @@ async function generateCode() {
 async function redeem() {
   try {
     const res = await axios.post('/api/invitation/redeem', { code: redeemCode.value })
-    redeemStatus.value = 'Kod başarıyla kullanıldı ✅'
+    redeemStatus.value = 'Kod başarıyla kullanıldı'
   } catch (err) {
-    redeemStatus.value = 'Kod geçersiz veya daha önce kullanılmış ❌'
+    redeemStatus.value = 'Kod geçersiz veya daha önce kullanılmış'
   }
 }
 </script>

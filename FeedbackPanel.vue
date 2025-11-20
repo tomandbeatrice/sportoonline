@@ -3,12 +3,15 @@
     <h3>Geri Bildirim</h3>
     <textarea v-model="feedback" placeholder="Sprint hakkında yorumunuzu yazın..." />
     <button @click="submitFeedback">Gönder</button>
-    <p v-if="submitted">✅ Geri bildiriminiz alındı.</p>
+    <p v-if="submitted" class="flex items-center gap-2 mt-2 text-green-600">
+      <BadgeIcon name="check" cls="w-5 h-5" /> Geri bildiriminiz alındı.
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 const feedback = ref('')
 const submitted = ref(false)
 

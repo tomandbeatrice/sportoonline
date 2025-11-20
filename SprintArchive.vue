@@ -1,6 +1,8 @@
 <template>
   <section class="sprint-archive">
-    <h3>📁 Sprint Arşivi</h3>
+    <h3 class="flex items-center gap-2">
+      <BadgeIcon name="folder" cls="w-6 h-6 text-blue-600" /> Sprint Arşivi
+    </h3>
     <ul>
       <li v-for="sprint in archivedSprints" :key="sprint.id" class="sprint-card">
         <header>
@@ -9,8 +11,8 @@
         </header>
         <p>Başarı: %{{ sprint.successRate }} / Motivasyon: %{{ sprint.motivation }}</p>
         <ul class="module-list">
-          <li v-for="modul in sprint.modules" :key="modul.id">
-            ✅ {{ modul.name }} – %{{ modul.progress }}
+          <li v-for="modul in sprint.modules" :key="modul.id" class="flex items-center gap-2">
+            <BadgeIcon name="check" cls="w-4 h-4 text-green-600" /> {{ modul.name }} – %{{ modul.progress }}
           </li>
         </ul>
       </li>
@@ -19,6 +21,8 @@
 </template>
 
 <script setup lang="ts">
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
+
 const props = defineProps<{
   archivedSprints: Array<{
     id: string
