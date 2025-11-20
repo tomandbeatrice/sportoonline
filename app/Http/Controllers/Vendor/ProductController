@@ -1,0 +1,101 @@
+namespace App\Http\Controllers\Vendor;
+
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
+
+class ProductController extends Controller
+{
+    public function index()
+    {
+        $vendorId = auth()->user()->vendor_id;
+        $products = Product::where('vendor_id', $vendorId)->latest()->get();
+        return view('vendor.products.index', compact('products'));
+    }
+
+    public function create()
+    {
+        return view('vendor.products.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+            'image' => 'nullable|image',
+            'category' => 'nullable|string'
+        ]);
+
+        $path = $request->file('image')?->store('products', 'public');
+
+        $product = Product::create([
+            ...$validated,
+            'vendor_id' => auth()->user()->vendor_id,
+            'image' => $path
+        ]);
+
+        Artisan::call('system:export-segment', [
+            'segmentId' => $product->id,
+            'day' => now()->format('l'),
+            'time' => now()->format('H:i')
+        ]);
+
+        return redirect()->back()->with('success', 'Ürün başarıyla eklendi');
+    }
+
+    public function edit(Product $product)
+    {
+        $this->authorize('update', $product);
+        return view('vendor.products.edit', compact('product'));
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $this->authorize('update', $product);
+
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+            'image' => 'nullable|image'
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($validated);
+
+        return redirect()->route('vendor.products.index')->with('success', 'Ürün güncellendi');
+    }
+
+    public function destroy(Product $product)
+    {
+        $this->authorize('delete', $product);
+
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        $product->delete();
+
+        return redirect()->route('vendor.products.index')->with('success', 'Ürün silindi');
+    }
+
+    public function triggerExport(Product $product)
+    {
+        Artisan::call('system:export-segment', [
+            'segmentId' => $product->id,
+            'day' => now()->format('l'),
+            'time' => now()->format('H:i')
+        ]);
+
+        return response()->json(['message' => 'Export tetiklendi']);
+    }
+}

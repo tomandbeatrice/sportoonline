@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "module": "Node16",
+    "moduleResolution": "node16"
+  },
+  "exclude": ["node_modules"]
+}

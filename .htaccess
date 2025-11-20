@@ -1,0 +1,17 @@
+<IfModule mod_headers.c>
+  # ✅ Asset dosyaları için uzun süreli önbellekleme
+  <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "max-age=31536000, public"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # ✅ Gerçek dosya varsa yönlendirme yapma
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # ✅ Vue SPA için fallback yönlendirme
+  RewriteRule ^ index.html [QSA,L]
+</IfModule>

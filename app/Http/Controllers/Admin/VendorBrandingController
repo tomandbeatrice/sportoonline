@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Vendor;
+use App\Models\VendorBranding;
+use Illuminate\Http\Request;
+
+class VendorBrandingController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Vendor::with('branding');
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $vendors = $query->paginate(10);
+
+        return view('admin.vendor_branding.index', compact('vendors'));
+    }
+
+    public function update(Request $request, $vendorId)
+    {
+        $data = $request->validate([
+            'logo_url' => 'nullable|url',
+            'primary_color' => 'nullable|string',
+            'secondary_color' => 'nullable|string',
+            'font_family' => 'nullable|string',
+        ]);
+
+        VendorBranding::updateOrCreate(
+            ['vendor_id' => $vendorId],
+            $data
+        );
+
+        return back()->with('success', 'Branding updated.');
+    }
+
+    public function preview(Vendor $vendor)
+    {
+        return view('admin.vendor_branding.preview', compact('vendor'));
+    }
+}

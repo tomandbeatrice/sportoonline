@@ -1,0 +1,25 @@
+{
+  "last_cleanup": "2025-08-08 03:00:00",
+  "deleted_count": 3,
+  "total_size_mb": 1.24,
+  "files": [
+    {
+      "file": "exports/vendor_123/report.csv",
+      "size_kb": 245.67,
+      "age_days": 5,
+      "deleted_at": "2025-08-08 03:00:00"
+    },
+    {
+      "file": "exports/vendor_456/data.csv",
+      "size_kb": 512.30,
+      "age_days": 6,
+      "deleted_at": "2025-08-08 03:00:00"
+    },
+    {
+      "file": "exports/vendor_789/summary.csv",
+      "size_kb": 508.12,
+      "age_days": 4,
+      "deleted_at": "2025-08-08 03:00:00"
+    }
+  ]
+}

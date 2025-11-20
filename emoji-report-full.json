@@ -1,0 +1,17 @@
+[
+  { "file": "src/views/marketplace/Home.vue", "line": 487, "snippet": "{ id: 1, name: 'Ayakkabı', icon: '👟' }" },
+  { "file": "src/views/marketplace/Home.vue", "line": 351, "snippet": "{{ i <= (product.rating || 5) ? '★' : '☆' }}" },
+  { "file": "src/views/marketplace/ProductDetail.vue", "line": 204, "snippet": "★★★★★" },
+  { "file": "src/views/marketplace/C2CMarketplaceDashboard.vue", "line": 486, "snippet": "icon: '📊'" },
+  { "file": "src/views/unified/UnifiedDashboard.vue", "line": 316, "snippet": "icon: '🎯'" },
+  { "file": "src/components/layout/Navbar.vue", "line": 199, "snippet": "icon: '🧾'" },
+  { "file": "src/components/AdminSidebar.vue", "line": 11, "snippet": "<span class=\"nav-icon\">📊</span>" },
+  { "file": "src/components/product/ProductReviews.vue", "line": 11, "snippet": "{{ star <= Math.round(averageRating) ? '⭐' : '☆' }}" },
+  { "file": "src/components/marketplace/VendorComparison.vue", "line": 57, "snippet": "⭐ Ortalama Puan" },
+  { "file": "src/services/api.js", "line": 28, "snippet": "console.log('❌ 401 Unauthorized - Logging out')" },
+  { "file": "app/Http/Controllers/SellerController.php", "line": 195, "snippet": "Kampanya planı onaylandı ✅" },
+  { "file": "database/seeders/SubscriptionPlanSeeder.php", "line": 31, "snippet": "'✅ Sınırsız ürün'" },
+  { "file": "resources/views/emails/order-status-changed.blade.php", "line": 111, "snippet": "<h1>🔔 Sipariş Durumu Güncellendi</h1>" },
+  { "file": "routes/api.php", "line": 333, "snippet": "// 📦 Kargo / Shipping" },
+  { "file": "docs/C2C_MARKETPLACE_DASHBOARD.md", "line": 11, "snippet": "## 🎯 Temel Özellikler" }
+]

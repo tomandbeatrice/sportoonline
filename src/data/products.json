@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Running Shoes",
+    "price": 120,
+    "image": "/products/shoes.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Sports Jacket",
+    "price": 85,
+    "image": "/products/jacket.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Duffle Bag",
+    "price": 60,
+    "image": "/products/bag.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Active Leggings",
+    "price": 50,
+    "image": "/products/leggings.jpg"
+  }
+]

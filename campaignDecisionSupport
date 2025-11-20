@@ -1,0 +1,34 @@
+public function campaignDecisionSupport()
+{
+    $campaigns = ['early_access_100', 'beta_invite', null];
+    $types = [
+        'early_access_100' => 'davet',
+        'beta_invite' => 'trend',
+        null => 'organik'
+    ];
+
+    $data = collect($campaigns)->map(function ($tag) use ($types) {
+        $type = $types[$tag ?? 'organik'];
+
+        $orders = Order::whereHas('buyer', fn($q) => $tag ? $q->where('campaign_tag', $tag) : $q->whereNull('campaign_tag'))
+            ->where('status', 'tamamlandı')
+            ->count();
+
+        $views = Product::where('campaign_tag', $tag)->sum('views');
+        $conversionRate = $views > 0 ? round($orders / $views * 100, 2) : 0;
+
+        $lastRun = now()->subDays(rand(3, 10))->toDateString(); // mock
+        $nextRecommended = now()->addDays(rand(2, 5))->toDateString(); // mock
+
+        return [
+            'type' => $type,
+            'orders' => $orders,
+            'views' => $views,
+            'conversionRate' => $conversionRate,
+            'lastRun' => $lastRun,
+            'nextRecommended' => $nextRecommended
+        ];
+    });
+
+    return response()->json($data);
+}

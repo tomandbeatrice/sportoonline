@@ -1,0 +1,10 @@
+Schema::create('planned_campaigns', function (Blueprint $table) {
+    $table->id();
+    $table->string('code')->unique();
+    $table->string('title');
+    $table->integer('discount_rate'); // örn: %15
+    $table->integer('commission_drop'); // örn: %3
+    $table->date('start_date');
+    $table->date('end_date');
+    $table->timestamps();
+});

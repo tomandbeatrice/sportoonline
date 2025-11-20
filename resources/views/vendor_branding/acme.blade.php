@@ -1,0 +1,1 @@
+<img src="{{ public_path('images/vendors/acme-logo.png') }}" width="120" alt="Acme Logo">

@@ -1,0 +1,224 @@
+{
+  "generated_at": "2025-11-20T10:40:22.148Z",
+  "total_entries": 15,
+  "unique_files": 14,
+  "top_files": [
+    {
+      "file": "src/services/api.js",
+      "count": 4,
+      "samples": [
+        {
+          "line": 28,
+          "snippet": "console.log('❌ 401 Unauthorized - Logging out')",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/views/marketplace/Home.vue",
+      "count": 3,
+      "samples": [
+        {
+          "line": 487,
+          "snippet": "{ id: 1, name: 'Ayakkabı', icon: '👟' }",
+          "matches": []
+        },
+        {
+          "line": 351,
+          "snippet": "{{ i <= (product.rating || 5) ? '★' : '☆' }}",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "resources/views/emails/order-status-changed.blade.php",
+      "count": 3,
+      "samples": [
+        {
+          "line": 111,
+          "snippet": "<h1>🔔 Sipariş Durumu Güncellendi</h1>",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "docs/C2C_MARKETPLACE_DASHBOARD.md",
+      "count": 3,
+      "samples": [
+        {
+          "line": 11,
+          "snippet": "## 🎯 Temel Özellikler",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/views/marketplace/C2CMarketplaceDashboard.vue",
+      "count": 1,
+      "samples": [
+        {
+          "line": 486,
+          "snippet": "icon: '📊'",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/views/unified/UnifiedDashboard.vue",
+      "count": 1,
+      "samples": [
+        {
+          "line": 316,
+          "snippet": "icon: '🎯'",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/components/layout/Navbar.vue",
+      "count": 1,
+      "samples": [
+        {
+          "line": 199,
+          "snippet": "icon: '🧾'",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/components/AdminSidebar.vue",
+      "count": 1,
+      "samples": [
+        {
+          "line": 11,
+          "snippet": "<span class=\"nav-icon\">📊</span>",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/components/product/ProductReviews.vue",
+      "count": 1,
+      "samples": [
+        {
+          "line": 11,
+          "snippet": "{{ star <= Math.round(averageRating) ? '⭐' : '☆' }}",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/components/marketplace/VendorComparison.vue",
+      "count": 1,
+      "samples": [
+        {
+          "line": 57,
+          "snippet": "⭐ Ortalama Puan",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "app/Http/Controllers/SellerController.php",
+      "count": 1,
+      "samples": [
+        {
+          "line": 195,
+          "snippet": "Kampanya planı onaylandı ✅",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "database/seeders/SubscriptionPlanSeeder.php",
+      "count": 1,
+      "samples": [
+        {
+          "line": 31,
+          "snippet": "'✅ Sınırsız ürün'",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "routes/api.php",
+      "count": 1,
+      "samples": [
+        {
+          "line": 333,
+          "snippet": "// 📦 Kargo / Shipping",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "file": "src/views/marketplace/ProductDetail.vue",
+      "count": 0,
+      "samples": [
+        {
+          "line": 204,
+          "snippet": "★★★★★",
+          "matches": []
+        }
+      ]
+    }
+  ],
+  "top_emojis": [
+    {
+      "emoji": "1",
+      "count": 4
+    },
+    {
+      "emoji": "👟",
+      "count": 1
+    },
+    {
+      "emoji": "5",
+      "count": 1
+    },
+    {
+      "emoji": "📊",
+      "count": 2
+    },
+    {
+      "emoji": "🎯",
+      "count": 2
+    },
+    {
+      "emoji": "🧾",
+      "count": 1
+    },
+    {
+      "emoji": "⭐",
+      "count": 2
+    },
+    {
+      "emoji": "❌",
+      "count": 1
+    },
+    {
+      "emoji": "4",
+      "count": 1
+    },
+    {
+      "emoji": "0",
+      "count": 1
+    },
+    {
+      "emoji": "✅",
+      "count": 2
+    },
+    {
+      "emoji": "🔔",
+      "count": 1
+    },
+    {
+      "emoji": "📦",
+      "count": 1
+    },
+    {
+      "emoji": "#",
+      "count": 2
+    }
+  ]
+}

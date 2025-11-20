@@ -1,0 +1,25 @@
+public function campaignPlanner($sellerId)
+{
+    $campaigns = ['early_access_100', 'beta_invite', null];
+    $types = [
+        'early_access_100' => 'davet',
+        'beta_invite' => 'trend',
+        null => 'organik'
+    ];
+
+    return collect($campaigns)->map(function ($tag, $i) use ($sellerId, $types) {
+        $last = now()->subDays(7 + $i * 2);
+        $next = $last->copy()->addDays(7);
+        $orders = Order::where('seller_id', $sellerId)->where('created_at', '>', $last)->count();
+        $views = Product::where('seller_id', $sellerId)->where('updated_at', '>', $last)->sum('views');
+        $rate = $views > 0 ? round($orders / $views * 100, 2) : 0;
+
+        return [
+            'campaign' => $tag ?? 'organik',
+            'type' => $types[$tag ?? 'organik'],
+            'lastRun' => $last->toDateString(),
+            'nextRun' => $next->toDateString(),
+            'expectedConversion' => $rate
+        ];
+    });
+}

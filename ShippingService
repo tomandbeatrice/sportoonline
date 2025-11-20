@@ -1,0 +1,40 @@
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+use App\Models\Order;
+
+class ShippingService
+{
+    public function createShipment(Order $order)
+    {
+        $response = Http::withToken(env('GELIVER_API_KEY'))
+            ->post('https://api.geliver.io/v1/shipments', [
+                'order_id' => $order->id,
+                'recipient' => [
+                    'name' => $order->recipient_name,
+                    'phone' => $order->recipient_phone,
+                    'address' => $order->recipient_address
+                ],
+                'package' => [
+                    'weight' => 1.2,
+                    'description' => 'Sipariş #' . $order->id
+                ]
+            ]);
+
+        if ($response->successful()) {
+            $trackingCode = $response->json()['tracking_code'];
+            $order->tracking_code = $trackingCode;
+            $order->status = 'shipped';
+            $order->save();
+
+            $order->logs()->create([
+                'message' => "Kargo oluşturuldu. Takip No: {$trackingCode}",
+                'created_at' => now()
+            ]);
+
+            return true;
+        }
+
+        return false;
+    }
+}
