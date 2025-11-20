@@ -2,7 +2,7 @@
   <div class="order-management">
     <div class="page-header">
       <div class="header-left">
-        <h1>📦 Sipariş Yönetimi</h1>
+        <h1 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-8 h-8 text-blue-600" /> Sipariş Yönetimi</h1>
         <p class="subtitle">Tüm siparişleri görüntüleyin ve yönetin</p>
       </div>
       <div class="header-actions">
@@ -104,7 +104,7 @@
       </div>
 
       <div class="stat-card delivered">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><BadgeIcon name="check" cls="w-6 h-6 text-green-600" /></div>
         <div class="stat-content">
           <div class="stat-value">{{ stats.delivered }}</div>
           <div class="stat-label">Teslim Edildi</div>
@@ -229,7 +229,7 @@
       <div class="bulk-buttons">
         <button @click="bulkUpdateStatus('processing')" class="btn-bulk">⚙️ İşle</button>
         <button @click="bulkUpdateStatus('shipped')" class="btn-bulk">🚚 Kargola</button>
-        <button @click="bulkUpdateStatus('delivered')" class="btn-bulk">✅ Teslim Et</button>
+        <button @click="bulkUpdateStatus('delivered')" class="btn-bulk"><BadgeIcon name="check" cls="w-4 h-4 inline mr-1" /> Teslim Et</button>
         <button @click="bulkExport" class="btn-bulk">📊 Dışa Aktar</button>
       </div>
     </div>
@@ -268,8 +268,8 @@
     <div v-if="showDetailModal" class="modal-overlay" @click.self="closeDetailModal">
       <div class="modal-content order-detail-modal">
         <div class="modal-header">
-          <h2>📦 Sipariş #{{ selectedOrder?.id }}</h2>
-          <button @click="closeDetailModal" class="btn-close">✕</button>
+          <h2 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /> Sipariş #{{ selectedOrder?.id }}</h2>
+          <button @click="closeDetailModal" class="btn-close"><BadgeIcon name="close" cls="w-5 h-5" /></button>
         </div>
 
         <div class="modal-body">
@@ -310,7 +310,7 @@
           </div>
 
           <div class="detail-section">
-            <h3>📦 Sipariş Detayları</h3>
+            <h3 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-5 h-5 text-blue-600" /> Sipariş Detayları</h3>
             <table class="items-table">
               <thead>
                 <tr>
@@ -380,6 +380,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 interface Order {
   id: number

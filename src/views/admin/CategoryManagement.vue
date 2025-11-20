@@ -22,7 +22,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><BadgeIcon name="check" cls="w-6 h-6 text-green-600" /></div>
         <div class="stat-content">
           <div class="stat-value">{{ stats.active }}</div>
           <div class="stat-label">Aktif Kategori</div>
@@ -38,7 +38,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon">📦</div>
+        <div class="stat-icon"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /></div>
         <div class="stat-content">
           <div class="stat-value">{{ formatNumber(stats.totalProducts) }}</div>
           <div class="stat-label">Toplam Ürün</div>
@@ -260,6 +260,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
+import CategoryNode from './CategoryNode.vue'
 
 interface Category {
   id: number

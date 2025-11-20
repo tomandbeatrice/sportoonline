@@ -26,6 +26,7 @@ import IconTruck from './IconTruck.vue'
 import IconFile from './IconFile.vue'
 import IconClose from './IconClose.vue'
 import IconChat from './IconChat.vue'
+import IconBox from './IconBox.vue'
 
 const props = defineProps<{
   name?: string
@@ -48,6 +49,7 @@ const iconMap: Record<string, any> = {
   medal: IconMedal,
   runner: IconRunner,
   check: IconCheck,
+  box: IconBox,
   truck: IconTruck,
   file: IconFile,
   close: IconClose,

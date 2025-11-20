@@ -232,7 +232,7 @@
 
         <Card>
           <CardHeader>
-            <CardTitle>📦 Sipariş Durumu</CardTitle>
+            <CardTitle class="inline-flex items-center gap-2"><BadgeIcon name="box" cls="w-5 h-5 text-blue-600" /> Sipariş Durumu</CardTitle>
             <CardDescription>Sipariş durum dağılımı</CardDescription>
           </CardHeader>
           <CardContent>
@@ -1131,7 +1131,7 @@ onMounted(() => {
   
   // Test notification after 3 seconds
   setTimeout(() => {
-    toast.info('🔔 Bildirim sistemi aktif! Test bildirimi gönderildi.')
+    toast.info('Bildirim sistemi aktif! Test bildirimi gönderildi.', { icon: '🔔' })
   }, 3000)
 })
 

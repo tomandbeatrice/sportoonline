@@ -19,7 +19,10 @@
         @click="activeTab = tab.id"
         :class="['tab-btn', { active: activeTab === tab.id }]"
       >
-        <span>{{ tab.icon }}</span>
+        <span class="flex items-center justify-center">
+          <BadgeIcon v-if="tab.iconName" :name="tab.iconName" cls="w-5 h-5 mr-2" />
+          <span v-else class="mr-2">{{ tab.icon }}</span>
+        </span>
         {{ tab.label }}
       </button>
     </div>
@@ -202,7 +205,7 @@
     <!-- Shipping Settings -->
     <div v-show="activeTab === 'shipping'" class="settings-section">
       <div class="section-card">
-        <h3>📦 Kargo Şirketleri</h3>
+        <h3 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /> Kargo Şirketleri</h3>
 
         <!-- Aras Kargo -->
         <div class="shipping-card">
@@ -426,6 +429,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const activeTab = ref('general')
 const saving = ref(false)
@@ -435,7 +439,7 @@ const categories = ref([])
 const tabs = [
   { id: 'general', icon: '🏢', label: 'Genel' },
   { id: 'payment', icon: '💳', label: 'Ödeme' },
-  { id: 'shipping', icon: '📦', label: 'Kargo' },
+  { id: 'shipping', icon: '📦', iconName: 'box', label: 'Kargo' },
   { id: 'email', icon: '📧', label: 'Email' },
   { id: 'commission', icon: '💼', label: 'Komisyon' },
   { id: 'maintenance', icon: '🔧', label: 'Bakım' }

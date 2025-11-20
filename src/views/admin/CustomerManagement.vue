@@ -86,7 +86,7 @@
       </div>
 
       <div class="stat-card active">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><BadgeIcon name="check" cls="w-6 h-6 text-green-600" /></div>
         <div class="stat-content">
           <div class="stat-value">{{ formatNumber(stats.active) }}</div>
           <div class="stat-label">Aktif Müşteri</div>
@@ -239,8 +239,8 @@
                 <span :class="['status-badge', `status-${customer.status || 'active'}`]">
                   {{ getStatusText(customer.status) }}
                 </span>
-                <span v-if="customer.email_verified_at" class="verified-badge">
-                  ✓ Doğrulanmış
+                <span v-if="customer.email_verified_at" class="verified-badge flex items-center gap-1">
+                  <BadgeIcon name="check" cls="w-3 h-3" /> Doğrulanmış
                 </span>
               </div>
             </td>
@@ -287,7 +287,7 @@
                   class="btn-action btn-unblock"
                   title="Blok Kaldır"
                 >
-                  ✅
+                  <BadgeIcon name="check" cls="w-4 h-4" />
                 </button>
               </div>
             </td>
@@ -343,7 +343,7 @@
       <div class="modal-content customer-detail-modal">
         <div class="modal-header">
           <h2>👤 {{ selectedCustomer?.name }}</h2>
-          <button @click="closeDetailModal" class="btn-close">✕</button>
+          <button @click="closeDetailModal" class="btn-close"><BadgeIcon name="close" cls="w-5 h-5" /></button>
         </div>
 
         <div class="modal-body">
@@ -373,10 +373,10 @@
               <div class="detail-item">
                 <label>E-posta Doğrulama</label>
                 <div>
-                  <span v-if="selectedCustomer?.email_verified_at" class="verified-badge">
-                    ✓ Doğrulanmış
+                  <span v-if="selectedCustomer?.email_verified_at" class="verified-badge flex items-center gap-1">
+                    <BadgeIcon name="check" cls="w-3 h-3" /> Doğrulanmış
                   </span>
-                  <span v-else class="unverified-badge">✗ Doğrulanmamış</span>
+                  <span v-else class="unverified-badge flex items-center gap-1"><BadgeIcon name="close" cls="w-3 h-3" /> Doğrulanmamış</span>
                 </div>
               </div>
               <div class="detail-item">
@@ -418,7 +418,7 @@
           </div>
 
           <div class="detail-section">
-            <h3>📦 Son Siparişler</h3>
+            <h3 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-5 h-5 text-blue-600" /> Son Siparişler</h3>
             <table class="orders-table" v-if="selectedCustomer?.recent_orders?.length">
               <thead>
                 <tr>
@@ -475,6 +475,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 import IconStar from '@/components/icons/IconStar.vue'
 
 interface Customer {

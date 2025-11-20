@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><BadgeIcon name="check" cls="w-6 h-6 text-green-600" /></div>
         <div class="stat-content">
           <div class="stat-label">Yayında</div>
           <div class="stat-value">{{ stats.published }}</div>
@@ -53,7 +53,10 @@
           class="page-card"
           @click="editPageBySlug(page.slug)"
         >
-          <div class="page-card-icon">{{ page.icon }}</div>
+          <div class="page-card-icon">
+            <BadgeIcon v-if="page.iconName" :name="page.iconName" cls="w-8 h-8" />
+            <span v-else>{{ page.icon }}</span>
+          </div>
           <div class="page-card-title">{{ page.title }}</div>
           <div class="page-card-status" :class="page.exists ? 'exists' : 'missing'">
             {{ page.exists ? '✓ Mevcut' : '+ Oluştur' }}
@@ -134,8 +137,10 @@
               </span>
             </td>
             <td>
-              <span class="status-badge" :class="page.status">
-                {{ page.status === 'published' ? '✅ Yayında' : '📝 Taslak' }}
+              <span class="status-badge flex items-center gap-1" :class="page.status">
+                <BadgeIcon v-if="page.status === 'published'" name="check" cls="w-3 h-3" />
+                <span v-else>📝</span>
+                {{ page.status === 'published' ? 'Yayında' : 'Taslak' }}
               </span>
             </td>
             <td>
@@ -158,7 +163,8 @@
                   class="btn-icon"
                   :title="page.status === 'published' ? 'Taslağa Al' : 'Yayınla'"
                 >
-                  {{ page.status === 'published' ? '📝' : '✅' }}
+                  <span v-if="page.status === 'published'">📝</span>
+                  <BadgeIcon v-else name="check" cls="w-4 h-4" />
                 </button>
                 <button 
                   v-if="page.type === 'custom'"
@@ -376,6 +382,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { marked } from 'marked'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 interface Page {
   id: number
@@ -404,6 +411,7 @@ interface DefaultPage {
   slug: string
   title: string
   icon: string
+  iconName?: string
   exists: boolean
 }
 
@@ -429,7 +437,7 @@ const defaultPages = ref<DefaultPage[]>([
   { slug: 'faq', title: 'Sıkça Sorulan Sorular', icon: '❓', exists: false },
   { slug: 'terms', title: 'Kullanım Koşulları', icon: '📜', exists: false },
   { slug: 'privacy', title: 'Gizlilik Politikası', icon: '🔒', exists: false },
-  { slug: 'shipping', title: 'Kargo ve Teslimat', icon: '📦', exists: false },
+  { slug: 'shipping', title: 'Kargo ve Teslimat', icon: '📦', iconName: 'box', exists: false },
   { slug: 'returns', title: 'İade ve Değişim', icon: '↩️', exists: false },
   { slug: 'payment', title: 'Ödeme Yöntemleri', icon: '💳', exists: false },
 ])

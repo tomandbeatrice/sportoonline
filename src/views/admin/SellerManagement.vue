@@ -215,7 +215,7 @@
         {{ selectedSellers.length }} satıcı seçildi
       </div>
       <div class="bulk-buttons">
-        <button @click="bulkActivate" class="btn-bulk">✅ Aktif Et</button>
+        <button @click="bulkActivate" class="btn-bulk inline-flex items-center gap-2"><BadgeIcon name="check" cls="w-4 h-4" /> Aktif Et</button>
         <button @click="bulkSuspend" class="btn-bulk">⏸️ Askıya Al</button>
         <button @click="bulkExport" class="btn-bulk">📊 Seçilenleri Dışa Aktar</button>
       </div>
@@ -298,12 +298,12 @@
             <h3>📊 İstatistikler</h3>
             <div class="stats-grid">
               <div class="stat-box">
-                <div class="stat-icon">📦</div>
+                <div class="stat-icon"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /></div>
                 <div class="stat-value">{{ selectedSeller?.products_count || 0 }}</div>
                 <div class="stat-label">Toplam Ürün</div>
               </div>
               <div class="stat-box">
-                <div class="stat-icon">🛒</div>
+                <div class="stat-icon"><BadgeIcon name="cart" cls="w-6 h-6 text-green-600" /></div>
                 <div class="stat-value">{{ selectedSeller?.orders_count || 0 }}</div>
                 <div class="stat-label">Toplam Sipariş</div>
               </div>

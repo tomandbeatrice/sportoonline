@@ -1,7 +1,7 @@
 <template>
   <div class="notification-center">
     <div class="header">
-      <h1>🔔 Bildirim Merkezi</h1>
+      <h1 class="inline-flex items-center gap-2"><BadgeIcon name="bell" cls="w-8 h-8 text-yellow-500" /> Bildirim Merkezi</h1>
       <button @click="sendTestNotification" class="btn-primary">
         <span>✉️</span> Test Bildirimi Gönder
       </button>
@@ -14,7 +14,9 @@
         :class="['tab', { active: activeTab === tab.id }]"
         @click="activeTab = tab.id"
       >
-        {{ tab.icon }} {{ tab.label }}
+        <BadgeIcon v-if="tab.iconName" :name="tab.iconName" cls="w-5 h-5 mr-2" />
+        <span v-else class="mr-2">{{ tab.icon }}</span>
+        {{ tab.label }}
       </button>
     </div>
 
@@ -36,14 +38,14 @@
           </div>
         </div>
         <div class="stat-card success">
-          <div class="stat-icon">✅</div>
+          <div class="stat-icon"><BadgeIcon name="check" cls="w-6 h-6 text-green-600" /></div>
           <div class="stat-info">
             <div class="stat-label">Gönderildi</div>
             <div class="stat-value">{{ emailStats.sent }}</div>
           </div>
         </div>
         <div class="stat-card danger">
-          <div class="stat-icon">❌</div>
+          <div class="stat-icon"><BadgeIcon name="close" cls="w-6 h-6 text-red-600" /></div>
           <div class="stat-info">
             <div class="stat-label">Başarısız</div>
             <div class="stat-value">{{ emailStats.failed }}</div>
@@ -454,12 +456,13 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const activeTab = ref('email')
 const tabs = [
   { id: 'email', label: 'Email Kuyruğu', icon: '📧' },
   { id: 'sms', label: 'SMS', icon: '📱' },
-  { id: 'push', label: 'Push Notification', icon: '🔔' },
+  { id: 'push', label: 'Push Notification', iconName: 'bell' },
   { id: 'system', label: 'Sistem Bildirimleri', icon: '⚙️' }
 ]
 

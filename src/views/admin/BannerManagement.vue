@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><BadgeIcon name="check" cls="w-6 h-6 text-green-600" /></div>
         <div class="stat-content">
           <div class="stat-label">Aktif</div>
           <div class="stat-value">{{ stats.active }}</div>
@@ -440,6 +440,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 interface Banner {
   id: number
