@@ -1,6 +1,8 @@
 <template>
   <section class="p-6 bg-white rounded shadow min-h-screen">
-    <h2 class="text-xl font-bold mb-4">📋 Kampanya Listesi</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="clipboard-list" cls="w-6 h-6 text-blue-600" /> Kampanya Listesi
+    </h2>
 
     <CampaignCreate @created="addCampaign" />
 
@@ -11,7 +13,9 @@
         <option value="start_date">Başlangıç</option>
         <option value="end_date">Bitiş</option>
       </select>
-      <button class="btn btn-outline btn-sm" @click="exportCSV">📤 CSV Export</button>
+      <button class="btn btn-outline btn-sm flex items-center gap-2" @click="exportCSV">
+        <BadgeIcon name="download" cls="w-4 h-4" /> CSV Export
+      </button>
     </div>
 
     <ul class="list-disc pl-4 space-y-2">
@@ -47,6 +51,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useApi } from '@/composables/useApi'
 import CampaignCreate from './CampaignCreate.vue'
 import { useToast } from 'vue-toastification'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 interface Campaign {
   id: number

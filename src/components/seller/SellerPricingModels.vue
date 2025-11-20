@@ -30,11 +30,11 @@
         <div class="features">
           <h4>Özellikler:</h4>
           <ul>
-            <li>✅ Sınırsız ürün ekleyin</li>
-            <li>✅ Ürün başına 10 fotoğraf</li>
-            <li>✅ Temel raporlama</li>
-            <li>✅ Email destek</li>
-            <li>✅ Hemen başlayın</li>
+            <li><BadgeIcon name="check" cls="w-4 h-4 text-green-600 inline mr-1" /> Sınırsız ürün ekleyin</li>
+            <li><BadgeIcon name="check" cls="w-4 h-4 text-green-600 inline mr-1" /> Ürün başına 10 fotoğraf</li>
+            <li><BadgeIcon name="check" cls="w-4 h-4 text-green-600 inline mr-1" /> Temel raporlama</li>
+            <li><BadgeIcon name="check" cls="w-4 h-4 text-green-600 inline mr-1" /> Email destek</li>
+            <li><BadgeIcon name="check" cls="w-4 h-4 text-green-600 inline mr-1" /> Hemen başlayın</li>
           </ul>
         </div>
 
@@ -54,7 +54,7 @@
 
       <div class="comparison-card subscription-model">
         <div class="badge premium">En Karlı</div>
-        <h2>📦 Abonelik + İndirimli Komisyon</h2>
+        <h2 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /> Abonelik + İndirimli Komisyon</h2>
         <p class="description">Aylık ücret ödeyerek çok daha düşük komisyon ödeyin</p>
 
         <div class="plan-selector">
@@ -133,7 +133,7 @@
         </div>
 
         <div v-if="selectedPlan" class="result-card best">
-          <h4>📦 {{ selectedPlan.name }}</h4>
+          <h4 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-5 h-5 text-blue-600" /> {{ selectedPlan.name }}</h4>
           <div class="result-breakdown">
             <span>Komisyon (%{{ selectedPlan.commission_rate }}): -₺{{ formatNumber(estimatedSales * selectedPlan.commission_rate / 100) }}</span>
             <span>Aylık Ücret: -₺{{ selectedPlan.price }}</span>
@@ -187,27 +187,27 @@
           </tr>
           <tr>
             <td>Toplu Yükleme</td>
-            <td>❌</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
+            <td><BadgeIcon name="close" cls="w-4 h-4 text-red-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
           </tr>
           <tr>
             <td>Gelişmiş Analitik</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
+            <td><BadgeIcon name="close" cls="w-4 h-4 text-red-600 mx-auto" /></td>
+            <td><BadgeIcon name="close" cls="w-4 h-4 text-red-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
           </tr>
           <tr>
             <td>API Erişimi</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>✅</td>
-            <td>✅</td>
+            <td><BadgeIcon name="close" cls="w-4 h-4 text-red-600 mx-auto" /></td>
+            <td><BadgeIcon name="close" cls="w-4 h-4 text-red-600 mx-auto" /></td>
+            <td><BadgeIcon name="close" cls="w-4 h-4 text-red-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
+            <td><BadgeIcon name="check" cls="w-4 h-4 text-green-600 mx-auto" /></td>
           </tr>
           <tr>
             <td>Destek</td>
@@ -226,9 +226,13 @@
 <script>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 export default {
   name: 'SellerPricingModels',
+  components: {
+    BadgeIcon
+  },
   setup() {
     const selectedModel = ref('commission');
     const selectedPlan = ref(null);

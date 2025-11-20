@@ -9,12 +9,14 @@
           v-for="tab in tabs"
           :key="tab.id"
           @click="activeTab = tab.id"
-          class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors"
+          class="pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2"
           :class="activeTab === tab.id
             ? 'border-blue-500 text-blue-600'
             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
         >
-          {{ tab.icon }} {{ tab.label }}
+          <BadgeIcon v-if="tab.iconName" :name="tab.iconName" cls="w-5 h-5" />
+          <span v-else>{{ tab.icon }}</span>
+          {{ tab.label }}
         </button>
       </nav>
     </div>
@@ -332,6 +334,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const activeTab = ref('personal')
 const saving = ref(false)
@@ -342,7 +345,7 @@ const tabs = [
   { id: 'personal', label: 'Kişisel Bilgiler', icon: '👤' },
   { id: 'addresses', label: 'Adreslerim', icon: '📍' },
   { id: 'password', label: 'Şifre', icon: '🔒' },
-  { id: 'notifications', label: 'Bildirimler', icon: '🔔' },
+  { id: 'notifications', label: 'Bildirimler', icon: '🔔', iconName: 'bell' },
 ]
 
 const personalInfo = reactive({

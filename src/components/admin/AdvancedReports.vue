@@ -9,10 +9,13 @@
           v-for="type in reportTypes"
           :key="type.id"
           @click="selectedReportType = type.id"
-          class="p-4 border-2 rounded-lg transition-all"
+          class="p-4 border-2 rounded-lg transition-all flex flex-col items-center justify-center"
           :class="selectedReportType === type.id ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-blue-400'"
         >
-          <div class="text-3xl mb-2">{{ type.icon }}</div>
+          <div class="text-3xl mb-2">
+            <BadgeIcon v-if="type.iconName" :name="type.iconName" cls="w-8 h-8 text-blue-600" />
+            <span v-else>{{ type.icon }}</span>
+          </div>
           <div class="font-semibold text-gray-900">{{ type.label }}</div>
         </button>
       </div>
@@ -285,11 +288,12 @@ import { ref, onMounted, nextTick, watch } from 'vue'
 import axios from 'axios'
 import Chart from 'chart.js/auto'
 import IconStar from '@/components/icons/IconStar.vue'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const reportTypes = [
   { id: 'sales', label: 'Satış Raporları', icon: '💰' },
   { id: 'vendor', label: 'Satıcı Performansı', icon: '🏪' },
-  { id: 'product', label: 'Ürün Analitiği', icon: '📦' },
+  { id: 'product', label: 'Ürün Analitiği', icon: '📦', iconName: 'box' },
   { id: 'customer', label: 'Müşteri Segmentasyonu', icon: '👥' }
 ]
 

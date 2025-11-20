@@ -1,7 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-8">
     <div class="container mx-auto px-4 max-w-6xl">
-      <h1 class="text-4xl font-bold mb-8 text-center">🧪 Feature Testing Dashboard</h1>
+      <h1 class="text-4xl font-bold mb-8 text-center flex items-center justify-center gap-3">
+        <BadgeIcon name="beaker" cls="w-10 h-10 text-blue-600" /> Feature Testing Dashboard
+      </h1>
 
       <!-- Performance Metrics -->
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -33,7 +35,7 @@
       <!-- Analytics Testing -->
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <span>📊</span> Analytics Events
+          <BadgeIcon name="bar-chart" cls="w-8 h-8 text-blue-600" /> Analytics Events
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button @click="trackPageView" class="p-4 border-2 border-blue-500 rounded-lg hover:bg-blue-50">
@@ -58,7 +60,7 @@
       <!-- Error Tracking -->
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <span>🐛</span> Error Tracking
+          <BadgeIcon name="bug" cls="w-8 h-8 text-red-600" /> Error Tracking
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <button @click="triggerError('low')" class="p-4 border-2 border-blue-500 rounded-lg hover:bg-blue-50">
@@ -87,7 +89,7 @@
       <!-- Form Validation Test -->
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <span>✅</span> Form Validation
+          <BadgeIcon name="check" cls="w-8 h-8 text-green-600" /> Form Validation
         </h2>
         <form @submit.prevent="testValidation" class="space-y-4">
           <div>
@@ -113,14 +115,16 @@
           <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             Test Validation
           </button>
-          <p v-if="validationSuccess" class="text-green-600 font-semibold">✅ Validation passed!</p>
+          <p v-if="validationSuccess" class="text-green-600 font-semibold flex items-center gap-2">
+            <BadgeIcon name="check" cls="w-5 h-5" /> Validation passed!
+          </p>
         </form>
       </div>
 
       <!-- SEO Test -->
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <span>🔍</span> SEO Features
+          <BadgeIcon name="search" cls="w-8 h-8 text-purple-600" /> SEO Features
         </h2>
         <div class="space-y-4">
           <button @click="testSEO" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -140,18 +144,21 @@
       <!-- PWA Test -->
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-          <span>📱</span> PWA Features
+          <BadgeIcon name="smartphone" cls="w-8 h-8 text-indigo-600" /> PWA Features
         </h2>
         <div class="space-y-4">
           <div class="flex items-center gap-4">
             <span class="font-semibold">Service Worker:</span>
-            <span :class="swRegistered ? 'text-green-600' : 'text-red-600'">
-              {{ swRegistered ? '✅ Registered' : '❌ Not Registered' }}
+            <span :class="swRegistered ? 'text-green-600 flex items-center gap-1' : 'text-red-600 flex items-center gap-1'">
+              <BadgeIcon :name="swRegistered ? 'check' : 'x'" cls="w-5 h-5" />
+              {{ swRegistered ? 'Registered' : 'Not Registered' }}
             </span>
           </div>
           <div class="flex items-center gap-4">
             <span class="font-semibold">Manifest:</span>
-            <span class="text-green-600">✅ Loaded</span>
+            <span class="text-green-600 flex items-center gap-1">
+              <BadgeIcon name="check" cls="w-5 h-5" /> Loaded
+            </span>
           </div>
           <button @click="checkPWAStatus" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             Check PWA Status
@@ -176,20 +183,20 @@
       <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg p-6">
         <h2 class="text-2xl font-bold mb-4">Test Summary</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="text-center">
-            <p class="text-4xl font-bold">{{ testResults.performance ? '✅' : '⏳' }}</p>
+          <div class="text-center flex flex-col items-center">
+            <BadgeIcon :name="testResults.performance ? 'check' : 'clock'" cls="w-10 h-10 text-white" />
             <p class="text-sm mt-2">Performance</p>
           </div>
-          <div class="text-center">
-            <p class="text-4xl font-bold">{{ testResults.analytics ? '✅' : '⏳' }}</p>
+          <div class="text-center flex flex-col items-center">
+            <BadgeIcon :name="testResults.analytics ? 'check' : 'clock'" cls="w-10 h-10 text-white" />
             <p class="text-sm mt-2">Analytics</p>
           </div>
-          <div class="text-center">
-            <p class="text-4xl font-bold">{{ testResults.errorTracking ? '✅' : '⏳' }}</p>
+          <div class="text-center flex flex-col items-center">
+            <BadgeIcon :name="testResults.errorTracking ? 'check' : 'clock'" cls="w-10 h-10 text-white" />
             <p class="text-sm mt-2">Error Tracking</p>
           </div>
-          <div class="text-center">
-            <p class="text-4xl font-bold">{{ testResults.seo ? '✅' : '⏳' }}</p>
+          <div class="text-center flex flex-col items-center">
+            <BadgeIcon :name="testResults.seo ? 'check' : 'clock'" cls="w-10 h-10 text-white" />
             <p class="text-sm mt-2">SEO</p>
           </div>
         </div>
@@ -204,6 +211,7 @@ import { useSEO, useFormValidation } from '@/composables'
 import { analytics } from '@/services/analytics'
 import { errorTracking } from '@/services/errorTracking'
 import { performanceMonitoring } from '@/services/performanceMonitoring'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 // Performance
 const performanceMetrics = ref({})

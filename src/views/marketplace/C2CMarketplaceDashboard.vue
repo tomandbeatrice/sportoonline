@@ -73,7 +73,10 @@
                 {{ stat.change }}
               </p>
             </div>
-            <span class="text-3xl">{{ stat.icon }}</span>
+            <span class="text-3xl">
+              <BadgeIcon v-if="stat.iconName" :name="stat.iconName" cls="w-8 h-8 text-blue-600" />
+              <span v-else>{{ stat.icon }}</span>
+            </span>
           </div>
         </div>
       </div>
@@ -100,7 +103,10 @@
               class="p-4 rounded-lg cursor-pointer hover:shadow-lg transition-all"
               @click="openModule(module)"
             >
-              <div class="text-3xl mb-2">{{ module.icon }}</div>
+              <div class="text-3xl mb-2">
+                <BadgeIcon v-if="module.iconName" :name="module.iconName" cls="w-8 h-8" />
+                <span v-else>{{ module.icon }}</span>
+              </div>
               <h3 class="font-semibold text-sm mb-1">{{ module.name }}</h3>
               <p v-if="module.badge" class="text-xs opacity-70">{{ module.badge }}</p>
             </div>
@@ -117,7 +123,10 @@
               class="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-all"
             >
               <div class="flex items-start gap-3">
-                <span class="text-2xl">{{ activity.icon }}</span>
+                <span class="text-2xl">
+                  <BadgeIcon v-if="activity.iconName" :name="activity.iconName" cls="w-6 h-6 text-blue-600" />
+                  <span v-else>{{ activity.icon }}</span>
+                </span>
                 <div class="flex-1">
                   <p class="text-sm font-semibold text-gray-900">{{ activity.title }}</p>
                   <p class="text-xs text-gray-500 mt-1">{{ activity.description }}</p>
@@ -140,7 +149,10 @@
             @click="executeWorkflow(workflow)"
           >
             <div class="flex items-center gap-3 mb-3">
-              <span class="text-2xl">{{ workflow.icon }}</span>
+              <span class="text-2xl">
+                <BadgeIcon v-if="workflow.iconName" :name="workflow.iconName" cls="w-6 h-6 text-blue-600" />
+                <span v-else>{{ workflow.icon }}</span>
+              </span>
               <h3 class="font-semibold">{{ workflow.name }}</h3>
             </div>
             <div class="space-y-2">
@@ -337,6 +349,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import c2cService from '@/services/c2cMarketplace'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const router = useRouter()
 
@@ -483,18 +496,18 @@ const modules = computed(() => {
     ]
   } else {
     return [
-      { id: 'dashboard', name: 'Platform Dashboard', category: 'platform', icon: '📊', color: 'blue', route: '/admin/dashboard' },
-      { id: 'improved-dashboard', name: 'Gelişmiş Dashboard', category: 'platform', icon: '🎯', color: 'blue', route: '/admin/dashboard-new' },
-      { id: 'sellers', name: 'Satıcı Yönetimi', category: 'platform', icon: '👥', color: 'blue', route: '/admin/sellers', badge: '1,234 satıcı' },
-      { id: 'seller-applications', name: 'Satıcı Başvuruları', category: 'platform', icon: '📋', color: 'blue', route: '/admin/seller-applications' },
-      { id: 'customers', name: 'Müşteri Yönetimi', category: 'platform', icon: '👤', color: 'blue', route: '/admin/customers' },
-      { id: 'all-orders', name: 'Sipariş Yönetimi', category: 'operations', icon: '🛒', color: 'green', route: '/admin/orders', badge: '567 bugün' },
-      { id: 'categories', name: 'Kategori Yönetimi', category: 'operations', icon: '📑', color: 'green', route: '/admin/categories' },
-      { id: 'banners', name: 'Banner Yönetimi', category: 'marketing', icon: '🖼️', color: 'purple', route: '/admin/banners' },
-      { id: 'pages', name: 'Sayfa Yönetimi', category: 'marketing', icon: '📄', color: 'purple', route: '/admin/pages' },
-      { id: 'reports', name: 'Raporlar & Analiz', category: 'analytics', icon: '📈', color: 'orange', route: '/admin/reports' },
-      { id: 'settings-admin', name: 'Sistem Ayarları', category: 'system', icon: '⚙️', color: 'red', route: '/admin/settings' },
-      { id: 'notifications', name: 'Bildirim Merkezi', category: 'system', icon: '🔔', color: 'red', route: '/admin/notifications' },
+      { id: 'dashboard', name: 'Platform Dashboard', category: 'platform', icon: '📊', iconName: 'chart', color: 'blue', route: '/admin/dashboard' },
+      { id: 'improved-dashboard', name: 'Gelişmiş Dashboard', category: 'platform', icon: '🎯', iconName: 'target', color: 'blue', route: '/admin/dashboard-new' },
+      { id: 'sellers', name: 'Satıcı Yönetimi', category: 'platform', icon: '👥', iconName: 'users', color: 'blue', route: '/admin/sellers', badge: '1,234 satıcı' },
+      { id: 'seller-applications', name: 'Satıcı Başvuruları', category: 'platform', icon: '📋', iconName: 'clipboard', color: 'blue', route: '/admin/seller-applications' },
+      { id: 'customers', name: 'Müşteri Yönetimi', category: 'platform', icon: '👤', iconName: 'user', color: 'blue', route: '/admin/customers' },
+      { id: 'all-orders', name: 'Sipariş Yönetimi', category: 'operations', icon: '🛒', iconName: 'cart', color: 'green', route: '/admin/orders', badge: '567 bugün' },
+      { id: 'categories', name: 'Kategori Yönetimi', category: 'operations', icon: '📑', iconName: 'file', color: 'green', route: '/admin/categories' },
+      { id: 'banners', name: 'Banner Yönetimi', category: 'marketing', icon: '🖼️', iconName: 'image', color: 'purple', route: '/admin/banners' },
+      { id: 'pages', name: 'Sayfa Yönetimi', category: 'marketing', icon: '📄', iconName: 'file', color: 'purple', route: '/admin/pages' },
+      { id: 'reports', name: 'Raporlar & Analiz', category: 'analytics', icon: '📈', iconName: 'chart', color: 'orange', route: '/admin/reports' },
+      { id: 'settings-admin', name: 'Sistem Ayarları', category: 'system', icon: '⚙️', iconName: 'settings', color: 'red', route: '/admin/settings' },
+      { id: 'notifications', name: 'Bildirim Merkezi', category: 'system', icon: '🔔', iconName: 'bell', color: 'red', route: '/admin/notifications' },
       { id: 'theme', name: 'Tema Yönetimi', category: 'system', icon: '🎨', color: 'red', route: '/admin/theme' }
     ]
   }
@@ -562,7 +575,8 @@ const workflows = computed(() => {
         id: 'seller-onboarding',
         name: 'Satıcı Onay Süreci',
         steps: ['Başvuru İnceleme', 'Kimlik Doğrulama', 'Belge Kontrolü', 'Mağaza Kurulumu', 'Onay'],
-        icon: '✅'
+        icon: '✅',
+        iconName: 'check'
       },
       {
         id: 'dispute-resolution',
@@ -594,11 +608,11 @@ const workflows = computed(() => {
 
 // Recent activities
 const recentActivities = ref([
-  { id: 1, icon: 'cart', title: 'Yeni Sipariş', description: 'Ali Yılmaz sepetini tamamladı', time: '5 dk önce' },
-  { id: 2, icon: 'star', title: 'Yeni Değerlendirme', description: 'Ayşe K. mağazanıza 5 yıldız verdi', time: '12 dk önce' },
-  { id: 3, icon: 'box', title: 'Ürün Güncellendi', description: 'Nike Air Max stoğu güncellendi', time: '25 dk önce' },
-  { id: 4, icon: 'chat', title: 'Yeni Mesaj', description: 'Mehmet Demir sorusu var', time: '1 saat önce' },
-  { id: 5, icon: 'target', title: 'Kampanya Başladı', description: 'Yaz İndirimleri aktif', time: '2 saat önce' }
+  { id: 1, icon: 'cart', iconName: 'cart', title: 'Yeni Sipariş', description: 'Ali Yılmaz sepetini tamamladı', time: '5 dk önce' },
+  { id: 2, icon: 'star', iconName: 'star', title: 'Yeni Değerlendirme', description: 'Ayşe K. mağazanıza 5 yıldız verdi', time: '12 dk önce' },
+  { id: 3, icon: 'box', iconName: 'box', title: 'Ürün Güncellendi', description: 'Nike Air Max stoğu güncellendi', time: '25 dk önce' },
+  { id: 4, icon: 'chat', iconName: 'chat', title: 'Yeni Mesaj', description: 'Mehmet Demir sorusu var', time: '1 saat önce' },
+  { id: 5, icon: 'target', iconName: 'target', title: 'Kampanya Başladı', description: 'Yaz İndirimleri aktif', time: '2 saat önce' }
 ])
 
 // Quick actions
@@ -606,7 +620,7 @@ const quickActions = computed(() => {
   if (isSeller.value) {
     return [
       { id: 'add-product', icon: 'plus', label: 'Yeni Ürün Ekle' },
-      { id: 'process-orders', icon: 'box', label: 'Siparişleri İşle' },
+      { id: 'process-orders', icon: 'box', iconName: 'box', label: 'Siparişleri İşle' },
       { id: 'create-campaign', icon: 'target', label: 'Kampanya Oluştur' },
       { id: 'view-analytics', icon: 'chart', label: 'Satış Analizi' },
       { id: 'messages', icon: 'chat', label: 'Mesajlar' }
@@ -615,13 +629,13 @@ const quickActions = computed(() => {
     return [
       { id: 'browse', icon: 'search', label: 'Ürün Ara' },
       { id: 'cart', icon: 'cart', label: 'Sepetim' },
-      { id: 'track-order', icon: 'box', label: 'Sipariş Takip' },
+      { id: 'track-order', icon: 'box', iconName: 'box', label: 'Sipariş Takip' },
       { id: 'favorites', icon: 'heart', label: 'Favorilerim' },
       { id: 'support', icon: 'help', label: 'Yardım' }
     ]
   } else {
     return [
-      { id: 'approve-seller', icon: '✅', label: 'Satıcı Onayla' },
+      { id: 'approve-seller', icon: '✅', iconName: 'check', label: 'Satıcı Onayla' },
       { id: 'review-dispute', icon: '⚖️', label: 'Anlaşmazlık İncele' },
       { id: 'create-campaign', icon: '🎯', label: 'Platform Kampanyası' },
       { id: 'view-reports', icon: '📊', label: 'Raporlar' },

@@ -28,7 +28,7 @@
           
           <div class="features-grid">
             <div class="feature-item">
-              <div class="feature-icon">📦</div>
+              <div class="feature-icon"><BadgeIcon name="box" cls="w-8 h-8 text-blue-600" /></div>
               <h3>Ürün Yönetimi</h3>
               <p>Kolayca ürün ekleyin ve stokları yönetin</p>
             </div>
@@ -53,7 +53,7 @@
 
         <!-- Step 2: İlk Ürün Ekleme -->
         <div v-if="currentStep === 1" class="product-step">
-          <h2>📦 İlk Ürününüzü Ekleyin</h2>
+          <h2 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /> İlk Ürününüzü Ekleyin</h2>
           <p>Satışa başlamak için en az bir ürün eklemeniz gerekiyor.</p>
 
           <form @submit.prevent="addProduct" class="product-form">
@@ -211,7 +211,7 @@
 
         <!-- Step 4: Tamamlandı -->
         <div v-if="currentStep === 3" class="complete-step">
-          <div class="success-icon">✅</div>
+          <div class="success-icon"><BadgeIcon name="check" cls="w-16 h-16 text-green-600" /></div>
           <h1>Tebrikler!</h1>
           <p>Satıcı hesabınız hazır. Artık satış yapmaya başlayabilirsiniz.</p>
 
@@ -243,6 +243,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const router = useRouter()
 
@@ -309,7 +310,7 @@ const addProduct = async () => {
   try {
     await axios.post('/api/seller/products', product.value)
     addedProductsCount.value++
-    alert('Ürün başarıyla eklendi! ✅')
+    alert('Ürün başarıyla eklendi!')
     currentStep.value++
   } catch (error: any) {
     alert(error.response?.data?.message || 'Ürün eklenemedi')

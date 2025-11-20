@@ -46,9 +46,7 @@
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Toplam Sipariş</span>
-            <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
+            <BadgeIcon name="shopping-bag" cls="w-8 h-8 text-blue-500" />
           </div>
           <p class="text-3xl font-bold text-gray-900">{{ stats.total_orders || 0 }}</p>
           <p class="text-xs text-green-600 mt-1">+12% bu ay</p>
@@ -57,9 +55,7 @@
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Toplam Harcama</span>
-            <svg class="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <BadgeIcon name="currency-dollar" cls="w-8 h-8 text-green-500" />
           </div>
           <p class="text-3xl font-bold text-gray-900">{{ formatCurrency(stats.total_spent || 0) }}</p>
           <p class="text-xs text-gray-500 mt-1">Son 6 ay</p>
@@ -68,9 +64,7 @@
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Favoriler</span>
-            <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+            <BadgeIcon name="heart" cls="w-8 h-8 text-red-500" />
           </div>
           <p class="text-3xl font-bold text-gray-900">{{ stats.favorites_count || 0 }}</p>
           <p class="text-xs text-gray-500 mt-1">Kayıtlı ürün</p>
@@ -79,9 +73,7 @@
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Ortalama Sepet</span>
-            <svg class="w-8 h-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+            <BadgeIcon name="chart-bar" cls="w-8 h-8 text-purple-500" />
           </div>
           <p class="text-3xl font-bold text-gray-900">{{ formatCurrency(stats.avg_order_value || 0) }}</p>
           <p class="text-xs text-gray-500 mt-1">Sipariş başına</p>
@@ -352,6 +344,7 @@ import LineChart from '@/components/charts/LineChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 import NotificationDropdown from '@/components/NotificationDropdown.vue'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 import { useNotifications } from '@/composables/useNotifications'
 
 const router = useRouter()

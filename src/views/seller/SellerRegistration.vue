@@ -7,7 +7,7 @@
       </div>
 
       <div v-if="registrationComplete" class="success-message">
-        <div class="success-icon">✅</div>
+        <div class="success-icon"><BadgeIcon name="check" cls="w-16 h-16 text-green-600" /></div>
         <h2>Başvurunuz Alındı!</h2>
         <p>Başvurunuz inceleniyor. Sonuç en kısa sürede e-posta ile bildirilecektir.</p>
         <button @click="$router.push('/')" class="btn-primary">Ana Sayfaya Dön</button>
@@ -204,6 +204,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const router = useRouter()
 

@@ -1,6 +1,8 @@
 <template>
   <section class="p-6 bg-white rounded shadow max-w-xl mx-auto">
-    <h2 class="text-xl font-bold mb-4">🆕 Yeni Kampanya Oluştur</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="plus-circle" cls="w-6 h-6 text-blue-600" /> Yeni Kampanya Oluştur
+    </h2>
 
     <form @submit.prevent="submit">
       <div class="mb-4">
@@ -32,11 +34,13 @@
         <input v-model="form.score" type="number" class="input input-bordered w-full" min="0" max="100" />
       </div>
 
-      <button class="btn btn-primary w-full" type="submit">✅ Oluştur</button>
+      <button class="btn btn-primary w-full flex items-center justify-center gap-2" type="submit">
+        <BadgeIcon name="check" cls="w-5 h-5" /> Oluştur
+      </button>
     </form>
 
-    <div v-if="success" class="mt-4 text-green-600 font-medium">
-      ✅ Kampanya başarıyla oluşturuldu!
+    <div v-if="success" class="mt-4 text-green-600 font-medium flex items-center gap-2">
+      <BadgeIcon name="check" cls="w-5 h-5" /> Kampanya başarıyla oluşturuldu!
     </div>
   </section>
 </template>
@@ -44,6 +48,7 @@
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue'
 import { useApi } from '@/composables/useApi'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const emit = defineEmits(['created'])
 const { post } = useApi()
