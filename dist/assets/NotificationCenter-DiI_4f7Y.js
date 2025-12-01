@@ -1,1 +1,0 @@
-import{d as t,c as o,o as n,b as a}from"./index-yqhG0KQQ.js";const i={class:"NotificationCenter"},_=t({__name:"NotificationCenter",setup(s){return(r,e)=>(n(),o("div",i,[...e[0]||(e[0]=[a("h1",null,"NotificationCenter",-1)])]))}});export{_ as default};

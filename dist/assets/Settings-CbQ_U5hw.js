@@ -1,1 +1,0 @@
-import{d as t,c as s,o as n,b as o}from"./index-yqhG0KQQ.js";const r={class:"seller-Settings"},i=t({__name:"Settings",setup(a){return(l,e)=>(n(),s("div",r,[...e[0]||(e[0]=[o("h1",null,"Seller Settings",-1)])]))}});export{i as default};

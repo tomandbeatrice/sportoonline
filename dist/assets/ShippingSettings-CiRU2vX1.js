@@ -1,1 +1,0 @@
-import{d as t,c as n,o as s,b as i}from"./index-yqhG0KQQ.js";const o={class:"seller-ShippingSettings"},l=t({__name:"ShippingSettings",setup(p){return(r,e)=>(s(),n("div",o,[...e[0]||(e[0]=[i("h1",null,"Seller ShippingSettings",-1)])]))}});export{l as default};

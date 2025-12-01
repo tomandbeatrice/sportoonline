@@ -1,1 +1,0 @@
-import{d as o,c as s,o as t,b as l}from"./index-yqhG0KQQ.js";const n={class:"SellerApplications"},c=o({__name:"SellerApplications",setup(a){return(p,e)=>(t(),s("div",n,[...e[0]||(e[0]=[l("h1",null,"SellerApplications",-1)])]))}});export{c as default};

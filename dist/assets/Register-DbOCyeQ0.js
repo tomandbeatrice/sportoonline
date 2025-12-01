@@ -1,1 +1,0 @@
-import{d as t,c as s,o,b as r}from"./index-yqhG0KQQ.js";const a={class:"auth-Register"},_=t({__name:"Register",setup(n){return(c,e)=>(o(),s("div",a,[...e[0]||(e[0]=[r("h1",null,"Register",-1)])]))}});export{_ as default};

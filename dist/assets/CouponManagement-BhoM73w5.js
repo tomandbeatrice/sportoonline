@@ -1,1 +1,0 @@
-import{d as n,c as o,o as a,b as t}from"./index-yqhG0KQQ.js";const s={class:"CouponManagement"},c=n({__name:"CouponManagement",setup(p){return(r,e)=>(a(),o("div",s,[...e[0]||(e[0]=[t("h1",null,"CouponManagement",-1)])]))}});export{c as default};

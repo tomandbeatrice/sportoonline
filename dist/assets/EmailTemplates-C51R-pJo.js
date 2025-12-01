@@ -1,1 +1,0 @@
-import{d as a,c as s,o as t,b as o}from"./index-yqhG0KQQ.js";const l={class:"EmailTemplates"},r=a({__name:"EmailTemplates",setup(m){return(n,e)=>(t(),s("div",l,[...e[0]||(e[0]=[o("h1",null,"EmailTemplates",-1)])]))}});export{r as default};

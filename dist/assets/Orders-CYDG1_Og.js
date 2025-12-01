@@ -1,1 +1,0 @@
-import{d as s,c as r,o,b as t}from"./index-yqhG0KQQ.js";const n={class:"user-Orders"},_=s({__name:"Orders",setup(a){return(d,e)=>(o(),r("div",n,[...e[0]||(e[0]=[t("h1",null,"User Orders",-1)])]))}});export{_ as default};

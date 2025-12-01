@@ -1,1 +1,0 @@
-import{d as a,c as s,o as r,b as o}from"./index-yqhG0KQQ.js";const t={class:"CareersPage"},l=a({__name:"CareersPage",setup(n){return(c,e)=>(r(),s("div",t,[...e[0]||(e[0]=[o("h1",null,"CareersPage",-1)])]))}});export{l as default};

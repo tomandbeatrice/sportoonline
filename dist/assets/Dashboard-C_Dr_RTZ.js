@@ -1,1 +1,0 @@
-import{d as e,c as o,o as s,b as n}from"./index-yqhG0KQQ.js";const t={class:"admin-dashboard"},m=e({__name:"Dashboard",setup(r){return(d,a)=>(s(),o("div",t,[...a[0]||(a[0]=[n("h1",null,"Admin Dashboard",-1)])]))}});export{m as default};

@@ -1,1 +1,0 @@
-import{d as s,c as a,o,b as r}from"./index-yqhG0KQQ.js";const t={class:"seller-Dashboard"},c=s({__name:"Dashboard",setup(n){return(l,e)=>(o(),a("div",t,[...e[0]||(e[0]=[r("h1",null,"Seller Dashboard",-1)])]))}});export{c as default};

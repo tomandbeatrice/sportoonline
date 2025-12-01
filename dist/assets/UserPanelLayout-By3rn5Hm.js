@@ -1,1 +1,0 @@
-import{d as o,r as t,c as a,o as s,a as r}from"./index-yqhG0KQQ.js";import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";const _={class:"user-panel-layout"},c=o({__name:"UserPanelLayout",setup(p){return(d,l)=>{const e=t("router-view");return s(),a("div",_,[r(e)])}}}),i=n(c,[["__scopeId","data-v-d2dad5f6"]]);export{i as default};

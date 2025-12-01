@@ -1,1 +1,0 @@
-import{d as s,c as o,o as t,b as r}from"./index-yqhG0KQQ.js";const a={class:"user-Favorites"},_=s({__name:"Favorites",setup(n){return(c,e)=>(t(),o("div",a,[...e[0]||(e[0]=[r("h1",null,"User Favorites",-1)])]))}});export{_ as default};

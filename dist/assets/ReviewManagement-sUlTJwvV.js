@@ -1,1 +1,0 @@
-import{d as n,c as a,o as t,b as o}from"./index-yqhG0KQQ.js";const s={class:"ReviewManagement"},i=n({__name:"ReviewManagement",setup(r){return(m,e)=>(t(),a("div",s,[...e[0]||(e[0]=[o("h1",null,"ReviewManagement",-1)])]))}});export{i as default};

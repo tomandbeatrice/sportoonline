@@ -1,1 +1,0 @@
-import{d as t,c as n,o as a,b as o}from"./index-yqhG0KQQ.js";const s={class:"StockManagement"},_=t({__name:"StockManagement",setup(c){return(r,e)=>(a(),n("div",s,[...e[0]||(e[0]=[o("h1",null,"StockManagement",-1)])]))}});export{_ as default};
