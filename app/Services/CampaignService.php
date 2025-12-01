@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Config;
@@ -76,6 +78,24 @@ class CampaignService
         ]);
     }
 
+    public function generateCampaignVariants(array $base): array
+    {
+        $variants = [];
+
+        foreach ([-5, 0, 5] as $discountShift) {
+            foreach ([3, 5, 7] as $duration) {
+                $variants[] = [
+                    'segment' => $base['segment'],
+                    'campaign_type' => $base['campaign_type'],
+                    'discount' => max(5, $base['suggested_discount'] + $discountShift),
+                    'duration' => $duration
+                ];
+            }
+        }
+
+        return $variants;
+    }
+
     public function learnFromSegmentHistory(array $history): array
     {
         $segmentScores = [];
@@ -101,4 +121,62 @@ class CampaignService
             $this->segmentWeights[$segment] = 1 + ($avgScoreChange / 10);
         }
     }
+
+    public function calibrateConfidenceScore(array $history): array
+    {
+        $adjusted = [];
+
+        foreach ($history as $entry) {
+            $confidence = $entry['confidence_score'];
+            $actual = $entry['actual_success_score'];
+            $delta = $actual - $confidence;
+
+            $adjustment = $delta / 100;
+            $newConfidence = round(min(max($confidence + $adjustment * 20, 0), 100), 2);
+
+            $adjusted[] = [
+                'date' => $entry['date'],
+                'segment' => $entry['segment'],
+                'campaign_type' => $entry['campaign_type'],
+                'original_confidence' => $confidence,
+                'actual_success' => $actual,
+                'adjusted_confidence' => $newConfidence
+            ];
+        }
+
+        return $adjusted;
+    }
+
+    public function calculateSuggestionAccuracy(array $history): float
+    {
+        $accurateCount = 0;
+
+        foreach ($history as $entry) {
+            $confidence = $entry['confidence_score'];
+            $actual = $entry['actual_success_score'];
+
+            if (abs($confidence - $actual) <= 10) {
+                $accurateCount++;
+            }
+        }
+
+        return round(($accurateCount / count($history)) * 100, 2);
+    }
+}
+public function predictSegmentSuccessScore(array $inputs): float
+{
+    $coefficients = [
+        'response_time' => -0.2,
+        'comment_response_rate' => 0.5,
+        'update_count' => 0.3,
+        'export_usage' => 0.2
+    ];
+
+    $score = 0;
+
+    foreach ($coefficients as $key => $weight) {
+        $score += ($inputs[$key] ?? 0) * $weight;
+    }
+
+    return round(min(max($score, 0), 100), 2);
 }
