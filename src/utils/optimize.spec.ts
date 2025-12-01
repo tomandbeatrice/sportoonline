@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from "vitest"
-import { debounce, throttle, cleanObject, groupBy, sortBy } from "./utils/optimize"
+import { debounce, throttle, cleanObject, groupBy, sortBy } from "./optimize"
 
 describe("optimize utils", () => {
   test("cleanObject removes null and empty strings", () => {

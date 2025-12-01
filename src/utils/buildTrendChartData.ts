@@ -1,5 +1,5 @@
 import { ModulTrendData } from '@/types'
-import { getColor } from '@/utils/colorScale'
+import { getModulColor } from '@/utils/colorScale'
 
 export function buildTrendChartData(data: ModulTrendData[]) {
   const labels = data[0]?.logs.map(log => log.date) || []
@@ -7,7 +7,7 @@ export function buildTrendChartData(data: ModulTrendData[]) {
   const datasets = data.map(modul => ({
     label: modul.modulName,
     data: modul.logs.map(log => log.count),
-    borderColor: getColor(modul.modulName),
+    borderColor: getModulColor(modul.modulName),
     backgroundColor: 'transparent',
     pointRadius: 3,
     tension: 0.4,

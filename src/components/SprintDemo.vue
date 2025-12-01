@@ -1,35 +1,66 @@
 <template>
-  <div class="sprint-demo">
-    <h2>Sprint Demo Görseli</h2>
-    <img src="/images/risingsportoonline.png" alt="Sprint Demo" class="demo-image" />
-    <p class="status">Test Paneli: <span class="green">Yeşil</span></p>
+  <div class="demo-container">
+    <img :src="demoImage" alt="Sprint Görseli" />
+    <button @click="exportSprint">Export Et</button>
+    <div class="test-panel" :style="{ color: testColor }">
+      Test Paneli: {{ testStatus }}
+    </div>
+
+    <!-- 🧠 Planlama bileşeni -->
+    <scheduled-export-list />
   </div>
 </template>
 
 <script setup>
-// Ek logic istersen buraya ekleyebiliriz
+import { computed } from 'vue'
+import ScheduledExportList from './ScheduledExportList.vue'
+
+defineProps({
+  demoImage: String,
+  testStatus: {
+    type: String,
+    default: 'Yeşil'
+  }
+})
+
+const testColor = computed(() => {
+  switch (testStatus) {
+    case 'Yeşil': return 'green'
+    case 'Sarı': return 'orange'
+    case 'Kırmızı': return 'red'
+    default: return 'gray'
+  }
+})
+
+function exportSprint() {
+  const sprintData = {
+    tarih: new Date().toISOString(),
+    moduller: {
+      demo: 'Render alındı',
+      export: 'Buton aktif',
+      test: testStatus
+    },
+    tamamlanma: testStatus === 'Yeşil'
+  }
+
+  const blob = new Blob([JSON.stringify(sprintData, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'sprint-export.json'
+  link.click()
+  URL.revokeObjectURL(url)
+}
 </script>
 
 <style scoped>
-.sprint-demo {
-  text-align: center;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
-.demo-image {
-  max-width: 100%;
-  height: auto;
-  border: 2px solid #4CAF50;
-  border-radius: 8px;
-}
-.status {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-}
-.green {
-  color: #4CAF50;
+.test-panel {
   font-weight: bold;
 }
 </style>

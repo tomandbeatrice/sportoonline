@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ModülTestDurumu } from './finalTypes'
+import type { ModülTestDurumu } from '../types/finalTypes'
 
 export function useFinalChecklist() {
   const modüller = ref<ModülTestDurumu[]>([
