@@ -1,6 +1,9 @@
 <template>
   <section class="p-6 bg-white rounded shadow min-h-screen">
-    <h2 class="text-xl font-bold mb-4">📆 Kampanya Yaşam Döngüsü</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="calendar" class="w-6 h-6 text-blue-600" />
+      Kampanya Yaşam Döngüsü
+    </h2>
 
     <div class="flex gap-4 mb-6">
       <select v-model="selectedId" class="select select-bordered">
@@ -23,6 +26,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import BadgeIcon from '@/components/BadgeIcon.vue'
 import axios from '@/utils/axios'
 import Chart from 'chart.js/auto'
 

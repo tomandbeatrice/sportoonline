@@ -1,6 +1,8 @@
 <template>
   <div class="analiz-paneli">
-    <h2>📊 Analiz Paneli</h2>
+    <h2 class="flex items-center gap-2">
+      <BadgeIcon name="bar-chart" cls="w-6 h-6 text-blue-600" /> Analiz Paneli
+    </h2>
 
     <SuccessRateChart />
     <ModuleComparison />
@@ -14,6 +16,7 @@
 import SuccessRateChart from '@/components/Analiz/SuccessRateChart.vue'
 import ModuleComparison from '@/components/Analiz/ModuleComparison.vue'
 // import AnalizÖzeti from '@/components/Analiz/AnalizÖzeti.vue'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 </script>
 
 <style scoped>

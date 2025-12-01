@@ -1,6 +1,9 @@
 <template>
   <section class="p-6 bg-white rounded shadow min-h-screen">
-    <h2 class="text-xl font-bold mb-4">🚀 Kampanya Performans Özeti</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="rocket" class="w-6 h-6 text-red-600" />
+      Kampanya Performans Özeti
+    </h2>
 
     <table class="table table-zebra w-full text-sm">
       <thead>
@@ -27,6 +30,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import BadgeIcon from '@/components/BadgeIcon.vue'
 import axios from '@/utils/axios'
 
 type PerformanceItem = {

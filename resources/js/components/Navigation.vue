@@ -4,7 +4,8 @@
       <div class="flex justify-between items-center h-16">
         <!-- Logo -->
         <router-link to="/" class="flex items-center space-x-2">
-          <span class="text-2xl font-bold text-blue-600">🛍️ Market</span>
+          <BadgeIcon name="shopping-bag" cls="w-8 h-8 text-blue-600" />
+          <span class="text-2xl font-bold text-blue-600">Market</span>
         </router-link>
 
         <!-- Arama Çubuğu -->
@@ -58,33 +59,33 @@
             >
               <router-link
                 to="/orders"
-                class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
                 @click="showUserMenu = false"
               >
-                📦 Siparişlerim
+                <BadgeIcon name="package" cls="w-4 h-4" /> Siparişlerim
               </router-link>
               <router-link
                 v-if="user?.role === 'seller'"
                 to="/seller/dashboard"
-                class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
                 @click="showUserMenu = false"
               >
-                🏪 Satıcı Paneli
+                <BadgeIcon name="store" cls="w-4 h-4" /> Satıcı Paneli
               </router-link>
               <router-link
                 v-if="user?.role === 'admin'"
                 to="/admin"
-                class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2"
                 @click="showUserMenu = false"
               >
-                ⚙️ Admin Paneli
+                <BadgeIcon name="settings" cls="w-4 h-4" /> Admin Paneli
               </router-link>
               <hr class="my-2" />
               <button
                 @click="logout"
-                class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2"
               >
-                🚪 Çıkış Yap
+                <BadgeIcon name="log-out" cls="w-4 h-4" /> Çıkış Yap
               </button>
             </div>
           </div>
@@ -122,7 +123,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
+import { useCartStore } from '@/stores/cartStore';
+import BadgeIcon from '@/components/icons/BadgeIcon.vue';
 
 const router = useRouter();
 const showUserMenu = ref(false);

@@ -1,6 +1,8 @@
 <template>
   <section class="p-4">
-    <h2 class="text-lg font-bold text-purple-700">📈 Haftalık Planlama Başarı Trendi</h2>
+    <h2 class="text-lg font-bold text-purple-700 flex items-center gap-2">
+      <BadgeIcon name="trending-up" cls="w-6 h-6" /> Haftalık Planlama Başarı Trendi
+    </h2>
     <canvas ref="chartCanvas" height="200"></canvas>
   </section>
 </template>
@@ -9,6 +11,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { Chart } from 'chart.js/auto'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const chartCanvas = ref(null)
 

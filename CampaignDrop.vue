@@ -1,6 +1,8 @@
 <template>
   <section class="p-6 bg-white rounded shadow min-h-screen">
-    <h2 class="text-xl font-bold mb-4">📉 Kampanya Terk Oranları</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="trending-down" cls="w-6 h-6 text-red-600" /> Kampanya Terk Oranları
+    </h2>
 
     <div class="flex gap-4 mb-6">
       <select v-model="selectedId" class="select select-bordered">
@@ -17,6 +19,7 @@
 import { ref, onMounted } from 'vue'
 import axios from '@/utils/axios'
 import Chart from 'chart.js/auto'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 type Campaign = { id: number; name: string }
 type DropPoint = { step: string; rate: number }

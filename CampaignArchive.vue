@@ -1,6 +1,8 @@
 <template>
   <section class="p-6 bg-white rounded shadow min-h-screen">
-    <h2 class="text-xl font-bold mb-4">📦 Kampanya Arşivleri</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="archive" cls="w-6 h-6 text-blue-600" /> Kampanya Arşivleri
+    </h2>
 
     <div class="flex gap-4 mb-6">
       <input v-model="search" type="text" placeholder="Kampanya adı ara..." class="input input-bordered w-full max-w-xs" />
@@ -35,6 +37,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import axios from '@/utils/axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 type ArchiveItem = {
   id: number

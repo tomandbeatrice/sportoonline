@@ -129,16 +129,16 @@
               </button>
               <button
                 @click="currentView = 'stock'"
-                class="p-4 border-2 border-orange-200 rounded-lg hover:bg-orange-50 transition-colors"
+                class="p-4 border-2 border-orange-200 rounded-lg hover:bg-orange-50 transition-colors flex flex-col items-center"
               >
-                <div class="text-3xl mb-2">📊</div>
+                <BadgeIcon name="chart-bar" cls="w-8 h-8 text-orange-600 mb-2" />
                 <div class="font-semibold text-gray-900">Stok Takip</div>
               </button>
               <button
                 @click="currentView = 'campaigns'"
-                class="p-4 border-2 border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+                class="p-4 border-2 border-purple-200 rounded-lg hover:bg-purple-50 transition-colors flex flex-col items-center"
               >
-                <div class="text-3xl mb-2">🎯</div>
+                <BadgeIcon name="target" cls="w-8 h-8 text-purple-600 mb-2" />
                 <div class="font-semibold text-gray-900">Kampanya</div>
               </button>
             </div>
@@ -190,7 +190,9 @@
           <!-- Low Stock Alerts -->
           <div class="bg-white rounded-lg shadow-md p-6" v-if="lowStockProducts.length > 0">
             <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-bold text-gray-900">⚠️ Düşük Stok Uyarısı</h2>
+              <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <BadgeIcon name="alert-triangle" cls="w-6 h-6 text-orange-500" /> Düşük Stok Uyarısı
+              </h2>
               <button
                 @click="currentView = 'stock'"
                 class="text-orange-600 hover:text-orange-800 font-medium"
@@ -255,6 +257,7 @@ import IconRocket from '@/components/icons/IconRocket.vue'
 import IconClock from '@/components/icons/IconClock.vue'
 import IconMoney from '@/components/icons/IconMoney.vue'
 import IconStar from '@/components/icons/IconStar.vue'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const router = useRouter()
 const sidebarOpen = ref(false)

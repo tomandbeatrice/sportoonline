@@ -1,6 +1,9 @@
 <template>
   <section class="p-6 bg-white rounded shadow min-h-screen">
-    <h2 class="text-xl font-bold mb-4">🧪 Kampanya Sandbox Simülasyonu</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="flask-conical" class="w-6 h-6 text-purple-600" />
+      Kampanya Sandbox Simülasyonu
+    </h2>
 
     <div class="flex gap-4 mb-6">
       <select v-model="selectedId" class="select select-bordered">
@@ -15,7 +18,10 @@
     </div>
 
     <div v-if="result" class="mt-6 bg-gray-50 p-4 rounded border">
-      <h3 class="text-lg font-semibold mb-2">📊 Simülasyon Sonucu</h3>
+      <h3 class="text-lg font-semibold mb-2 flex items-center gap-2">
+        <BadgeIcon name="bar-chart" class="w-5 h-5 text-blue-600" />
+        Simülasyon Sonucu
+      </h3>
       <p><strong>Beklenen Skor Artışı:</strong> {{ result.score_increase }}%</p>
       <p><strong>Beklenen Dönüşüm Artışı:</strong> {{ result.conversion_increase }}%</p>
       <p><strong>Risk:</strong> {{ result.risk_level }}</p>
@@ -25,6 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import BadgeIcon from '@/components/BadgeIcon.vue'
 import axios from '@/utils/axios'
 
 type Campaign = { id: number; name: string }

@@ -1,6 +1,8 @@
 <template>
   <div class="admin-dashboard max-w-2xl mx-auto p-8 bg-white rounded-lg shadow">
-    <h1 class="text-3xl font-bold mb-4">📊 Admin Panel Dashboard</h1>
+    <h1 class="text-3xl font-bold mb-4 flex items-center gap-2">
+      <BadgeIcon name="bar-chart" cls="w-8 h-8 text-blue-600" /> Admin Panel Dashboard
+    </h1>
     <p class="mb-6">Hoş geldin, Engin. Bugünkü sistem durumu: <span :class="systemStatusClass">{{ systemStatus }}</span></p>
     <div class="grid grid-cols-2 gap-6 mb-6">
       <div class="bg-gray-100 p-4 rounded">
@@ -36,6 +38,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import BadgeIcon from '@/components/icons/BadgeIcon.vue';
 
 const stats = ref({
   user_count: 0,

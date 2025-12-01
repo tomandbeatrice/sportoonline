@@ -82,9 +82,13 @@
 
           <!-- Teslimat Bilgileri -->
           <div v-if="order.address" class="mt-6 pt-6 border-t">
-            <h4 class="font-semibold mb-2">📦 Teslimat Adresi</h4>
+            <h4 class="font-semibold mb-2 flex items-center gap-2">
+              <BadgeIcon name="package" cls="w-5 h-5" /> Teslimat Adresi
+            </h4>
             <p class="text-gray-700">{{ order.address }}</p>
-            <p v-if="order.phone" class="text-gray-700 mt-1">📞 {{ order.phone }}</p>
+            <p v-if="order.phone" class="text-gray-700 mt-1 flex items-center gap-2">
+              <BadgeIcon name="phone" cls="w-4 h-4" /> {{ order.phone }}
+            </p>
           </div>
         </div>
       </div>
@@ -95,6 +99,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 interface OrderItem {
   id: number;

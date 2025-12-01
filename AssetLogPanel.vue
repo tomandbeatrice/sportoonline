@@ -1,6 +1,8 @@
 <template>
   <div class="asset-log-panel">
-    <h2>📊 CDN Asset Performans Logları</h2>
+    <h2 class="flex items-center gap-2">
+      <BadgeIcon name="bar-chart" cls="w-6 h-6 text-blue-600" /> CDN Asset Performans Logları
+    </h2>
 
     <select v-model="selectedSegment">
       <option value="">Tüm Segmentler</option>
@@ -34,6 +36,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const logs = ref([])
 const selectedSegment = ref('')
