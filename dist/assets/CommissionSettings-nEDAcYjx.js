@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as t,o as n,a as e}from"./index-BIM8AUBS.js";const a={},i={class:"page"};function r(c,s){return n(),t("div",i,[...s[0]||(s[0]=[e("h2",null,"CommissionSettings",-1),e("p",null,"Admin CommissionSettings page",-1)])])}const _=o(a,[["render",r],["__scopeId","data-v-eadd4f92"]]);export{_ as default};

@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as a,o as s,a as t}from"./index-BIM8AUBS.js";const c={},l={class:"page"};function r(n,e){return s(),a("div",l,[...e[0]||(e[0]=[t("h2",null,"Hotel Detail",-1),t("p",null,"Hotel details",-1)])])}const i=o(c,[["render",r],["__scopeId","data-v-8fc214c3"]]);export{i as default};

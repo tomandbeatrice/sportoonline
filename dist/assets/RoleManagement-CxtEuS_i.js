@@ -1,1 +1,0 @@
-import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as o,o as t,a}from"./index-BIM8AUBS.js";const s={},c={class:"page"};function r(l,e){return t(),o("div",c,[...e[0]||(e[0]=[a("h2",null,"RoleManagement",-1),a("p",null,"Admin RoleManagement page",-1)])])}const m=n(s,[["render",r],["__scopeId","data-v-86c1ad1f"]]);export{m as default};

@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as s,o as r,a as e}from"./index-BIM8AUBS.js";const t={},c={class:"page"};function n(d,a){return r(),s("div",c,[...a[0]||(a[0]=[e("h2",null,"Dashboard",-1),e("p",null,"User Dashboard page",-1)])])}const p=o(t,[["render",n],["__scopeId","data-v-bd51b496"]]);export{p as default};

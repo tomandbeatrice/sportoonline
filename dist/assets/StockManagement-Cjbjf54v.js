@@ -1,1 +1,0 @@
-import{_ as a}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as n,o,a as t}from"./index-BIM8AUBS.js";const c={},s={class:"page"};function r(_,e){return o(),n("div",s,[...e[0]||(e[0]=[t("h2",null,"StockManagement",-1),t("p",null,"Admin StockManagement page",-1)])])}const l=a(c,[["render",r],["__scopeId","data-v-d8293bc0"]]);export{l as default};

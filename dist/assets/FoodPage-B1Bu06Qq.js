@@ -1,1 +1,0 @@
-import{_ as a}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as r,o as t,a as o}from"./index-BIM8AUBS.js";const s={},c={class:"page"};function d(n,e){return t(),r("div",c,[...e[0]||(e[0]=[o("h2",null,"Food Delivery",-1),o("p",null,"Food delivery marketplace",-1)])])}const f=a(s,[["render",d],["__scopeId","data-v-5d6f3fba"]]);export{f as default};

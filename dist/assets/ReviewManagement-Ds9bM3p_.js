@@ -1,1 +1,0 @@
-import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as t,o,a}from"./index-BIM8AUBS.js";const s={},r={class:"page"};function c(_,e){return o(),t("div",r,[...e[0]||(e[0]=[a("h2",null,"ReviewManagement",-1),a("p",null,"Admin ReviewManagement page",-1)])])}const d=n(s,[["render",c],["__scopeId","data-v-a5384914"]]);export{d as default};

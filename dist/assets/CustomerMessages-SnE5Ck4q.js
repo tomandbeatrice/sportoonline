@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as t,o as a,a as s}from"./index-BIM8AUBS.js";const r={},c={class:"page"};function n(l,e){return a(),t("div",c,[...e[0]||(e[0]=[s("h2",null,"CustomerMessages",-1),s("p",null,"Seller CustomerMessages page",-1)])])}const m=o(r,[["render",n],["__scopeId","data-v-31d87040"]]);export{m as default};

@@ -1,1 +1,0 @@
-import{_ as s}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as t,o,a}from"./index-BIM8AUBS.js";const l={},c={class:"page"};function n(r,e){return o(),t("div",c,[...e[0]||(e[0]=[a("h2",null,"EmailTemplates",-1),a("p",null,"Admin EmailTemplates page",-1)])])}const _=s(l,[["render",n],["__scopeId","data-v-c22ba252"]]);export{_ as default};

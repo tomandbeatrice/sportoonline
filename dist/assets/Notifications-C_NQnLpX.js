@@ -1,1 +1,0 @@
-import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as s,o as a,a as t}from"./index-BIM8AUBS.js";const c={},n={class:"page"};function i(r,o){return a(),s("div",n,[...o[0]||(o[0]=[t("h2",null,"Notifications",-1),t("p",null,"User Notifications page",-1)])])}const l=e(c,[["render",i],["__scopeId","data-v-f6c1f025"]]);export{l as default};

@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as t,o as n,a as e}from"./index-BIM8AUBS.js";const s={},r={class:"not-found"};function c(d,a){return n(),t("div",r,[...a[0]||(a[0]=[e("h2",null,"Sayfa Bulunamadı",-1),e("p",null,"Aradığınız sayfa mevcut değil.",-1)])])}const f=o(s,[["render",c],["__scopeId","data-v-9ab7e500"]]);export{f as default};

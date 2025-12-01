@@ -1,1 +1,0 @@
-import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as s,o,a}from"./index-BIM8AUBS.js";const t={},n={class:"page"};function c(i,e){return o(),s("div",n,[...e[0]||(e[0]=[a("h2",null,"Ride Sharing",-1),a("p",null,"Ride sharing service",-1)])])}const l=r(t,[["render",c],["__scopeId","data-v-523ea09e"]]);export{l as default};
