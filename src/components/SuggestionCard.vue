@@ -1,9 +1,9 @@
 <template>
   <div class="suggestion-card" v-if="suggestion">
-    <h4>{{ modul.name }} – Teknik Öneri</h4>
+    <h4>{{ props.modul.name }} – Teknik Öneri</h4>
     <p>{{ suggestion }}</p>
-    <span class="risk-score">Risk Skoru: {{ modul.riskScore }}</span>
-    <Badge :score="modul.riskScore" />
+    <span class="risk-score">Risk Skoru: {{ props.modul.riskScore }}</span>
+    <Badge :score="props.modul.riskScore" />
   </div>
 </template>
 
@@ -11,20 +11,11 @@
 import { computed } from 'vue'
 import Badge from '@/components/ui/Badge.vue'
 
-defineProps<{
-  modul: {
-    name: string
-    progress: number
-    successRate: number
-    riskScore: number
-    uiDropRate: number
-  }
-}>()
-
 const props = defineProps<{
   modul: {
     name: string
     progress: number
+    successRate: number
     riskScore: number
     uiDropRate: number
   }
@@ -37,7 +28,7 @@ const suggestion = computed(() => {
   if (props.modul.uiDropRate > 30) {
     return 'UI sadeleştirme önerisi: kullanıcı davranışı düşmüş'
   }
-  if (modul.successRate < 50) {
+  if (props.modul.successRate < 50) {
     return 'Test kapsamı düşük, modül başarısı kritik seviyede'
   }
   return null
