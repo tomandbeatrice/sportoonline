@@ -22,8 +22,11 @@
 <script setup>
 import { computed } from 'vue'
 
+defineProps({
+  tamamlananSprintSayisi: Number
+})
+
 const toplamSprint = 10
-const tamamlananSprint = 7 // Bu veri dışarıdan prop olarak da alınabilir
 
 const ekipKatkisi = {
   frontend: '40%',
@@ -32,7 +35,7 @@ const ekipKatkisi = {
 }
 
 const ilerlemeYuzdesi = computed(() =>
-  Math.round((tamamlananSprint / toplamSprint) * 100)
+  Math.round((tamamlananSprintSayisi / toplamSprint) * 100)
 )
 
 const motivasyonMesaji = computed(() => {

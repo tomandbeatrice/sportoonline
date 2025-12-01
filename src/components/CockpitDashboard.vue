@@ -1,78 +1,45 @@
 <template>
-  <main class="cockpit-dashboard">
-    <!-- Üst Panel: Trend, Export, Risk -->
-    <ModuleTrend />
-    <ExportPanel />
-    <ModuleRisk />
-
-    <!-- Davranış, Motivasyon ve Risk Paneli -->
-    <section class="insight-section">
-      <ModuleBehavior />
-      <MotivationPulse :modulStats="modulStats" />
-      <ModuleRiskScore />
+  <div class="dashboard">
+    <section class="summary">
+      <MotivationPulse :value="overallSuccess" />
+      <SprintRadar :modules="modules" />
     </section>
 
-    <!-- AI Destekli Öneri Paneli -->
-    <section class="suggestion-section">
-      <SuggestionBox />
-    </section>
-
-    <!-- Modül Çıktı Paneli -->
-    <section class="output-section">
-      <h2>📊 Sprint Cockpit – Modül Çıktıları</h2>
-
-      <ModuleOutputAutoPanel
-        title="Ürün Modülü Çıktısı"
-        endpoint="/api/module/product"
-      />
-      <ModuleOutputAutoPanel
-        title="Kategori Modülü Çıktısı"
-        endpoint="/api/module/category"
+    <section class="modules">
+      <ModuleCard
+        v-for="mod in modules"
+        :key="mod.id"
+        v-bind="mod"
       />
     </section>
-  </main>
+
+    <CelebrationEffect v-if="overallSuccess >= 90" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import ModuleTrend from '@/components/ModuleTrend.vue'
-import ExportPanel from '@/components/ExportPanel.vue'
-import ModuleRisk from '@/components/ModuleRisk.vue'
-import ModuleBehavior from '@/components/ModuleBehavior.vue'
+import { modules, overallSuccess } from '@/mock/sprintData'
 import MotivationPulse from '@/components/MotivationPulse.vue'
-import ModuleRiskScore from '@/components/ModuleRiskScore.vue'
-import SuggestionBox from '@/components/SuggestionBox.vue'
-import ModuleOutputAutoPanel from './ModuleOutputAutoPanel.vue'
-
-const modulStats = ref([])
-
-onMounted(async () => {
-  const res = await fetch('/api/module/stats')
-  modulStats.value = await res.json()
-})
+import SprintRadar from '@/components/SprintRadar.vue'
+import ModuleCard from '@/components/ModuleCard.vue'
+import CelebrationEffect from '@/components/CelebrationEffect.vue'
 </script>
 
 <style scoped>
-.cockpit-dashboard {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+.dashboard {
   padding: 2rem;
-  background-color: #f0f2f5;
+  background-color: var(--bg);
+  color: var(--text);
 }
-
-.output-section,
-.insight-section,
-.suggestion-section {
-  background-color: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+.summary {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
-
-.output-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #333;
+.modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 </style>
