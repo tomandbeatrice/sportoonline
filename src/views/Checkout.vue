@@ -1,243 +1,196 @@
 <template>
-  <div class="checkout-page min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4">
-      <h1 class="text-3xl font-bold text-gray-900 mb-8">Sipariş Tamamla</h1>
+  <div class="min-h-screen bg-gray-50 py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <h1 class="text-3xl font-bold mb-8">Ödeme</h1>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column: Steps -->
+        <!-- Adres ve Ödeme Bilgileri -->
         <div class="lg:col-span-2 space-y-6">
-          <!-- Step 1: Delivery Address -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-bold text-gray-900 flex items-center">
-                <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3">1</span>
-                Teslimat Adresi
-              </h2>
-              <button
-                v-if="!showAddressForm"
-                @click="showAddressForm = true"
-                class="text-blue-500 hover:text-blue-600 text-sm font-semibold"
-              >
-                + Yeni Adres Ekle
-              </button>
-            </div>
-
-            <!-- Address Selection -->
-            <div v-if="!showAddressForm && addresses.length > 0" class="space-y-3">
-              <div
-                v-for="address in addresses"
-                :key="address.id"
-                @click="selectedAddressId = address.id"
-                class="border rounded-lg p-4 cursor-pointer transition-all"
-                :class="{
-                  'border-blue-500 bg-blue-50': selectedAddressId === address.id,
-                  'border-gray-200 hover:border-gray-300': selectedAddressId !== address.id
-                }"
-              >
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                      <h3 class="font-semibold text-gray-900">{{ address.title }}</h3>
-                      <span v-if="address.is_default" class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
-                        Varsayılan
-                      </span>
-                    </div>
-                    <p class="text-gray-700">{{ address.full_name }}</p>
-                    <p class="text-gray-600 text-sm">{{ address.phone }}</p>
-                    <p class="text-gray-600 text-sm mt-2">{{ address.formatted_address }}</p>
-                  </div>
-                  <input
-                    type="radio"
-                    :checked="selectedAddressId === address.id"
-                    class="mt-1"
-                  />
-                </div>
+          <!-- Teslimat Adresi -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Teslimat Adresi</h2>
+            <form class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Ad Soyad *
+                </label>
+                <input
+                  v-model="form.name"
+                  type="text"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-            </div>
-
-            <!-- Address Form -->
-            <AddressForm
-              v-if="showAddressForm || addresses.length === 0"
-              @saved="handleAddressSaved"
-              @cancel="showAddressForm = false"
-            />
-          </div>
-
-          <!-- Step 2: Payment Method -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-900 flex items-center mb-4">
-              <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3">2</span>
-              Ödeme Yöntemi
-            </h2>
-
-            <div v-if="paymentGateways.length > 0" class="space-y-3">
-              <div
-                v-for="gateway in paymentGateways"
-                :key="gateway.name"
-                @click="selectedGateway = gateway.name"
-                class="border rounded-lg p-4 cursor-pointer transition-all"
-                :class="{
-                  'border-blue-500 bg-blue-50': selectedGateway === gateway.name,
-                  'border-gray-200 hover:border-gray-300': selectedGateway !== gateway.name
-                }"
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">{{ gateway.display_name }}</h3>
-                    <p class="text-sm text-gray-600">{{ gateway.description }}</p>
-                    <div v-if="gateway.is_test_mode" class="mt-2">
-                      <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">
-                        Test Modu
-                      </span>
-                    </div>
-                  </div>
-                  <input
-                    type="radio"
-                    :checked="selectedGateway === gateway.name"
-                  />
-                </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Telefon *
+                </label>
+                <input
+                  v-model="form.phone"
+                  type="tel"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-            </div>
-            <div v-else class="text-center text-gray-500 py-4">
-              Aktif ödeme yöntemi bulunamadı
-            </div>
-          </div>
-
-          <!-- Step 2.5: Coupon Code -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-900 flex items-center mb-4">
-              <span class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3"><BadgeIcon name="ticket" cls="w-5 h-5 text-white" /></span>
-              Kupon Kodu
-            </h2>
-
-            <div class="flex gap-3">
-              <input
-                v-model="couponCode"
-                type="text"
-                :disabled="appliedCoupon !== null"
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                placeholder="Kupon kodunuzu girin"
-              />
-              <button
-                v-if="!appliedCoupon"
-                @click="applyCoupon"
-                :disabled="!couponCode || validatingCoupon"
-                class="px-6 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white font-semibold rounded-lg"
-              >
-                {{ validatingCoupon ? 'Kontrol...' : 'Uygula' }}
-              </button>
-              <button
-                v-else
-                @click="removeCoupon"
-                class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg"
-              >
-                Kaldır
-              </button>
-            </div>
-
-            <!-- Applied Coupon -->
-            <div v-if="appliedCoupon" class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div class="flex items-start justify-between">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Adres *
+                </label>
+                <textarea
+                  v-model="form.address"
+                  rows="3"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <div class="flex items-center gap-2 mb-1">
-                    <BadgeIcon name="check" cls="w-5 h-5 text-green-600" />
-                    <h3 class="font-bold text-green-900">{{ appliedCoupon.name }}</h3>
-                  </div>
-                  <p class="text-sm text-green-700">{{ appliedCoupon.description }}</p>
-                  <p class="text-sm font-semibold text-green-900 mt-2">
-                    İndirim: ₺{{ formatMoney(discountAmount) }}
-                  </p>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    İl *
+                  </label>
+                  <input
+                    v-model="form.city"
+                    type="text"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    İlçe *
+                  </label>
+                  <input
+                    v-model="form.district"
+                    type="text"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
               </div>
-            </div>
-
-            <!-- Coupon Error -->
-            <div v-if="couponError" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {{ couponError }}
-            </div>
+            </form>
           </div>
 
-          <!-- Step 3: Order Note (Optional) -->
-          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-900 flex items-center mb-4">
-              <span class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3">3</span>
-              Sipariş Notu (Opsiyonel)
-            </h2>
-            <textarea
-              v-model="orderNote"
-              rows="3"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Satıcıya iletmek istediğiniz bir not varsa buraya yazabilirsiniz..."
-            ></textarea>
+          <!-- Ödeme Bilgileri -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Ödeme Bilgileri</h2>
+            <form class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Kart Üzerindeki İsim *
+                </label>
+                <input
+                  v-model="payment.cardName"
+                  type="text"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Kart Numarası *
+                </label>
+                <input
+                  v-model="payment.cardNumber"
+                  type="text"
+                  maxlength="19"
+                  placeholder="1234 5678 9012 3456"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Son Kullanma Tarihi *
+                  </label>
+                  <input
+                    v-model="payment.expiry"
+                    type="text"
+                    maxlength="5"
+                    placeholder="MM/YY"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    CVV *
+                  </label>
+                  <input
+                    v-model="payment.cvv"
+                    type="text"
+                    maxlength="3"
+                    placeholder="123"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </form>
           </div>
         </div>
 
-        <!-- Right Column: Order Summary -->
+        <!-- Sipariş Özeti -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Sipariş Özeti</h2>
-
-            <!-- Cart Items -->
-            <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+          <div class="bg-white rounded-lg shadow p-6 sticky top-4">
+            <h2 class="text-xl font-bold mb-4">Sipariş Özeti</h2>
+            
+            <div class="space-y-3 mb-6 max-h-60 overflow-y-auto">
               <div
                 v-for="item in cartItems"
                 :key="item.id"
-                class="flex items-center gap-3 pb-3 border-b"
+                class="flex justify-between text-sm"
               >
-                <img
-                  :src="item.product.image_url || '/placeholder.jpg'"
-                  :alt="item.product.name"
-                  class="w-16 h-16 object-cover rounded"
-                />
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-semibold text-sm text-gray-900 truncate">
-                    {{ item.product.name }}
-                  </h3>
-                  <p class="text-xs text-gray-600">{{ item.quantity }} adet</p>
-                </div>
-                <div class="text-right">
-                  <p class="font-semibold text-gray-900">₺{{ formatMoney(item.total_price) }}</p>
-                </div>
+                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                <span>{{ (item.product.price * item.quantity).toFixed(2) }} TL</span>
               </div>
             </div>
 
-            <!-- Price Summary -->
-            <div class="space-y-2 border-t pt-4">
-              <div class="flex justify-between text-gray-700">
+            <div class="space-y-2 pt-4 border-t">
+              <div class="flex justify-between">
                 <span>Ara Toplam</span>
-                <span>₺{{ formatMoney(subtotal) }}</span>
+                <span>{{ subtotal.toFixed(2) }} TL</span>
               </div>
-              <div v-if="discountAmount > 0" class="flex justify-between text-green-600">
-                <span>İndirim ({{ appliedCoupon?.coupon_code }})</span>
-                <span>-₺{{ formatMoney(discountAmount) }}</span>
-              </div>
-              <div class="flex justify-between text-gray-700">
+              <div class="flex justify-between">
                 <span>Kargo</span>
-                <span class="text-green-600">Ücretsiz</span>
+                <span>{{ shippingCost.toFixed(2) }} TL</span>
               </div>
-              <div class="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t">
+              <div class="flex justify-between text-lg font-bold pt-2 border-t">
                 <span>Toplam</span>
-                <span>₺{{ formatMoney(total) }}</span>
+                <span>{{ total.toFixed(2) }} TL</span>
               </div>
             </div>
 
-            <!-- Complete Order Button -->
             <button
-              @click="completeOrder"
-              :disabled="!canCompleteOrder || processing"
-              class="w-full mt-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors"
+              @click="submitOrder"
+              :disabled="loading"
+              class="w-full mt-6 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400"
             >
-              {{ processing ? 'İşleniyor...' : 'Siparişi Tamamla' }}
+              {{ loading ? 'İşleniyor...' : 'Siparişi Onayla' }}
             </button>
 
-            <!-- Security Badge -->
-            <div class="mt-4 flex items-center justify-center text-sm text-gray-600">
-              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-              </svg>
-              Güvenli Ödeme
-            </div>
+            <p class="text-xs text-gray-500 mt-4 text-center">
+              Siparişinizi onaylayarak <a href="#" class="text-blue-600">kullanım koşullarını</a> kabul etmiş olursunuz.
+            </p>
           </div>
+        </div>
+      </div>
+
+      <!-- Başarı Mesajı -->
+      <div
+        v-if="successMessage"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center flex flex-col items-center">
+          <BadgeIcon name="check-circle" cls="w-20 h-20 text-green-600 mb-4" />
+          <h2 class="text-2xl font-bold mb-2">Siparişiniz Alındı!</h2>
+          <p class="text-gray-600 mb-6">{{ successMessage }}</p>
+          <button
+            @click="goToOrders"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Siparişlerime Git
+          </button>
         </div>
       </div>
     </div>
@@ -247,201 +200,95 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-import AddressForm from '@/components/AddressForm.vue'
+import { useCartStore } from '@/stores/cartStore'
+import { useApi } from '@/composables/useApi'
 import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const router = useRouter()
-
-const addresses = ref([])
-const selectedAddressId = ref(null)
-const showAddressForm = ref(false)
-
-const paymentGateways = ref([])
-const selectedGateway = ref(null)
-
+const loading = ref(false)
+const successMessage = ref('')
 const cartItems = ref([])
-const orderNote = ref('')
-const processing = ref(false)
 
-const couponCode = ref('')
-const appliedCoupon = ref(null)
-const discountAmount = ref(0)
-const validatingCoupon = ref(false)
-const couponError = ref('')
-
-const subtotal = computed(() => {
-  return cartItems.value.reduce((sum, item) => sum + parseFloat(item.total_price), 0)
+const form = ref({
+  name: '',
+  phone: '',
+  address: '',
+  city: '',
+  district: ''
 })
 
-const total = computed(() => Math.max(0, subtotal.value - discountAmount.value))
-
-const canCompleteOrder = computed(() => {
-  return selectedAddressId.value && selectedGateway.value && cartItems.value.length > 0
+const payment = ref({
+  cardName: '',
+  cardNumber: '',
+  expiry: '',
+  cvv: ''
 })
 
-const loadAddresses = async () => {
+const fetchCart = async () => {
   try {
-    const { data } = await axios.get('/api/addresses')
-    addresses.value = data.addresses
-    
-    // Auto-select default address
-    const defaultAddress = addresses.value.find(a => a.is_default)
-    if (defaultAddress) {
-      selectedAddressId.value = defaultAddress.id
-    } else if (addresses.value.length > 0) {
-      selectedAddressId.value = addresses.value[0].id
-    }
+    const { data } = await api.get('/cart')
+    cartItems.value = data
   } catch (error) {
-    console.error('Failed to load addresses:', error)
+    console.error('Sepet yüklenemedi:', error)
+    router.push('/cart')
   }
 }
 
-const loadPaymentGateways = async () => {
-  try {
-    const { data } = await axios.get('/api/payment/gateways')
-    paymentGateways.value = data.gateways
-    
-    // Auto-select first gateway
-    if (paymentGateways.value.length > 0) {
-      selectedGateway.value = paymentGateways.value[0].name
-    }
-  } catch (error) {
-    console.error('Failed to load payment gateways:', error)
+const subtotal = computed(() =>
+  cartItems.value.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+)
+
+const shippingCost = computed(() => {
+  return subtotal.value > 200 ? 0 : 29.90
+})
+
+const total = computed(() => subtotal.value + shippingCost.value)
+
+const submitOrder = async () => {
+  if (!form.value.name || !form.value.address || !payment.value.cardNumber) {
+    alert('Lütfen tüm alanları doldurun!')
+    return
   }
-}
 
-const loadCart = async () => {
+  loading.value = true
   try {
-    const { data } = await axios.get('/api/cart')
-    cartItems.value = data.items || []
-  } catch (error) {
-    console.error('Failed to load cart:', error)
-  }
-}
-
-const applyCoupon = async () => {
-  if (!couponCode.value || validatingCoupon.value) return
-
-  validatingCoupon.value = true
-  couponError.value = ''
-
-  try {
-    const { data } = await axios.post('/api/validate-coupon', {
-      coupon_code: couponCode.value,
-      cart_total: subtotal.value,
-      product_ids: cartItems.value.map(item => item.product_id)
+    const { data } = await api.post('/checkout', {
+      shipping_address: {
+        name: form.value.name,
+        phone: form.value.phone,
+        address: form.value.address,
+        city: form.value.city,
+        district: form.value.district
+      },
+      payment_info: {
+        card_name: payment.value.cardName,
+        card_number: payment.value.cardNumber,
+        expiry: payment.value.expiry,
+        cvv: payment.value.cvv
+      },
+      total: total.value
     })
 
-    if (data.valid) {
-      appliedCoupon.value = data.campaign
-      discountAmount.value = parseFloat(data.discount_amount)
-      couponError.value = ''
-    }
+    successMessage.value = `Sipariş numaranız: #${data.order_id}`
   } catch (error) {
-    couponError.value = error.response?.data?.error || 'Kupon kodu doğrulanamadı'
-    appliedCoupon.value = null
-    discountAmount.value = 0
+    console.error('Sipariş oluşturulamadı:', error)
+    alert('Sipariş sırasında bir hata oluştu. Lütfen tekrar deneyin.')
   } finally {
-    validatingCoupon.value = false
+    loading.value = false
   }
 }
 
-const removeCoupon = () => {
-  couponCode.value = ''
-  appliedCoupon.value = null
-  discountAmount.value = 0
-  couponError.value = ''
-}
-
-const handleAddressSaved = async (newAddress) => {
-  await loadAddresses()
-  selectedAddressId.value = newAddress.id
-  showAddressForm.value = false
-}
-
-const completeOrder = async () => {
-  if (!canCompleteOrder.value || processing.value) return
-
-  processing.value = true
-
-  try {
-    // Create order
-    const orderResponse = await axios.post('/api/orders', {
-      address_id: selectedAddressId.value,
-      note: orderNote.value,
-      campaign_id: appliedCoupon.value?.id || null,
-      discount_amount: discountAmount.value || 0,
-    })
-
-    const orderId = orderResponse.data.order.id
-
-    // Get selected address for customer data
-    const selectedAddress = addresses.value.find(a => a.id === selectedAddressId.value)
-
-    // Initiate payment
-    const paymentResponse = await axios.post('/api/payment/initiate', {
-      order_id: orderId,
-      gateway: selectedGateway.value,
-      customer_data: {
-        first_name: selectedAddress.first_name,
-        last_name: selectedAddress.last_name,
-        email: selectedAddress.email || '',
-        phone: selectedAddress.phone,
-        address: selectedAddress.address,
-        city: selectedAddress.city,
-        district: selectedAddress.district,
-        zip_code: selectedAddress.zip_code,
-        country: selectedAddress.country,
-        ip: '127.0.0.1', // This should come from backend
-      }
-    })
-
-    if (paymentResponse.data.success) {
-      // Redirect to payment gateway
-      window.location.href = paymentResponse.data.data.payment_page_url
-    } else {
-      alert('Ödeme başlatılamadı: ' + paymentResponse.data.error)
-    }
-  } catch (error) {
-    console.error('Order completion failed:', error)
-    alert('Sipariş oluşturulurken hata oluştu')
-  } finally {
-    processing.value = false
-  }
-}
-
-const formatMoney = (amount) => {
-  return new Intl.NumberFormat('tr-TR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
+const goToOrders = () => {
+  router.push('/buyer/dashboard')
 }
 
 onMounted(() => {
-  loadAddresses()
-  loadPaymentGateways()
-  loadCart()
+  fetchCart()
 })
 </script>
 
 <style scoped>
-/* Custom scrollbar for cart items */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #555;
+.container {
+  max-width: 1200px;
 }
 </style>
