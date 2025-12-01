@@ -1,0 +1,1 @@
+import{d as s,c as o,o as t,b as n}from"./index-yqhG0KQQ.js";const r={class:"seller-ProductQuestions"},u=s({__name:"ProductQuestions",setup(a){return(c,e)=>(t(),o("div",r,[...e[0]||(e[0]=[n("h1",null,"Seller ProductQuestions",-1)])]))}});export{u as default};

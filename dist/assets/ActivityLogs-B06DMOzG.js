@@ -1,0 +1,1 @@
+import{d as e,c as o,o as s,b as n}from"./index-yqhG0KQQ.js";const a={class:"ActivityLogs"},_=e({__name:"ActivityLogs",setup(c){return(i,t)=>(s(),o("div",a,[...t[0]||(t[0]=[n("h1",null,"ActivityLogs",-1)])]))}});export{_ as default};

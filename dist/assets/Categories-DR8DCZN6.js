@@ -1,0 +1,1 @@
+import{d as o,c as s,o as t,b as a}from"./index-yqhG0KQQ.js";const n={class:"admin-Categories"},d=o({__name:"Categories",setup(r){return(i,e)=>(t(),s("div",n,[...e[0]||(e[0]=[a("h1",null,"Admin Categories",-1)])]))}});export{d as default};

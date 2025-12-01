@@ -1,0 +1,1 @@
+import{d as o,c as t,o as s,b as r}from"./index-yqhG0KQQ.js";const p={class:"user-Support"},c=o({__name:"Support",setup(n){return(a,e)=>(s(),t("div",p,[...e[0]||(e[0]=[r("h1",null,"User Support",-1)])]))}});export{c as default};

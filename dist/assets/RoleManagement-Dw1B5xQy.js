@@ -1,0 +1,1 @@
+import{d as n,c as a,o,b as t}from"./index-yqhG0KQQ.js";const s={class:"RoleManagement"},c=n({__name:"RoleManagement",setup(l){return(r,e)=>(o(),a("div",s,[...e[0]||(e[0]=[t("h1",null,"RoleManagement",-1)])]))}});export{c as default};

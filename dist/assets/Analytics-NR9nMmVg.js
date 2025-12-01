@@ -1,0 +1,1 @@
+import{d as s,c as t,o as n,b as a}from"./index-yqhG0KQQ.js";const l={class:"seller-Analytics"},i=s({__name:"Analytics",setup(o){return(r,e)=>(n(),t("div",l,[...e[0]||(e[0]=[a("h1",null,"Seller Analytics",-1)])]))}});export{i as default};

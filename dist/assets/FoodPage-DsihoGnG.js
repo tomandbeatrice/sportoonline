@@ -1,0 +1,1 @@
+import{d as o,c as a,o as s,b as t}from"./index-yqhG0KQQ.js";const n={class:"FoodPage"},_=o({__name:"FoodPage",setup(r){return(d,e)=>(s(),a("div",n,[...e[0]||(e[0]=[t("h1",null,"FoodPage",-1)])]))}});export{_ as default};

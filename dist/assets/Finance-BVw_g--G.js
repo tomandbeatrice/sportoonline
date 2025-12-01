@@ -1,0 +1,1 @@
+import{d as n,c as s,o as a,b as o}from"./index-yqhG0KQQ.js";const t={class:"seller-Finance"},i=n({__name:"Finance",setup(r){return(c,e)=>(a(),s("div",t,[...e[0]||(e[0]=[o("h1",null,"Seller Finance",-1)])]))}});export{i as default};

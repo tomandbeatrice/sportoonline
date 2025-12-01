@@ -1,0 +1,1 @@
+import{d as o,r as t,c as a,o as n,a as s}from"./index-yqhG0KQQ.js";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";const c={class:"admin-panel-layout"},_=o({__name:"AdminPanelLayout",setup(m){return(p,d)=>{const e=t("router-view");return n(),a("div",c,[s(e)])}}}),u=r(_,[["__scopeId","data-v-9c04f856"]]);export{u as default};

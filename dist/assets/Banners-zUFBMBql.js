@@ -1,0 +1,1 @@
+import{d as n,c as s,o as a,b as o}from"./index-yqhG0KQQ.js";const t={class:"Banners"},l=n({__name:"Banners",setup(r){return(c,e)=>(a(),s("div",t,[...e[0]||(e[0]=[o("h1",null,"Banners",-1)])]))}});export{l as default};

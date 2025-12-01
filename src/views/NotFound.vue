@@ -1,10 +1,9 @@
 <template>
   <div class="not-found">
-    <h2>Sayfa Bulunamadı</h2>
-    <p>Aradığınız sayfa mevcut değil.</p>
+    <h1>404 - Page Not Found</h1>
   </div>
 </template>
-<script setup lang="ts"></script>
-<style scoped>
-.not-found { text-align: center; margin-top: 4rem; }
-</style>
+
+<script setup lang="ts">
+// NotFound component
+</script>

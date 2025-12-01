@@ -1,0 +1,1 @@
+import{d as e,c as n,o as t,b as r}from"./index-yqhG0KQQ.js";const o={class:"VariantManager"},_=e({__name:"VariantManager",setup(s){return(c,a)=>(t(),n("div",o,[...a[0]||(a[0]=[r("h1",null,"VariantManager",-1)])]))}});export{_ as default};

@@ -1,0 +1,1 @@
+import{d as o,c as t,o as s,b as n}from"./index-yqhG0KQQ.js";const a={class:"user-Notifications"},_=o({__name:"Notifications",setup(i){return(r,e)=>(s(),t("div",a,[...e[0]||(e[0]=[n("h1",null,"User Notifications",-1)])]))}});export{_ as default};

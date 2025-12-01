@@ -1,0 +1,1 @@
+import{d as s,c as o,o as t,b as r}from"./index-yqhG0KQQ.js";const a={class:"seller-CustomerMessages"},c=s({__name:"CustomerMessages",setup(n){return(l,e)=>(t(),o("div",a,[...e[0]||(e[0]=[r("h1",null,"Seller CustomerMessages",-1)])]))}});export{c as default};

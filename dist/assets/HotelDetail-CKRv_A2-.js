@@ -1,0 +1,1 @@
+import{d as t,c as o,o as a,b as s}from"./index-yqhG0KQQ.js";const l={class:"HotelDetail"},i=t({__name:"HotelDetail",setup(n){return(r,e)=>(a(),o("div",l,[...e[0]||(e[0]=[s("h1",null,"HotelDetail",-1)])]))}});export{i as default};

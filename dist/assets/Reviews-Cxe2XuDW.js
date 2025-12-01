@@ -1,0 +1,1 @@
+import{d as s,c as o,o as t,b as n}from"./index-yqhG0KQQ.js";const r={class:"seller-Reviews"},i=s({__name:"Reviews",setup(a){return(l,e)=>(t(),o("div",r,[...e[0]||(e[0]=[n("h1",null,"Seller Reviews",-1)])]))}});export{i as default};

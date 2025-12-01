@@ -1,0 +1,1 @@
+import{d as a,c as o,o as s,b as t}from"./index-yqhG0KQQ.js";const r={class:"RideSharePage"},i=a({__name:"RideSharePage",setup(n){return(d,e)=>(s(),o("div",r,[...e[0]||(e[0]=[t("h1",null,"RideSharePage",-1)])]))}});export{i as default};

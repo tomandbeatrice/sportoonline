@@ -1,0 +1,1 @@
+import{d as e,c as n,o,b as t}from"./index-yqhG0KQQ.js";const a={class:"SubscriptionPlans"},l=e({__name:"SubscriptionPlans",setup(r){return(c,s)=>(o(),n("div",a,[...s[0]||(s[0]=[t("h1",null,"SubscriptionPlans",-1)])]))}});export{l as default};

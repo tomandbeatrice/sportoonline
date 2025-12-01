@@ -1,0 +1,1 @@
+import{d as e,c as o,o as t,b as n}from"./index-yqhG0KQQ.js";const i={class:"CommissionSettings"},c=e({__name:"CommissionSettings",setup(m){return(a,s)=>(t(),o("div",i,[...s[0]||(s[0]=[n("h1",null,"CommissionSettings",-1)])]))}});export{c as default};

@@ -1,0 +1,1 @@
+import{d as o,c as n,o as t,b as s}from"./index-yqhG0KQQ.js";const a={class:"auth-Login"},_=o({__name:"Login",setup(r){return(c,e)=>(t(),n("div",a,[...e[0]||(e[0]=[s("h1",null,"Login",-1)])]))}});export{_ as default};

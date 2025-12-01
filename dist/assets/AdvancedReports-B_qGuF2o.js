@@ -1,0 +1,1 @@
+import{d as o,c as s,o as t,b as n}from"./index-yqhG0KQQ.js";const a={class:"AdvancedReports"},p=o({__name:"AdvancedReports",setup(r){return(d,e)=>(t(),s("div",a,[...e[0]||(e[0]=[n("h1",null,"AdvancedReports",-1)])]))}});export{p as default};

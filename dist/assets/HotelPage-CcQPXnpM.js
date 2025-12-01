@@ -1,0 +1,1 @@
+import{d as o,c as t,o as a,b as s}from"./index-yqhG0KQQ.js";const n={class:"HotelPage"},_=o({__name:"HotelPage",setup(l){return(r,e)=>(a(),t("div",n,[...e[0]||(e[0]=[s("h1",null,"HotelPage",-1)])]))}});export{_ as default};

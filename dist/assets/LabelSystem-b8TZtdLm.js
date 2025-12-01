@@ -1,0 +1,1 @@
+import{d as s,c as t,o as a,b as o}from"./index-yqhG0KQQ.js";const n={class:"LabelSystem"},c=s({__name:"LabelSystem",setup(l){return(r,e)=>(a(),t("div",n,[...e[0]||(e[0]=[o("h1",null,"LabelSystem",-1)])]))}});export{c as default};

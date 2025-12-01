@@ -1,0 +1,1 @@
+import{d as o,r as t,c as a,o as r,a as s}from"./index-yqhG0KQQ.js";import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";const _={class:"seller-panel-layout"},c=o({__name:"SellerPanelLayout",setup(l){return(p,m)=>{const e=t("router-view");return r(),a("div",_,[s(e)])}}}),i=n(c,[["__scopeId","data-v-8d129301"]]);export{i as default};

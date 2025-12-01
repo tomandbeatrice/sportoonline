@@ -1,0 +1,1 @@
+import{d as o,c as s,o as r,b as t}from"./index-yqhG0KQQ.js";const n={class:"user-Profile"},i=o({__name:"Profile",setup(a){return(l,e)=>(r(),s("div",n,[...e[0]||(e[0]=[t("h1",null,"User Profile",-1)])]))}});export{i as default};

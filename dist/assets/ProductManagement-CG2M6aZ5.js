@@ -1,0 +1,1 @@
+import{d as t,c as n,o as a,b as o}from"./index-yqhG0KQQ.js";const r={class:"seller-ProductManagement"},d=t({__name:"ProductManagement",setup(s){return(c,e)=>(a(),n("div",r,[...e[0]||(e[0]=[o("h1",null,"Seller ProductManagement",-1)])]))}});export{d as default};

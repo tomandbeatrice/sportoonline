@@ -1,0 +1,1 @@
+import{d as s,c as a,o,b as t}from"./index-yqhG0KQQ.js";const n={class:"Pages"},l=s({__name:"Pages",setup(r){return(c,e)=>(o(),a("div",n,[...e[0]||(e[0]=[t("h1",null,"Pages",-1)])]))}});export{l as default};
