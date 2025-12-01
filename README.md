@@ -1,50 +1,327 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏆 sportoonline - Multi-Platform Marketplace
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Laravel-10+-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
+  <img src="https://img.shields.io/badge/Vue.js-3.5-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white" alt="Vue 3">
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Vite-7.1-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>A comprehensive e-commerce, service marketplace, and ride-sharing platform with AI-powered search and multi-language support</strong>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🛒 E-Commerce Platform
+- **Seller Management** - Product listings, inventory, campaigns
+- **Buyer Experience** - Shopping cart, favorites, order tracking
+- **Admin Tools** - Order management, seller approvals, analytics
+- **Multi-Vendor Support** - Independent seller dashboards
 
-## Learning Laravel
+### 🔧 Service Marketplace
+- **Service Provider Applications** - Professional service listings
+- **Admin Approval Workflow** - Approve, reject, suspend, activate providers
+- **Email Notifications** - Automated status updates
+- **Service Booking System** - Real-time availability management
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🚗 Ride-Sharing Platform
+- **Ride Listings** - P2P ride sharing with detailed itineraries
+- **Passenger Management** - Booking, cancellations, refunds
+- **Admin Moderation** - Flag inappropriate rides, safety controls
+- **Real-time Notifications** - SMS, email, push notifications
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🤖 AI-Powered Features
+- **🎤 Voice Search** - Multi-language speech recognition (TR/EN/AR/DE)
+- **📷 Visual Search** - Google Cloud Vision API integration
+- **🌍 Multi-Language** - 4 languages with RTL support for Arabic
+- **🔍 Smart Search** - Semantic search with filters
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📊 Admin Dashboard
+- **Analytics & Reports** - Sales metrics, user statistics
+- **Financial Management** - Commission tracking, payouts
+- **User Management** - Customers, sellers, service providers
+- **System Settings** - Email config, themes, notifications
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 Tech Stack
 
-### Premium Partners
+### Backend
+- **Laravel 10+** - PHP framework
+- **MySQL/PostgreSQL** - Database
+- **Laravel Sanctum** - API authentication
+- **Laravel Mail** - Email system
+- **Queue Workers** - Background jobs
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Frontend
+- **Vue 3.5** - Progressive JavaScript framework
+- **TypeScript 5.9** - Type-safe development
+- **Vite 7.1** - Build tool & dev server
+- **Pinia 3.0** - State management
+- **vue-i18n 9.14** - Internationalization
+- **DaisyUI 5.0** - UI components
+- **Tailwind CSS 4.1** - Utility-first CSS
 
-## Contributing
+### APIs & Services
+- **Google Cloud Vision** - Visual search
+- **Web Speech API** - Voice recognition
+- **WebSocket** - Real-time communications
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+- PHP 8.1+
+- Composer 2.5+
+- Node.js 18+
+- MySQL 8.0+ / PostgreSQL 14+
+
+### Quick Start
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/sportoonline.git
+cd sportoonline
+
+# Backend setup
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+
+# Frontend setup
+npm install
+npm run dev
+
+# Start Laravel server
+php artisan serve
+```
+
+**Access:** http://localhost:3000
+
+---
+
+## 🌍 Multi-Language Support
+
+| Language | Code | Direction | Status |
+|----------|------|-----------|--------|
+| Türkçe   | `tr` | LTR       | ✅ Complete |
+| English  | `en` | LTR       | ✅ Complete |
+| العربية  | `ar` | RTL       | ✅ Complete |
+| Deutsch  | `de` | LTR       | ✅ Complete |
+
+**Translation Files:** `src/i18n/locales/`
+
+### Usage
+```typescript
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n()
+
+// Change language
+locale.value = 'ar' // Arabic with RTL
+
+// Use translation
+{{ t('nav.home') }}
+```
+
+---
+
+## 🎤 Voice Search
+
+Built with **Web Speech API** for natural language search.
+
+### Supported Languages
+- Turkish (tr-TR)
+- English (en-US)
+- Arabic (ar-SA)
+- German (de-DE)
+
+### Requirements
+- HTTPS (required for microphone access)
+- Chrome/Edge browser (best support)
+
+**Component:** `src/components/VoiceSearch.vue`
+
+---
+
+## 📷 Visual Search
+
+Powered by **Google Cloud Vision API** for image-based product search.
+
+### Features
+- Image upload (drag & drop)
+- Camera capture (mobile)
+- Object detection
+- Label recognition
+
+### Setup
+```env
+GOOGLE_CLOUD_KEY_FILE=/path/to/service-account-key.json
+GOOGLE_CLOUD_PROJECT_ID=your-project-id
+```
+
+**API Endpoint:** `POST /api/search/visual`
+
+---
+
+## 📧 Email System
+
+### Notification Templates
+- ✅ Service Provider Approved
+- ✅ Service Provider Rejected
+- ✅ Service Provider Suspended
+- ✅ Service Provider Activated
+
+**Location:** `resources/views/emails/`
+
+### Configuration
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_FROM_ADDRESS=noreply@sportoonline.com
+```
+
+---
+
+## 🔧 Admin Workflows
+
+### Service Provider Approval
+
+```php
+// Approve provider
+POST /api/admin/service-providers/{id}/approve
+
+// Reject provider
+POST /api/admin/service-providers/{id}/reject
+{
+  "rejection_reason": "Incomplete documentation"
+}
+
+// Suspend provider
+POST /api/admin/service-providers/{id}/suspend
+{
+  "suspension_reason": "Policy violation",
+  "suspension_until": "2025-12-31"
+}
+
+// Activate provider
+POST /api/admin/service-providers/{id}/activate
+```
+
+### Ride Moderation
+
+```php
+// Approve ride
+POST /api/admin/rides/{id}/approve
+
+// Flag ride
+POST /api/admin/rides/{id}/flag
+{
+  "flag_reason": "Inappropriate description",
+  "suspend": true
+}
+
+// Cancel ride (with refunds)
+POST /api/admin/rides/{id}/cancel
+{
+  "cancel_reason": "Safety concerns"
+}
+```
+
+---
+
+## 📁 Project Structure
+
+```
+sportoonline/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── ServiceMarketplaceController.php
+│   │   ├── RideShareController.php
+│   │   └── VisualSearchController.php
+│   ├── Mail/
+│   │   ├── ServiceProviderApproved.php
+│   │   └── ...
+│   └── Models/
+│       ├── ServiceProvider.php
+│       └── RideAd.php
+├── resources/
+│   └── views/
+│       └── emails/
+├── src/
+│   ├── components/
+│   │   ├── VoiceSearch.vue
+│   │   ├── VisualSearch.vue
+│   │   └── LanguageSwitcher.vue
+│   ├── i18n/
+│   │   └── locales/
+│   ├── views/
+│   │   ├── admin/
+│   │   ├── seller/
+│   │   ├── buyer/
+│   │   └── marketplace/
+│   └── services/
+│       └── api.ts
+└── routes/
+    ├── api.php
+    └── web.php
+```
+
+---
+
+## 🧪 Testing
+
+Comprehensive test results available in `TEST_RESULTS.md`.
+
+```bash
+# Run backend tests
+php artisan test
+
+# Run frontend tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+```
+
+**Test Coverage:**
+- ✅ Multi-language switching
+- ✅ Voice search functionality
+- ✅ Visual search upload
+- ✅ Admin approval workflows
+- ✅ Email notifications
+- ✅ RTL layout (Arabic)
+
+---
+
+## 📚 Documentation
+
+- **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production setup
+- **[Test Results](TEST_RESULTS.md)** - Comprehensive testing
+- **[Code Cleanup](CODE_CLEANUP.md)** - Code quality recommendations
+
+---
+
+## 🔐 Security
+
+- Laravel Sanctum authentication
+- CSRF protection
+- XSS prevention
+- SQL injection protection
+- Rate limiting
+- HTTPS required (production)
+
+---
+
+## 🤝 Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
