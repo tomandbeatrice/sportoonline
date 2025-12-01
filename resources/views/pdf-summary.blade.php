@@ -49,9 +49,6 @@
                 </tr>
             </thead>
             <tbody>
-                <div class="mt-3">
-    {{ $summary->links() }}
-</div>
                 @forelse ($summary as $index => $item)
                     <tr>
                         <td>{{ $index + 1 }}</td>
@@ -66,6 +63,9 @@
                 @endforelse
             </tbody>
         </table>
+        <div class="mt-3">
+            {{ $summary->links() }}
+        </div>
     </div>
 </div>
 @endsection
