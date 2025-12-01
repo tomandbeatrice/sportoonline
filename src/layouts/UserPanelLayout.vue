@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-// User Panel Layout
 </script>
 
 <style scoped>

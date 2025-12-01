@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-// Seller Panel Layout
 </script>
 
 <style scoped>

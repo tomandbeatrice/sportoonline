@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-// Admin Panel Layout
 </script>
 
 <style scoped>
