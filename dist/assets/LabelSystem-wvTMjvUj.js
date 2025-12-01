@@ -1,0 +1,1 @@
+import{_ as t}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as a,o,a as s}from"./index-BIM8AUBS.js";const c={},n={class:"page"};function r(l,e){return o(),a("div",n,[...e[0]||(e[0]=[s("h2",null,"LabelSystem",-1),s("p",null,"Admin LabelSystem page",-1)])])}const m=t(c,[["render",r],["__scopeId","data-v-b7bc5bdb"]]);export{m as default};

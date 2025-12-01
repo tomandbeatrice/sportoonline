@@ -1,0 +1,1 @@
+import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as r,o as t,a as e}from"./index-BIM8AUBS.js";const o={},s={class:"page"};function c(_,a){return t(),r("div",s,[...a[0]||(a[0]=[e("h2",null,"VariantManager",-1),e("p",null,"Admin VariantManager page",-1)])])}const l=n(o,[["render",c],["__scopeId","data-v-660a064d"]]);export{l as default};

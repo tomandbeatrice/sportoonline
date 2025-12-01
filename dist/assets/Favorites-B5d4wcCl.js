@@ -1,0 +1,1 @@
+import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as s,o as t,a}from"./index-BIM8AUBS.js";const r={},c={class:"page"};function n(_,e){return t(),s("div",c,[...e[0]||(e[0]=[a("h2",null,"Favorites",-1),a("p",null,"User Favorites page",-1)])])}const p=o(r,[["render",n],["__scopeId","data-v-4aab4c37"]]);export{p as default};
