@@ -1,0 +1,1 @@
+import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as s,o,a as t}from"./index-BIM8AUBS.js";const a={},i={class:"page"};function p(r,e){return o(),s("div",i,[...e[0]||(e[0]=[t("h2",null,"ShippingSettings",-1),t("p",null,"Admin ShippingSettings page",-1)])])}const d=n(a,[["render",p],["__scopeId","data-v-6219ea4f"]]);export{d as default};

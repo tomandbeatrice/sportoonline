@@ -1,0 +1,1 @@
+import{d as e,c as s,o as t,a as o}from"./index-BIM8AUBS.js";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";const d={class:"dashboard"},n=e({__name:"Dashboard",setup(_){return(c,a)=>(t(),s("div",d,[...a[0]||(a[0]=[o("h2",null,"Admin Dashboard",-1),o("p",null,"Welcome to the admin dashboard",-1)])]))}}),l=r(n,[["__scopeId","data-v-e3698355"]]);export{l as default};

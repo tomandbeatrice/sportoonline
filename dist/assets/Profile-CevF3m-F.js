@@ -1,0 +1,1 @@
+import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as a,o as s,a as o}from"./index-BIM8AUBS.js";const t={},c={class:"page"};function n(l,e){return s(),a("div",c,[...e[0]||(e[0]=[o("h2",null,"Profile",-1),o("p",null,"User Profile page",-1)])])}const i=r(t,[["render",n],["__scopeId","data-v-822aa07e"]]);export{i as default};
