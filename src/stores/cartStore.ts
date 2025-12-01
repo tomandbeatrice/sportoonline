@@ -1,61 +1,30 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { useToast } from 'vue-toastification'
 
-export const useCartStore = defineStore('cart', () => {
-  const items = ref<any[]>([])
-  const toast = useToast()
+interface CartItem {
+  id: number
+  name: string
+  price: number
+  quantity: number
+}
 
-  const totalItems = computed(() => items.value.reduce((sum, item) => sum + item.quantity, 0))
-  
-  const subtotal = computed(() => {
-    return items.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  })
-
-  function addToCart(product: any, quantity = 1) {
-    const existingItem = items.value.find(item => item.id === product.id)
-    if (existingItem) {
-      existingItem.quantity += quantity
-      toast.info('Sepetteki ürün adedi güncellendi')
-    } else {
-      items.value.push({
-        ...product,
-        quantity
-      })
-      toast.success('Ürün sepete eklendi')
-    }
-  }
-
-  function removeFromCart(productId: number) {
-    const index = items.value.findIndex(item => item.id === productId)
-    if (index !== -1) {
-      items.value.splice(index, 1)
-      toast.info('Ürün sepetten çıkarıldı')
-    }
-  }
-
-  function updateQuantity(productId: number, quantity: number) {
-    const item = items.value.find(item => item.id === productId)
-    if (item) {
-      if (quantity > 0) {
-        item.quantity = quantity
+export const useCartStore = defineStore('cart', {
+  state: () => ({
+    items: [] as CartItem[]
+  }),
+  actions: {
+    addItem(item: CartItem) {
+      const existing = this.items.find(i => i.id === item.id)
+      if (existing) {
+        existing.quantity += item.quantity
       } else {
-        removeFromCart(productId)
+        this.items.push({ ...item })
       }
+    },
+    removeItem(id: number) {
+      this.items = this.items.filter(i => i.id !== id)
+    },
+    clearCart() {
+      this.items = []
     }
-  }
-
-  function clearCart() {
-    items.value = []
-  }
-
-  return {
-    items,
-    totalItems,
-    subtotal,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart
   }
 })
