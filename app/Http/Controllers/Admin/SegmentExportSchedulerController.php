@@ -1,45 +1,22 @@
-<?php
-
-namespace App\Http\Controllers\Admin;
-
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
-class SegmentExportSchedulerController extends Controller
+public function schedule(Request $request)
 {
-    /**
-     * Segment export zamanlaması oluştur
-     */
-    public function schedule(Request $request)
-    {
-        $validated = $request->validate([
-            'segment_id' => 'required|string',
-            'day' => 'required|string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
-            'time' => 'required|string|regex:/^\d{2}:\d{2}$/',
-            'format' => 'nullable|string|in:xlsx,csv',
-        ]);
+    $segmentId = $request->input('segmentId');
+    $time = $request->input('time');
+    $day = $request->input('day');
 
-        $configPath = config_path('scheduled_exports.php');
-        $schedules = file_exists($configPath) ? require $configPath : [];
+    $configPath = config_path('scheduled_exports.php');
+    $current = file_exists($configPath) ? require_once $configPath : [];
 
-        // Yeni zamanlama ekle
-        $key = "{$validated['segment_id']}_{$validated['day']}_{$validated['time']}";
-        $schedules[$key] = [
-            'segment_id' => $validated['segment_id'],
-            'day' => $validated['day'],
-            'time' => $validated['time'],
-            'format' => $validated['format'] ?? 'xlsx',
-            'created_at' => now()->toDateTimeString(),
-        ];
+    $current[] = [
+        'segmentId' => $segmentId,
+        'time' => $time,
+        'day' => $day
+    ];
 
-        // Config dosyasına kaydet
-        $content = "<?php\n\nreturn " . var_export($schedules, true) . ";\n";
-        file_put_contents($configPath, $content);
+return response()->json(["message" => "Segment #{$segmentId} için export planlandı: {$day} - {$time}"]);
+    file_put_contents($configPath, $content);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Export zamanlaması oluşturuldu',
-            'schedule' => $schedules[$key],
-        ]);
-    }
+    return response()->json([
+        'message' => "Segment #{$segmentId} için export planlandı: {$day} - {$time}"
+    ]);
 }

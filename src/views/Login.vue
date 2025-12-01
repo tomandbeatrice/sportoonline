@@ -1,64 +1,29 @@
 <template>
-  <div class="auth-box">
-    <h2>ZAMANLAYICI MODÜLÜ AKTİF</h2>
-    <p v-if="countdown > 0">Oturum süresi: {{ countdown }} saniye</p>
-    <p v-else>Oturum süresi doldu</p>
-
-    <input v-model="password" placeholder="Parolayı girin" />
-    <button @click="verifyPassword">Doğrula</button>
+  <div class="login-panel">
+    <h2>Giriş Yap</h2>
+    <form @submit.prevent="login">
+      <input v-model="email" type="email" placeholder="E-posta" required />
+      <input v-model="password" type="password" placeholder="Şifre" required />
+      <button type="submit">Giriş</button>
+    </form>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      password: '',
-      countdown: 30,
-      timer: null
-    }
-  },
-  mounted() {
-    this.timer = setInterval(() => {
-      this.countdown--
-      if (this.countdown <= 0) {
-        clearInterval(this.timer)
-        this.$router.push('/timeout')
-      }
-    }, 1000)
-  },
-  methods: {
-    verifyPassword() {
-      if (this.password === 'Vural') {
-        clearInterval(this.timer)
-        this.$router.push('/dashboard')
-      } else {
-        alert('Parola hatalı')
-      }
-    }
-  }
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const email = ref('')
+const password = ref('')
+
+function login() {
+  // Giriş işlemi ve role ayarı örneği
+  localStorage.setItem('role', 'customer')
+  window.location.href = '/dashboard'
 }
 </script>
 
 <style scoped>
-.auth-box {
-  max-width: 400px;
-  margin: 100px auto;
-  padding: 20px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  text-align: center;
-}
-input {
-  width: 80%;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+.login-panel { max-width: 320px; margin: 2rem auto; padding: 2rem; background: #fff; border-radius: 8px; }
+input { display: block; margin-bottom: 1rem; width: 100%; padding: 0.5rem; }
+button { width: 100%; }
 </style>
