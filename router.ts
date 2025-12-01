@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import ProductList from '@/views/products/ProductList.vue'
-import Cart from '@/views/products/Cart.vue'
-import Checkout from '@/views/products/Checkout.vue'
+import Cart from '@/views/Cart.vue'
+import Checkout from '@/views/Checkout.vue'
 import OrderStatus from '@/views/products/OrderStatus.vue'
 
 // Auth routes
-const Login = () => import('@/components/user/Login.vue')
-const Register = () => import('@/components/user/Register.vue')
+const Login = () => import('@/views/Login.vue')
+const Register = () => import('@/views/Register.vue')
 
 // Seller routes
-const SellerDashboard = () => import('@/components/seller/SellerDashboard.vue')
+const SellerDashboard = () => import('@/views/SellerDashboard.vue')
 
 // Admin routes
 const AdminDashboard = () => import('@/components/admin/AdminDashboard.vue')
