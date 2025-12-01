@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 import SlackToggle from '@/components/SlackToggle.vue'
-import { sendSlackUpdate } from '@/services/slackService'
+import { sendSlackUpdate as sendSlackMessage } from '@/services/slackService'
 
 function sendSlackUpdate(message) {
-  sendSlackUpdate(message)
+  sendSlackMessage(message)
 }
 </script>

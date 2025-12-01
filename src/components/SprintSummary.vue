@@ -1,13 +1,14 @@
 <template>
   <section class="dashboard">
     <SummaryPanel />
-    <SprintSummary />
+    <div class="sprint-summary-placeholder">
+      <!-- Sprint summary content -->
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import SummaryPanel from './SummaryPanel.vue'
-import SprintSummary from './SprintSummary.vue'
 </script>
 
 <style scoped>

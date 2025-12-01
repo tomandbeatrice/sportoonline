@@ -10,12 +10,17 @@ defineProps<{
   visible: boolean
 }>()
 
+const props = defineProps<{
+  log: { data: Array<{ timestamp: string; count: number }> }
+  visible: boolean
+}>()
+
 defineEmits(['close'])
 
 const activeTab = ref<'data' | 'errors' | 'info'>('data')
 
 const formattedData = computed(() =>
-  log.data.map((point) => ({
+  props.log.data.map((point) => ({
     time: new Date(point.timestamp).toLocaleTimeString('tr-TR'),
     count: point.count,
   }))

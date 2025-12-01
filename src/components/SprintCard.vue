@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <SprintCard
-      :demoImage="demoImage"
-      :testStatus="testStatus"
-      :tarih="tarih"
-      @exported="handleExport"
-    />
+  <div class="sprint-card">
+    <div class="sprint-info">
+      <img :src="demoImage" alt="Sprint Demo" />
+      <p>Test Status: {{ testStatus }}</p>
+      <p>Date: {{ tarih }}</p>
+    </div>
 
     <div class="tamamlananlar">
       <h3>Tamamlanan Sprintler</h3>
@@ -20,7 +19,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import SprintCard from './SprintCard.vue'
 
 const demoImage = '/assets/sprint-demo.png'
 const testStatus = 'Yeşil'

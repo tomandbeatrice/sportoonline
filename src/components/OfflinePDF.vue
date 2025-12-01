@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { generateOfflinePDF } from '@/services/pdfOffline'
+import { generateOfflinePDF as generatePDF } from '@/services/pdfOffline'
 
 function generateOfflinePDF() {
-  generateOfflinePDF()
+  generatePDF()
 }
 </script>

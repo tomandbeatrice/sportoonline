@@ -21,11 +21,20 @@ defineProps<{
   }
 }>()
 
+const props = defineProps<{
+  modul: {
+    name: string
+    progress: number
+    riskScore: number
+    uiDropRate: number
+  }
+}>()
+
 const suggestion = computed(() => {
-  if (modul.riskScore > 70 && modul.progress < 60) {
+  if (props.modul.riskScore > 70 && props.modul.progress < 60) {
     return 'Refactor önerisi: coverage artırılmalı'
   }
-  if (modul.uiDropRate > 30) {
+  if (props.modul.uiDropRate > 30) {
     return 'UI sadeleştirme önerisi: kullanıcı davranışı düşmüş'
   }
   if (modul.successRate < 50) {

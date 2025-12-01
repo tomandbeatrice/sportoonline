@@ -20,11 +20,11 @@ import {
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 import { computed } from 'vue'
-defineProps<{ logs: Array<{ user_id: number }> }>()
+const props = defineProps<{ logs: Array<{ user_id: number }> }>()
 
 const userCounts = computed(() => {
   const counts: Record<string, number> = {}
-  logs.forEach(log => {
+  props.logs.forEach(log => {
     const id = `User #${log.user_id}`
     counts[id] = (counts[id] || 0) + 1
   })
