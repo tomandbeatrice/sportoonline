@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ModülDurumu } from './roadmapTypes'
+import type { ModülDurumu } from '../types/roadmapTypes'
 
 export function useRoadmapData() {
   const modüller = ref<ModülDurumu[]>([

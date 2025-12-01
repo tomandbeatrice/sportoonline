@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ModülBaşarıVerisi } from './successRateTypes'
+import type { ModülBaşarıVerisi } from '../types/successRateTypes'
 
 export function useSuccessRateData() {
   const modülVerisi = ref<ModülBaşarıVerisi[]>([

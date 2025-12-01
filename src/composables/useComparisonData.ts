@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ModülKarşılaştırmaVerisi } from './comparisonTypes'
+import type { ModülKarşılaştırmaVerisi } from '../types/comparisonTypes'
 
 export function useComparisonData() {
   const modülVerisi = ref<ModülKarşılaştırmaVerisi[]>([
