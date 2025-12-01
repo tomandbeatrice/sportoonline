@@ -1,5 +1,3 @@
-<?php
-
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
@@ -11,29 +9,31 @@ class ScheduledExportController extends Controller
 
     public function __construct()
     {
-        $this->configPath = config_path('scheduled_exports.json');
+        $this->configPath = config_path('scheduled_exports.php');
     }
 
     public function list()
     {
-        $plans = file_exists($this->configPath)
-            ? json_decode(file_get_contents($this->configPath), true)
-            : [];
+        $plans = file_exists($this->configPath) ? require $this->configPath : [];
 
         return response()->json($plans);
     }
 
-    public function delete($segmentId, $day, $time)
+    public function delete(Request $request)
     {
-        $plans = file_exists($this->configPath)
-            ? json_decode(file_get_contents($this->configPath), true)
-            : [];
+        $validated = $request->validate([
+            'segmentId' => 'required|integer',
+            'day' => 'required|string',
+            'time' => 'required|string'
+        ]);
+
+        $plans = file_exists($this->configPath) ? require $this->configPath : [];
 
         $filtered = array_filter($plans, fn($plan) =>
             !(
-                $plan['segmentId'] == $segmentId &&
-                $plan['day'] == $day &&
-                $plan['time'] == $time
+                $plan['segmentId'] == $validated['segmentId'] &&
+                $plan['day'] == $validated['day'] &&
+                $plan['time'] == $validated['time']
             )
         );
 
@@ -44,6 +44,9 @@ class ScheduledExportController extends Controller
 
     protected function writeConfig(array $data): void
     {
-        file_put_contents($this->configPath, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $export = var_export($data, true);
+        $content = "<?php\n\nreturn {$export};\n";
+
+        file_put_contents($this->configPath, $content);
     }
 }
