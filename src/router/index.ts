@@ -9,6 +9,13 @@ const routes: RouteRecordRaw[] = [
   // Marketplace Home
   { path: '/', name: 'Home', component: MarketplaceHome },
   
+  // Navbar Links
+  { path: '/products', name: 'Products', component: ComingSoon },
+  { path: '/apply-seller', name: 'ApplySeller', component: ComingSoon },
+  { path: '/campaigns', name: 'Campaigns', component: ComingSoon },
+  { path: '/orders', name: 'Orders', component: ComingSoon },
+  { path: '/cart', name: 'Cart', component: ComingSoon },
+  
   // Marketplace Services (Coming Soon)
   { path: '/food', name: 'Food', component: ComingSoon },
   { path: '/hotels', name: 'Hotels', component: ComingSoon },
@@ -16,9 +23,9 @@ const routes: RouteRecordRaw[] = [
   { path: '/services', name: 'Services', component: ComingSoon },
   { path: '/career', name: 'Career', component: ComingSoon },
   
-  // Auth (Placeholder)
-  { path: '/login', name: 'Login', component: PlaceholderPage },
-  { path: '/register', name: 'Register', component: PlaceholderPage },
+  // Auth (Coming Soon)
+  { path: '/login', name: 'Login', component: ComingSoon },
+  { path: '/register', name: 'Register', component: ComingSoon },
   
   // Fallback
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: AccessDenied }
