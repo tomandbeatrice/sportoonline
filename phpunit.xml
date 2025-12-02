@@ -19,7 +19,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="APP_KEY" value="base64:YBB80YXjw5EjdaDAxyp/48tKasyY+zoacfWA5UKQEjA="/>
+        <env name="APP_KEY" value="base64:G6oC9oEN/Zl9DvTS0L38yDflqReswGdWYI8d7Eq2Xww="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
