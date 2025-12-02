@@ -7,11 +7,9 @@ use Illuminate\Http\Request;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, ...$roles)
-    {
-        $user = auth()->user();
-        if (!$user || !in_array($user->role, $roles)) {
-            return response()->json(['error' => 'Yetkisiz erişim'], 403);
+    public function handle($request, Closure $next, $role) {
+        if ($request->user()->role !== $role) {
+            return response()->json(['error' => 'Yetkisiz'], 403);
         }
         return $next($request);
     }
