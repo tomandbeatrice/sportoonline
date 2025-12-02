@@ -24,6 +24,16 @@ const Register = () => import('@/views/auth/Register.vue')
 const ApplyAsSeller = () => import('@/views/seller/ApplyAsSeller.vue')
 const SellerProducts = () => import('@/views/seller/SellerProducts.vue')
 
+// Admin
+const AdminDashboard = () => import('@/views/admin/AdminDashboard.vue')
+const AdminOrders = () => import('@/views/admin/OrderManagement.vue')
+const AdminSellers = () => import('@/views/admin/SellerManagement.vue')
+const AdminCustomers = () => import('@/views/admin/CustomerManagement.vue')
+const AdminCategories = () => import('@/views/admin/CategoryManagement.vue')
+const AdminBanners = () => import('@/views/admin/BannerManagement.vue')
+const AdminReports = () => import('@/views/admin/ReportsAnalytics.vue')
+const AdminSettings = () => import('@/views/admin/SystemSettings.vue')
+
 const routes: RouteRecordRaw[] = [
   // Marketplace Home
   { path: '/', name: 'Home', component: MarketplaceHome },
@@ -56,6 +66,22 @@ const routes: RouteRecordRaw[] = [
   // Auth
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
+  
+  // Admin
+  { 
+    path: '/admin', 
+    children: [
+      { path: '', redirect: '/admin/dashboard' },
+      { path: 'dashboard', name: 'AdminDashboard', component: AdminDashboard },
+      { path: 'orders', name: 'AdminOrders', component: AdminOrders },
+      { path: 'sellers', name: 'AdminSellers', component: AdminSellers },
+      { path: 'customers', name: 'AdminCustomers', component: AdminCustomers },
+      { path: 'categories', name: 'AdminCategories', component: AdminCategories },
+      { path: 'banners', name: 'AdminBanners', component: AdminBanners },
+      { path: 'reports', name: 'AdminReports', component: AdminReports },
+      { path: 'settings', name: 'AdminSettings', component: AdminSettings },
+    ]
+  },
   
   // Fallback
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: AccessDenied }
