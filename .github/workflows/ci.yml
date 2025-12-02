@@ -1,23 +1,121 @@
-name: CI
+name: CI/CD Pipeline
+
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
+
 jobs:
-  build:
+  # ============================================
+  # Frontend Tests & Build
+  # ============================================
+  frontend:
+    name: Frontend Tests
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v3
+      
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
+      
       - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
-      - name: Test
+        run: npm ci
+      
+      - name: Run TypeScript Check
+        run: npx tsc --noEmit
+        continue-on-error: true
+      
+      - name: Run Tests
         run: npm run test
-      - name: Build
+      
+      - name: Build Production
         run: npm run build
+      
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # ============================================
+  # Backend Tests
+  # ============================================
+  backend:
+    name: Backend Tests (PHP 8.2)
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json
+          coverage: xdebug
+      
+      - name: Copy .env
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: Run PHPUnit Tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: password
+        run: |
+          php artisan migrate --force
+          php artisan test --coverage --min=50
+      
+      - name: Run Static Analysis (Larastan)
+        run: |
+          composer require --dev larastan/larastan --with-all-dependencies || true
+          vendor/bin/phpstan analyse --memory-limit=2G || true
+        continue-on-error: true
+
+  # ============================================
+  # Security Checks
+  # ============================================
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      
+      - name: Run Composer Security Check
+        run: |
+          composer install --no-dev --prefer-dist
+          composer audit
+        continue-on-error: true

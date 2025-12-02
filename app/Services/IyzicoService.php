@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\PaymentGatewayInterface;
 use App\Models\Order;
 use Illuminate\Support\Facades\Config;
 use Iyzipay\Model\Address;
@@ -13,7 +14,7 @@ use Iyzipay\Model\PaymentGroup;
 use Iyzipay\Options;
 use Iyzipay\Request\CreatePayWithIyzicoInitializeRequest;
 
-class IyzicoService
+class IyzicoService implements PaymentGatewayInterface
 {
     protected $options;
 

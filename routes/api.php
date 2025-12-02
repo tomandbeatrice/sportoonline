@@ -1,7 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application.
+| All API routes are versioned for backward compatibility.
+|
+*/
+
+// ============================================
+// API Version 1 (Current Stable)
+// ============================================
+Route::prefix('v1')->group(base_path('routes/api/v1.php'));
+
+// ============================================
+// Legacy Routes (Backward Compatibility)
+// ============================================
+// Redirect old non-versioned routes to v1 for backward compatibility
+// These will be deprecated in future versions
+
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;

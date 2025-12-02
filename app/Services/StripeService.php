@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\PaymentGatewayInterface;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use Stripe\Exception\ApiErrorException;
 
-class StripeService
+class StripeService implements PaymentGatewayInterface
 {
     protected $secretKey;
     protected $currency;

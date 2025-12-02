@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Contracts\PaymentGatewayInterface;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 
-class PaytrService
+class PaytrService implements PaymentGatewayInterface
 {
     protected $merchantId;
     protected $merchantKey;
