@@ -3,21 +3,37 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ExportLog extends Model
 {
-    protected $table = 'export_logs';
+    use HasFactory;
 
     protected $fillable = [
-        'admin_id',
-        'vendor_id',
-        'vendor_name',
-        'user_email',
-        'action',
-        'file_name',
-        'ip',
-        'created_at',
+        'product_id',
+        'status',
+        'message',
+        'exported_at'
     ];
 
-    public $timestamps = false; // çünkü sadece created_at var
+    protected $casts = [
+        'exported_at' => 'datetime',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    // Scope: segment bazlı filtreleme için hazır
+    public function scopeSegment($query, $segmentId)
+    {
+        return $query->where('product_id', $segmentId);
+    }
+
+    // Scope: son 7 gün logları
+    public function scopeRecent($query)
+    {
+        return $query->where('exported_at', '>=', now()->subDays(7));
+    }
 }
