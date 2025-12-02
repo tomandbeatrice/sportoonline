@@ -1258,12 +1258,16 @@ const loadCartCount = async () => {
 
 onMounted(async () => {
   // Load all data in parallel
-  await Promise.all([
-    loadCampaigns(),
-    loadActiveOrders(),
-    loadBundles(),
-    loadCartCount()
-  ])
+  // API calls disabled - backend not running
+  // await Promise.all([
+  //   loadCampaigns(),
+  //   loadActiveOrders(),
+  //   loadBundles(),
+  //   loadCartCount()
+  // ])
+  
+  // Just load mock bundles
+  loadBundles()
 })
 
 onUnmounted(() => {
