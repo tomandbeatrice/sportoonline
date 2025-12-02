@@ -23,7 +23,7 @@ const products = ref([
 ])
 
 function viewDetail(id: number) {
-  router.push(`/product/${id}`)
+  router.push(`/products/${id}`)
 }
 </script>
 
