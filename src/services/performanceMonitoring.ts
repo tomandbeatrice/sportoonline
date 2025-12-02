@@ -222,9 +222,9 @@ class PerformanceMonitoringService {
 
     this.metrics.push(metric)
 
-    // Log in development
-    if (import.meta.env.DEV) {
-      console.log(`📊 ${name}: ${metric.value}ms (${rating})`)
+    // Log only poor performance in development
+    if (import.meta.env.DEV && rating === 'poor') {
+      console.log(`⚠️ ${name}: ${metric.value}ms (${rating})`)
     }
 
     // Warn on poor performance

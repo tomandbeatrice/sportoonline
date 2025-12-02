@@ -1,0 +1,19 @@
+<template>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+      <div class="text-6xl mb-4">🚧</div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Yakında!</h1>
+      <p class="text-gray-600 mb-6">Bu sayfa şu anda geliştirme aşamasında.</p>
+      <router-link 
+        to="/" 
+        class="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+      >
+        Ana Sayfaya Dön
+      </router-link>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+// Coming soon placeholder page
+</script>

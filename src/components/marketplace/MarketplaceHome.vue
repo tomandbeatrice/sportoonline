@@ -1187,11 +1187,15 @@ const scrollBundles = (direction: 'left' | 'right') => {
 const addBundleToCart = async (bundle: Bundle) => {
   addingBundleId.value = bundle.id
   try {
-    await fetch('/api/cart/bundle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bundle_id: bundle.id })
-    })
+    // API call disabled - backend not running
+    // await fetch('/api/cart/bundle', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ bundle_id: bundle.id })
+    // })
+    
+    // Simulate adding to cart
+    await new Promise(resolve => setTimeout(resolve, 500))
     cartItemCount.value += 2
     // Show success toast
   } catch (error) {

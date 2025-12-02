@@ -104,8 +104,8 @@ class ErrorTrackingService {
       this.errors.shift()
     }
 
-    // Log to console in development
-    if (import.meta.env.DEV) {
+    // Log only high/critical errors in development
+    if (import.meta.env.DEV && (report.severity === 'high' || report.severity === 'critical')) {
       console.error('🔴 Error captured:', report)
     }
 
