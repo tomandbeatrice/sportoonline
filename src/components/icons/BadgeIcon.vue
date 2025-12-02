@@ -55,7 +55,6 @@ const iconMap: Record<string, any> = {
   close: IconClose,
   chat: IconChat,
   // fallbacks
-  box: IconCart,
   chart: IconTrophy,
   user: IconUser,
   image: IconImage,

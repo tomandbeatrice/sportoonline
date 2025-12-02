@@ -781,8 +781,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useApiCache } from '@/composables/useApiCache'
-import { useI18n } from '@/composables/useI18n'
+
+// Simple i18n helpers
+const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
+const formatDate = (date: string) => new Date(date).toLocaleDateString('tr-TR')
+const t = (key: string) => key // Simplified translation
 
 // Types
 interface Campaign {
@@ -818,8 +821,6 @@ interface Bundle {
 
 // Composables
 const router = useRouter()
-const { fetchWithCache, postWithCacheInvalidation } = useApiCache()
-const { t, formatCurrency, formatDate } = useI18n()
 
 // ═══════════════════════════════════════════════════════════════════
 // State
@@ -1186,7 +1187,11 @@ const scrollBundles = (direction: 'left' | 'right') => {
 const addBundleToCart = async (bundle: Bundle) => {
   addingBundleId.value = bundle.id
   try {
-    await postWithCacheInvalidation('/api/cart/bundle', { bundle_id: bundle.id }, ['cart'])
+    await fetch('/api/cart/bundle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bundle_id: bundle.id })
+    })
     cartItemCount.value += 2
     // Show success toast
   } catch (error) {
@@ -1202,7 +1207,8 @@ const addBundleToCart = async (bundle: Bundle) => {
 
 const loadCampaigns = async () => {
   try {
-    campaigns.value = await fetchWithCache<Campaign[]>('/api/campaigns/active') || []
+    const response = await fetch('/api/campaigns/active')
+    campaigns.value = response.ok ? await response.json() : []
     if (campaigns.value.length > 0) {
       updateCampaignCountdown()
       startCampaignAutoPlay()
@@ -1214,7 +1220,8 @@ const loadCampaigns = async () => {
 
 const loadActiveOrders = async () => {
   try {
-    activeOrders.value = await fetchWithCache<Order[]>('/api/orders/active') || []
+    const response = await fetch('/api/orders/active')
+    activeOrders.value = response.ok ? await response.json() : []
   } catch (error) {
     console.error('Siparişler yüklenemedi:', error)
   }
@@ -1237,7 +1244,8 @@ const loadBundles = async () => {
 
 const loadCartCount = async () => {
   try {
-    const data = await fetchWithCache<{ count: number }>('/api/cart/count')
+    const response = await fetch('/api/cart/count')
+    const data = response.ok ? await response.json() : null
     cartItemCount.value = data?.count || 0
   } catch (error) {
     console.error('Sepet sayısı alınamadı:', error)
