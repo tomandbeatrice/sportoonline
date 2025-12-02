@@ -5,6 +5,7 @@
   "require": {
     "php": "^8.2",
     "barryvdh/laravel-dompdf": "*",
+    "darkaonline/l5-swagger": "*",
     "guzzlehttp/guzzle": "^7.0.1",
     "iyzico/iyzipay-php": "*",
     "laravel/framework": "10.0",
