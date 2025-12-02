@@ -54,6 +54,11 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        
+        // Module Service Providers
+        App\Modules\Ecommerce\EcommerceServiceProvider::class,
+        App\Modules\Campaign\CampaignServiceProvider::class,
+        App\Modules\Seller\SellerServiceProvider::class,
     ],
 
     'aliases' => [

@@ -69,16 +69,26 @@ Route::get('/marketplace/stats', [DashboardController::class, 'marketplaceStats'
 // ============================================
 // Categories (Public)
 // ============================================
-Route::get('/categories', [CategoryController::class, 'index'])->name('v1.categories');
+Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('v1.categories')
+    ->middleware('cache.response:7200'); // 2 hours cache
 
 // ============================================
 // Products
 // ============================================
 Route::prefix('products')->name('v1.products.')->group(function () {
-    // Public routes
-    Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/search/autocomplete', [ProductController::class, 'autocomplete'])->name('autocomplete');
-    Route::get('/{product}', [ProductController::class, 'show'])->name('show');
+    // Public routes with caching
+    Route::get('/', [ProductController::class, 'index'])
+        ->name('index')
+        ->middleware('cache.response:3600'); // 1 hour cache
+        
+    Route::get('/search/autocomplete', [ProductController::class, 'autocomplete'])
+        ->name('autocomplete')
+        ->middleware('cache.response:1800'); // 30 min cache
+        
+    Route::get('/{product}', [ProductController::class, 'show'])
+        ->name('show')
+        ->middleware('cache.response:3600'); // 1 hour cache
     
     // Product reviews
     Route::get('/{product}/reviews', [\App\Http\Controllers\ReviewController::class, 'productReviews'])

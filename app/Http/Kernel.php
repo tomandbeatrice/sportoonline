@@ -54,5 +54,8 @@ class Kernel extends HttpKernel
         'isAdmin'              => \App\Http\Middleware\IsAdmin::class,
         'can.viewExportLogs'   => \App\Http\Middleware\CanViewExportLogs::class,
         'role'                 => \App\Http\Middleware\RoleMiddleware::class,
+        
+        // Cache middleware
+        'cache.response'       => \App\Http\Middleware\CacheResponse::class,
     ];
 }
