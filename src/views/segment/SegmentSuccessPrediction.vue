@@ -1,7 +1,16 @@
 <template>
   <div>
     <h3>Segment Başarı Tahmini</h3>
-    <table>
+    
+    <div v-if="error" class="error-banner">
+      ⚠️ {{ error }}
+    </div>
+    
+    <div v-else-if="loading" class="loading">
+      Yükleniyor...
+    </div>
+    
+    <table v-else>
       <thead>
         <tr>
           <th>Segment</th>
@@ -26,12 +35,16 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import axios from 'axios'
 
 const predictions = ref([])
+const { error, loading, withLoading } = useErrorHandler()
 
 onMounted(async () => {
-  const res = await axios.get('/api/admin/segment-success-predictions')
-  predictions.value = res.data
+  await withLoading(async () => {
+    const res = await axios.get('/api/admin/segment-success-predictions')
+    predictions.value = res.data
+  })
 })
 </script>
