@@ -59,6 +59,7 @@ return [
         App\Modules\Ecommerce\EcommerceServiceProvider::class,
         App\Modules\Campaign\CampaignServiceProvider::class,
         App\Modules\Seller\SellerServiceProvider::class,
+        App\Modules\Wallet\WalletServiceProvider::class,
     ],
 
     'aliases' => [
