@@ -204,7 +204,7 @@
           </router-link>
 
           <!-- Otel -->
-          <router-link to="/hotels" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all">
+          <div @click="handleHotelBooking" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
               <span class="text-3xl">🏨</span>
             </div>
@@ -216,7 +216,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </span>
-          </router-link>
+          </div>
 
           <!-- Ulaşım -->
           <router-link to="/rides" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-green-200 hover:shadow-lg hover:-translate-y-1 transition-all">
@@ -775,12 +775,20 @@
 
     <!-- Spacer for bottom navigation -->
     <div class="h-16 md:hidden"></div>
+
+    <!-- Transfer Recommendation Modal (Cross-Selling) -->
+    <TransferRecommendation 
+      v-if="showTransferRecommendation"
+      @accept="handleTransferAccept"
+      @decline="handleTransferDecline"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import TransferRecommendation from './TransferRecommendation.vue'
 
 // Simple i18n helpers
 const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
@@ -946,6 +954,9 @@ const mobileSearchInput = ref<HTMLInputElement | null>(null)
 
 // Cart
 const cartItemCount = ref(0)
+
+// Transfer Recommendation (Cross-Selling)
+const showTransferRecommendation = ref(false)
 
 // ═══════════════════════════════════════════════════════════════════
 // Computed
@@ -1203,6 +1214,27 @@ const addBundleToCart = async (bundle: Bundle) => {
   } finally {
     addingBundleId.value = null
   }
+}
+
+// Hotel Booking & Transfer Recommendation Methods
+const handleHotelBooking = () => {
+  // This would be called after a successful hotel booking
+  // For demo purposes, this is a mock function
+  console.log('Hotel booking completed')
+  showTransferRecommendation.value = true
+}
+
+const handleTransferAccept = () => {
+  console.log('Transfer added to cart')
+  // TODO: Add actual transfer booking logic
+  // For now, just increment cart count to show something was added
+  cartItemCount.value += 1
+  showTransferRecommendation.value = false
+}
+
+const handleTransferDecline = () => {
+  console.log('Transfer recommendation declined')
+  showTransferRecommendation.value = false
 }
 
 // ═══════════════════════════════════════════════════════════════════
