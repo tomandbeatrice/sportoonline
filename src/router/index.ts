@@ -88,6 +88,12 @@ const UserEdit = () => import('@/views/user/UserEdit.vue')
 // Hotel
 const HotelBookingConfirmation = () => import('@/views/hotel/HotelBookingConfirmation.vue')
 
+// ServiceHub Pages
+const FoodHome = () => import('@/views/services/FoodHome.vue')
+const HotelHome = () => import('@/views/services/HotelHome.vue')
+const RidesHome = () => import('@/views/services/RidesHome.vue')
+const ServicesHome = () => import('@/views/services/ServicesHome.vue')
+
 // Other Pages
 const PaymentSuccess = () => import('@/views/PaymentSuccess.vue')
 const PaymentFailed = () => import('@/views/PaymentFailed.vue')
@@ -164,12 +170,12 @@ const routes: RouteRecordRaw[] = [
   { path: '/user/profile', name: 'UserProfile', component: UserProfile },
   { path: '/user/edit', name: 'UserEdit', component: UserEdit },
   
-  // Marketplace Services (placeholders)
-  { path: '/food', name: 'Food', component: ComingSoon },
-  { path: '/hotels', name: 'Hotels', component: ComingSoon },
+  // Marketplace Services
+  { path: '/food', name: 'Food', component: FoodHome },
+  { path: '/hotels', name: 'Hotels', component: HotelHome },
   { path: '/hotels/booking-confirmation', name: 'HotelBookingConfirmation', component: HotelBookingConfirmation },
-  { path: '/rides', name: 'Rides', component: ComingSoon },
-  { path: '/services', name: 'Services', component: ComingSoon },
+  { path: '/rides', name: 'Rides', component: RidesHome },
+  { path: '/services', name: 'Services', component: ServicesHome },
   { path: '/career', name: 'Career', component: CareerOpportunities },
   
   // Auth
