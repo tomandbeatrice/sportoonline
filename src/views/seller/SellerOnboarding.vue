@@ -42,7 +42,8 @@
               <h3>Kampanyalar</h3>
               <p>İndirim kampanyaları oluşturun</p>
             </div>
-            <div class="feature-icon">💰</div>
+            <div class="feature-item">
+              <div class="feature-icon">💰</div>
               <h3>Ödemeler</h3>
               <p>Düzenli ödeme alın</p>
             </div>

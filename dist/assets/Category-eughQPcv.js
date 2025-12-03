@@ -1,0 +1,1 @@
+import{_ as t}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{e as o,f as a,g as r}from"./index-BGyiXXhD.js";const s={},n={class:"category"};function c(l,e){return a(),o("div",n,[...e[0]||(e[0]=[r("h2",null,"Kategori",-1),r("p",null,"Burada kategoriye göre ürünler listelenir.",-1)])])}const d=t(s,[["render",c],["__scopeId","data-v-6b50655b"]]);export{d as default};
