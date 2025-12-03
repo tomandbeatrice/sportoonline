@@ -28,16 +28,15 @@ describe('TransferRecommendation', () => {
 
   it('emits add-transfer event when Add Transfer button is clicked', async () => {
     const wrapper = mount(TransferRecommendation)
-    const addButton = wrapper.find('button:first-of-type')
+    const addButton = wrapper.find('[data-testid="add-transfer-btn"]')
     await addButton.trigger('click')
     expect(wrapper.emitted('add-transfer')).toBeTruthy()
   })
 
   it('emits dismiss event when No thanks button is clicked', async () => {
     const wrapper = mount(TransferRecommendation)
-    const buttons = wrapper.findAll('button')
-    const noThanksButton = buttons[1]
-    await noThanksButton.trigger('click')
+    const dismissButton = wrapper.find('[data-testid="dismiss-btn"]')
+    await dismissButton.trigger('click')
     expect(wrapper.emitted('dismiss')).toBeTruthy()
   })
 

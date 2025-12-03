@@ -47,6 +47,7 @@
         <div class="flex flex-col sm:flex-row gap-3">
           <button 
             @click="handleAddTransfer"
+            data-testid="add-transfer-btn"
             class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-xl shadow-lg shadow-green-200 hover:bg-green-700 hover:shadow-xl hover:-translate-y-0.5 transition-all"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,6 +58,7 @@
           
           <button 
             @click="handleNoThanks"
+            data-testid="dismiss-btn"
             class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
           >
             No thanks

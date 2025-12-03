@@ -214,7 +214,7 @@
             <!-- Booking Simulation Button (MVP Feature) -->
             <button
               v-if="!hotelBookingSuccess"
-              @click="simulateHotelBooking('Grand Plaza Hotel')"
+              @click="simulateHotelBooking(MOCK_HOTEL_NAME)"
               class="w-full mb-3 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             >
               Simulate Hotel Booking ✅
@@ -1241,8 +1241,11 @@ const addBundleToCart = async (bundle: Bundle) => {
   }
 }
 
+// Constants for MVP simulation
+const MOCK_HOTEL_NAME = 'Grand Plaza Hotel'
+
 // Hotel Booking & Transfer Cross-Promotion Methods
-const simulateHotelBooking = (hotelName: string = 'Grand Plaza Hotel') => {
+const simulateHotelBooking = (hotelName: string = MOCK_HOTEL_NAME) => {
   hotelBookingSuccess.value = true
   bookedHotelName.value = hotelName
   showTransferRecommendation.value = true
