@@ -204,19 +204,30 @@
           </router-link>
 
           <!-- Otel -->
-          <router-link to="/hotels" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all">
+          <div class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg transition-all">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
               <span class="text-3xl">🏨</span>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">Otel Rezervasyonu</h3>
             <p class="text-slate-500 mb-4">En iyi fiyat garantisi</p>
-            <span class="inline-flex items-center text-sm font-medium text-blue-600 group-hover:gap-2 transition-all">
-              Otel Ara
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
+            <div class="flex flex-col gap-2">
+              <router-link 
+                to="/hotels"
+                class="inline-flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:gap-3 transition-all"
+              >
+                Otel Ara
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </router-link>
+              <button
+                @click="handleHotelBooking"
+                class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Hızlı Rezervasyon Yap
+              </button>
+            </div>
+          </div>
 
           <!-- Ulaşım -->
           <router-link to="/rides" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-green-200 hover:shadow-lg hover:-translate-y-1 transition-all">
@@ -773,6 +784,13 @@
       </div>
     </Transition>
 
+    <!-- Transfer Recommendation Modal -->
+    <TransferRecommendation 
+      :show="showTransferRecommendation"
+      @close="closeTransferRecommendation"
+      @add-transfer="handleAddTransfer"
+    />
+
     <!-- Spacer for bottom navigation -->
     <div class="h-16 md:hidden"></div>
   </div>
@@ -781,6 +799,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import TransferRecommendation from './TransferRecommendation.vue'
 
 // Simple i18n helpers
 const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
@@ -946,6 +965,9 @@ const mobileSearchInput = ref<HTMLInputElement | null>(null)
 
 // Cart
 const cartItemCount = ref(0)
+
+// Transfer Recommendation
+const showTransferRecommendation = ref(false)
 
 // ═══════════════════════════════════════════════════════════════════
 // Computed
@@ -1203,6 +1225,21 @@ const addBundleToCart = async (bundle: Bundle) => {
   } finally {
     addingBundleId.value = null
   }
+}
+
+// Transfer Recommendation Methods
+const handleHotelBooking = () => {
+  // Simulate hotel booking completion
+  showTransferRecommendation.value = true
+}
+
+const closeTransferRecommendation = () => {
+  showTransferRecommendation.value = false
+}
+
+const handleAddTransfer = () => {
+  // Placeholder for adding transfer to cart
+  console.log('Transfer added to Global Cart')
 }
 
 // ═══════════════════════════════════════════════════════════════════
