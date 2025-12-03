@@ -431,6 +431,8 @@ const showApplicationForm = ref(false)
 const selectedJob = ref<Job | null>(null)
 const isSubmitting = ref(false)
 const showSuccessToast = ref(false)
+const showErrorToast = ref(false)
+const errorMessage = ref('')
 const resumeInput = ref<HTMLInputElement | null>(null)
 
 const applicationForm = ref<ApplicationForm>({
@@ -470,7 +472,11 @@ const handleResumeUpload = (event: Event) => {
   if (file) {
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Dosya boyutu 5MB\'dan küçük olmalıdır.')
+      errorMessage.value = "Dosya boyutu 5MB'dan küçük olmalıdır."
+      showErrorToast.value = true
+      setTimeout(() => {
+        showErrorToast.value = false
+      }, 5000)
       target.value = ''
       return
     }
