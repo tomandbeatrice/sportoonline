@@ -17,9 +17,12 @@
       </ul>
     </div>
 
+    <!-- Commented out temporarily - missing component files
     <StrategyAccuracy />
+    -->
     <SegmentAccuracyBreakdown />
     <SegmentAccuracyChart />
+    <!-- Commented out temporarily - missing component files
     <StrategyAccuracyTrend />
     <SuggestedCampaignCard :suggestion="suggestion" />
     <SuggestionHistoryTable />
@@ -27,6 +30,7 @@
     <CalibratedConfidenceTable />
     <ABTestResultTable />
     <StrategyVersionComparison />
+    -->
 
     <div v-if="history.length">
       <h3>Güncelleme Geçmişi</h3>
@@ -43,13 +47,14 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-import StrategyAccuracy from './StrategyAccuracy.vue'
+// Commented out temporarily - missing component files
+// import StrategyAccuracy from './StrategyAccuracy.vue'
 import SegmentAccuracyBreakdown from './SegmentAccuracyBreakdown.vue'
 import SegmentAccuracyChart from './SegmentAccuracyChart.vue'
-import StrategyAccuracyTrend from './StrategyAccuracyTrend.vue'
-import SuggestedCampaignCard from './SuggestedCampaignCard.vue'
-import SuggestionHistoryTable from './SuggestionHistoryTable.vue'
-import SuggestionDeviationTable from './SuggestionDeviationTable.vue'
+// import StrategyAccuracyTrend from './StrategyAccuracyTrend.vue'
+// import SuggestedCampaignCard from './SuggestedCampaignCard.vue'
+// import SuggestionHistoryTable from './SuggestionHistoryTable.vue'
+// import SuggestionDeviationTable from './SuggestionDeviationTable.vue'
 
 const weights = ref(null)
 const lastUpdated = ref('Yükleniyor...')

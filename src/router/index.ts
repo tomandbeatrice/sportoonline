@@ -84,6 +84,9 @@ const ProductPublic = () => import('@/views/storefront/ProductPublic.vue')
 const UserProfile = () => import('@/views/user/UserProfile.vue')
 const UserEdit = () => import('@/views/user/UserEdit.vue')
 
+// Hotel
+const HotelBookingConfirmation = () => import('@/views/hotel/HotelBookingConfirmation.vue')
+
 // Other Pages
 const PaymentSuccess = () => import('@/views/PaymentSuccess.vue')
 const PaymentFailed = () => import('@/views/PaymentFailed.vue')
@@ -163,6 +166,7 @@ const routes: RouteRecordRaw[] = [
   // Marketplace Services (placeholders)
   { path: '/food', name: 'Food', component: ComingSoon },
   { path: '/hotels', name: 'Hotels', component: ComingSoon },
+  { path: '/hotels/booking-confirmation', name: 'HotelBookingConfirmation', component: HotelBookingConfirmation },
   { path: '/rides', name: 'Rides', component: ComingSoon },
   { path: '/services', name: 'Services', component: ComingSoon },
   { path: '/career', name: 'Career', component: ComingSoon },
