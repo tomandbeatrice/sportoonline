@@ -172,10 +172,19 @@ const routes: RouteRecordRaw[] = [
   
   // Marketplace Services
   { path: '/food', name: 'Food', component: FoodHome },
+  { path: '/food/restaurants', name: 'FoodRestaurants', component: ComingSoon },
+  { path: '/food/category/:id', name: 'FoodCategory', component: ComingSoon },
+  { path: '/food/restaurant/:id', name: 'FoodRestaurant', component: ComingSoon },
+  { path: '/food/group-order', name: 'FoodGroupOrder', component: ComingSoon },
   { path: '/hotels', name: 'Hotels', component: HotelHome },
+  { path: '/hotels/all', name: 'HotelsAll', component: ComingSoon },
+  { path: '/hotels/search', name: 'HotelsSearch', component: ComingSoon },
+  { path: '/hotels/:id', name: 'HotelDetail', component: ComingSoon },
   { path: '/hotels/booking-confirmation', name: 'HotelBookingConfirmation', component: HotelBookingConfirmation },
   { path: '/rides', name: 'Rides', component: RidesHome },
+  { path: '/rides/search', name: 'RidesSearch', component: ComingSoon },
   { path: '/services', name: 'Services', component: ServicesHome },
+  { path: '/services/all', name: 'ServicesAll', component: ComingSoon },
   { path: '/career', name: 'Career', component: CareerOpportunities },
   
   // Auth
