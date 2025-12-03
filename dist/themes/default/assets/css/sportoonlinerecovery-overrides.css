@@ -1,10 +1,10 @@
 
 
-/* ==== sportoonlinerecovery overrides (palette: green/orange) ==== */
+/* ==== sportoonlinerecovery overrides (palette: indigo/orange) ==== */
 :root{
-  --primary-color: #16a34a; /* green-600 */
-  --primary-dark: #12813b;
-  --primary-light: #34d399;
+  --primary-color: #4F46E5; /* indigo-600 */
+  --primary-dark: #4338ca; /* indigo-700 */
+  --primary-light: #818cf8; /* indigo-400 */
   --secondary-color: #f97316; /* orange-500 */
   --secondary-dark: #c25b12;
   --secondary-light: #fba56c;
@@ -46,7 +46,7 @@ a:hover, .link-primary:hover { color: var(--primary-dark) !important; }
 /* badges and alerts (bootstrap-ish) */
 .badge-primary { background-color: var(--primary-color) !important; }
 .badge-secondary { background-color: var(--secondary-color) !important; }
-.alert-primary { background-color: rgba(22,163,74,0.1) !important; border-color: var(--primary-color) !important; color: var(--primary-dark) !important; }
+.alert-primary { background-color: rgba(79,70,229,0.1) !important; border-color: var(--primary-color) !important; color: var(--primary-dark) !important; }
 .alert-secondary { background-color: rgba(249,115,22,0.1) !important; border-color: var(--secondary-color) !important; color: var(--secondary-dark) !important; }
 
 /* Links in nav and active states */
@@ -55,5 +55,5 @@ a:hover, .link-primary:hover { color: var(--primary-dark) !important; }
 /* Custom form focus */
 .form-control:focus, .form-select:focus {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 .2rem rgba(22,163,74,.25) !important;
+  box-shadow: 0 0 0 .2rem rgba(79,70,229,.25) !important;
 }
