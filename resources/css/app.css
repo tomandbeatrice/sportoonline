@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --color-brand: #4F46E5;
+    --color-food: #F97316;
+    --color-hotel: #06B6D4;
+    --color-ride: #10B981;
+    --color-service: #8B5CF6;
+    --color-career: #EC4899;
+}
