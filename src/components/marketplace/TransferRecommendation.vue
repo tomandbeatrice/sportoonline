@@ -11,7 +11,6 @@
 
         <!-- Modal Card -->
         <div
-          ref="modalRef"
           class="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all"
           role="dialog"
           aria-modal="true"
@@ -123,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 
 interface Props {
   modelValue: boolean
@@ -137,8 +136,6 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const modalRef = ref<HTMLElement | null>(null)
-
 // Prevent body scroll when modal is open
 watch(() => props.modelValue, (isOpen) => {
   if (isOpen) {
@@ -146,6 +143,11 @@ watch(() => props.modelValue, (isOpen) => {
   } else {
     document.body.style.overflow = ''
   }
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  document.body.style.overflow = ''
 })
 
 const close = () => {
