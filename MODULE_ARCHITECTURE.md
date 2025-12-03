@@ -189,6 +189,12 @@ class YourModuleServiceProvider extends ServiceProvider
 - **Features**: Seller dashboard, Application management
 - **Cache**: 30 minutes TTL
 
+### Ride Module
+- **Services**: TransferService
+- **Features**: Transfer/Ride suggestions, Hotel booking cross-sell, Transfer bookings
+- **Routes**: `/api/v1/transfers/suggestions`, `/api/v1/transfers/available`, `/api/v1/transfers/book`
+- **Cross-Sell**: Automatically suggests airport transfers after hotel bookings
+
 ## 🔐 Payment Gateways
 
 All payment services implement `PaymentGatewayInterface`:
