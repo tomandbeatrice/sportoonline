@@ -204,7 +204,15 @@
           </router-link>
 
           <!-- Otel -->
-          <div @click="handleHotelBooking" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
+          <div 
+            @click="handleHotelBooking" 
+            @keydown.enter="handleHotelBooking"
+            @keydown.space.prevent="handleHotelBooking"
+            role="button"
+            tabindex="0"
+            aria-label="Otel rezervasyonu yap ve transfer önerisi al"
+            class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
+          >
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
               <span class="text-3xl">🏨</span>
             </div>
@@ -1217,21 +1225,31 @@ const addBundleToCart = async (bundle: Bundle) => {
 }
 
 // Hotel Booking & Transfer Recommendation Methods
+/**
+ * Demo handler for hotel booking completion.
+ * In production, this would be triggered after actual hotel booking API call succeeds.
+ * Currently simulates the booking flow by immediately showing transfer recommendation.
+ */
 const handleHotelBooking = () => {
-  // This would be called after a successful hotel booking
-  // For demo purposes, this is a mock function
-  console.log('Hotel booking completed')
+  console.log('Hotel booking completed (demo mode)')
   showTransferRecommendation.value = true
 }
 
+/**
+ * Handler for when user accepts the transfer recommendation.
+ * In production, this would call the transfer booking API.
+ */
 const handleTransferAccept = () => {
   console.log('Transfer added to cart')
-  // TODO: Add actual transfer booking logic
-  // For now, just increment cart count to show something was added
+  // Production: Call API to add transfer to cart
+  // For demo: Just increment cart count to show visual feedback
   cartItemCount.value += 1
   showTransferRecommendation.value = false
 }
 
+/**
+ * Handler for when user declines the transfer recommendation.
+ */
 const handleTransferDecline = () => {
   console.log('Transfer recommendation declined')
   showTransferRecommendation.value = false
