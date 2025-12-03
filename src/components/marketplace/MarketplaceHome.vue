@@ -204,19 +204,37 @@
           </router-link>
 
           <!-- Otel -->
-          <router-link to="/hotels" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all">
+          <div class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
               <span class="text-3xl">🏨</span>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">Otel Rezervasyonu</h3>
             <p class="text-slate-500 mb-4">En iyi fiyat garantisi</p>
-            <span class="inline-flex items-center text-sm font-medium text-blue-600 group-hover:gap-2 transition-all">
-              Otel Ara
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
+            
+            <!-- Booking Simulation Button (MVP Feature) -->
+            <button
+              v-if="!hotelBookingSuccess"
+              @click="simulateHotelBooking(MOCK_HOTEL_NAME)"
+              class="w-full mb-3 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Simulate Hotel Booking ✅
+            </button>
+            <div v-else class="mb-3 px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-lg text-center">
+              Booking Successful! 🎉
+            </div>
+            
+            <router-link
+              to="/hotels"
+              class="block text-center"
+            >
+              <span class="inline-flex items-center text-sm font-medium text-blue-600 group-hover:gap-2 transition-all">
+                Otel Ara
+                <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </router-link>
+          </div>
 
           <!-- Ulaşım -->
           <router-link to="/rides" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-green-200 hover:shadow-lg hover:-translate-y-1 transition-all">
@@ -377,6 +395,18 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           🚗 TRANSFER RECOMMENDATION - Cross-Selling After Hotel Booking
+           ═══════════════════════════════════════════════════════════════════ -->
+      <section v-if="showTransferRecommendation" class="transfer-cross-sell">
+        <TransferRecommendation
+          :destination="bookedHotelName"
+          :show-discount="true"
+          @add-transfer="handleAddTransfer"
+          @dismiss="handleDismissTransfer"
+        />
+      </section>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            2. 📦 AKTİF SİPARİŞLER - Kritik Bilgi
@@ -781,6 +811,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import TransferRecommendation from './TransferRecommendation.vue'
 
 // Simple i18n helpers
 const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
@@ -946,6 +977,11 @@ const mobileSearchInput = ref<HTMLInputElement | null>(null)
 
 // Cart
 const cartItemCount = ref(0)
+
+// Hotel Booking & Cross-Promotion
+const hotelBookingSuccess = ref(false)
+const showTransferRecommendation = ref(false)
+const bookedHotelName = ref('')
 
 // ═══════════════════════════════════════════════════════════════════
 // Computed
@@ -1203,6 +1239,32 @@ const addBundleToCart = async (bundle: Bundle) => {
   } finally {
     addingBundleId.value = null
   }
+}
+
+// Constants for MVP simulation
+const MOCK_HOTEL_NAME = 'Grand Plaza Hotel'
+
+// Hotel Booking & Transfer Cross-Promotion Methods
+const simulateHotelBooking = (hotelName: string = MOCK_HOTEL_NAME) => {
+  hotelBookingSuccess.value = true
+  bookedHotelName.value = hotelName
+  showTransferRecommendation.value = true
+}
+
+const handleAddTransfer = () => {
+  // Navigate to transfer booking page with hotel context
+  router.push({
+    path: '/rides',
+    query: { 
+      destination: bookedHotelName.value,
+      source: 'hotel-cross-sell'
+    }
+  })
+  showTransferRecommendation.value = false
+}
+
+const handleDismissTransfer = () => {
+  showTransferRecommendation.value = false
 }
 
 // ═══════════════════════════════════════════════════════════════════
