@@ -816,7 +816,87 @@ import FoodGroupOrder from './FoodGroupOrder.vue'
 // Simple i18n helpers
 const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
 const formatDate = (date: string) => new Date(date).toLocaleDateString('tr-TR')
-const t = (key: string) => key // Simplified translation
+
+// Turkish translations dictionary
+const translations: Record<string, string> = {
+  // Product
+  'product.bundleOffers': 'Paket Teklifleri',
+  'product.bundle.addToCart': 'Paketi Sepete Ekle',
+  'product.bundle.savings': 'Kazancınız',
+  'product.bundle.includes': 'Paket İçeriği',
+  'product.addBundle': 'Paketi Ekle',
+  'product.discount': 'İndirim',
+  'product.addToCart': 'Sepete Ekle',
+  'product.buyNow': 'Hemen Al',
+  'product.outOfStock': 'Stokta Yok',
+  'product.inStock': 'Stokta Var',
+  
+  // Bundle
+  'bundle.saveMoreTogether': 'Birlikte alın, daha çok kazanın!',
+  'bundle.noBundles': 'Şu anda aktif paket teklifi bulunmuyor.',
+  
+  // CTA (Call to Action)
+  'cta.specialOffers': 'Özel Teklifler',
+  'cta.specialOffersDesc': 'Size özel indirimli ürünleri kaçırmayın!',
+  'cta.viewOffers': 'Teklifleri Gör',
+  'cta.viewBundles': 'Paketleri Gör',
+  'cta.browseProducts': 'Ürünlere Göz At',
+  'cta.shopNow': 'Alışverişe Başla',
+  'cta.learnMore': 'Daha Fazla Bilgi',
+  
+  // Common
+  'common.limitedTime': 'Sınırlı Süre',
+  'common.viewAll': 'Tümünü Gör',
+  'common.loading': 'Yükleniyor...',
+  'common.error': 'Hata',
+  'common.success': 'Başarılı',
+  'common.cancel': 'İptal',
+  'common.save': 'Kaydet',
+  'common.delete': 'Sil',
+  'common.edit': 'Düzenle',
+  'common.add': 'Ekle',
+  'common.search': 'Ara',
+  'common.filter': 'Filtrele',
+  'common.sort': 'Sırala',
+  'common.price': 'Fiyat',
+  'common.quantity': 'Adet',
+  'common.total': 'Toplam',
+  'common.discount': 'İndirim',
+  'common.new': 'Yeni',
+  'common.popular': 'Popüler',
+  'common.recommended': 'Önerilen',
+  'common.previous': 'Önceki',
+  'common.next': 'Sonraki',
+  
+  // Order
+  'order.status.pending': 'Beklemede',
+  'order.status.confirmed': 'Onaylandı',
+  'order.status.processing': 'Hazırlanıyor',
+  'order.status.shipped': 'Kargoya Verildi',
+  'order.status.delivered': 'Teslim Edildi',
+  'order.trackOrder': 'Siparişi Takip Et',
+  'order.activeOrders': 'Aktif Siparişler',
+  'order.track': 'Takip Et',
+  'order.delivery': 'Teslimat',
+  
+  // Campaign
+  'campaign.endingSoon': 'Bitiyor',
+  'campaign.viewDetails': 'Detayları Gör',
+  'campaign.active': 'Aktif Kampanyalar',
+  'campaign.live': 'Canlı',
+  'campaign.shopNow': 'Hemen Alışveriş Yap',
+  
+  // Search
+  'search.placeholder': 'Ürün, marka veya kategori ara...',
+  
+  // Time
+  'time.days': 'gün',
+  'time.hours': 'saat',
+  'time.minutes': 'dakika',
+  'time.seconds': 'saniye',
+}
+
+const t = (key: string) => translations[key] || key
 
 // Types
 interface Campaign {
