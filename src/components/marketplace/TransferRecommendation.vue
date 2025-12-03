@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
+import { watch, onBeforeUnmount } from 'vue'
 
 // Props
 interface Props {
@@ -101,6 +101,11 @@ watch(() => props.show, (isOpen) => {
   } else {
     document.body.style.overflow = ''
   }
+})
+
+// Cleanup body scroll lock on unmount
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
 })
 </script>
 

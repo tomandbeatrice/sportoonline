@@ -1239,7 +1239,8 @@ const closeTransferRecommendation = () => {
 
 const handleAddTransfer = () => {
   // Placeholder for adding transfer to cart
-  console.log('Transfer added to Global Cart')
+  // The actual console.log is handled in the TransferRecommendation component
+  // Additional logic for adding to cart can be implemented here
 }
 
 // ═══════════════════════════════════════════════════════════════════
