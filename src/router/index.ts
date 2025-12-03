@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 // Marketplace
 const MarketplaceHome = () => import('@/components/marketplace/MarketplaceHome.vue')
+const CareerOpportunities = () => import('@/components/marketplace/CareerOpportunities.vue')
 const AccessDenied = () => import('@/pages/AccessDenied.vue')
 const ComingSoon = () => import('@/pages/ComingSoon.vue')
 
@@ -169,7 +170,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/hotels/booking-confirmation', name: 'HotelBookingConfirmation', component: HotelBookingConfirmation },
   { path: '/rides', name: 'Rides', component: ComingSoon },
   { path: '/services', name: 'Services', component: ComingSoon },
-  { path: '/career', name: 'Career', component: ComingSoon },
+  { path: '/career', name: 'Career', component: CareerOpportunities },
   
   // Auth
   { path: '/login', name: 'Login', component: Login },
