@@ -354,12 +354,20 @@ const shareableLink = computed(() => {
 const startGroupOrder = () => {
   if (!groupName.value.trim()) return
   
-  // Generate a random group ID
-  groupId.value = Math.random().toString(36).substring(2, 9)
+  // Generate a cryptographically secure random group ID
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    groupId.value = crypto.randomUUID().split('-')[0]
+  } else {
+    // Fallback for older browsers
+    groupId.value = Array.from(crypto.getRandomValues(new Uint8Array(4)))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+  }
   isActive.value = true
 }
 
 const closeGroupOrder = () => {
+  // TODO: Replace with a proper confirmation modal component
   if (confirm('Grup siparişini iptal etmek istediğinizden emin misiniz?')) {
     isActive.value = false
     groupName.value = ''
@@ -429,7 +437,11 @@ const calculateTotalAmount = (): number => {
 const completeOrder = () => {
   if (guests.value.length === 0 || calculateTotalAmount() === 0) return
   
-  alert(`Sipariş tamamlandı! Toplam: ₺${calculateTotalAmount().toFixed(2)}\n\nKatılımcılar:\n${guests.value.map(g => `${g.name}: ₺${calculateGuestTotal(g).toFixed(2)}`).join('\n')}`)
+  // TODO: Replace with toast notification or proper order confirmation flow
+  const orderSummary = `Sipariş tamamlandı! Toplam: ₺${calculateTotalAmount().toFixed(2)}\n\nKatılımcılar:\n${guests.value.map(g => `${g.name}: ₺${calculateGuestTotal(g).toFixed(2)}`).join('\n')}`
+  
+  console.log('Order completed:', orderSummary)
+  alert(orderSummary)
   
   // Reset after completion
   closeGroupOrder()

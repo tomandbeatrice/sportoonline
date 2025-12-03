@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, VueWrapper } from '@vue/test-utils'
 import FoodGroupOrder from '@/components/marketplace/FoodGroupOrder.vue'
 
 describe('FoodGroupOrder', () => {
@@ -45,7 +45,7 @@ describe('FoodGroupOrder', () => {
   })
 
   describe('Active State', () => {
-    let wrapper: any
+    let wrapper: VueWrapper<any>
 
     beforeEach(async () => {
       wrapper = mount(FoodGroupOrder)
