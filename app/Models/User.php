@@ -80,6 +80,11 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
+    public function wallet()
+    {
+        return $this->hasOne(\App\Modules\Wallet\Models\Wallet::class);
+    }
+
     protected function casts(): array
     {
         return [
