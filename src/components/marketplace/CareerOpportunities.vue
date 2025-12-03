@@ -273,6 +273,22 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Error Toast -->
+    <Transition name="toast">
+      <div
+        v-if="showErrorToast"
+        class="fixed bottom-6 right-6 z-50 max-w-md bg-red-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3"
+      >
+        <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <p class="font-semibold">Hata!</p>
+          <p class="text-sm text-red-100">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -315,7 +331,7 @@ const jobOpenings = ref<Job[]>([
     department: 'Yazılım',
     location: 'İstanbul / Remote',
     icon: '⚙️',
-    description: 'Yüksek performanslı API\'ler ve mikroservisler geliştirmek için deneyimli backend geliştiriciler arıyoruz. Node.js veya Laravel deneyimi gereklidir.',
+    description: "Yüksek performanslı API'ler ve mikroservisler geliştirmek için deneyimli backend geliştiriciler arıyoruz. Node.js veya Laravel deneyimi gereklidir.",
     tags: ['Node.js', 'Laravel', 'PostgreSQL', 'Full-time']
   },
   {
