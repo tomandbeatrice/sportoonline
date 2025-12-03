@@ -155,6 +155,9 @@ const close = () => {
   emit('close')
 }
 
+// Accept the offer and close the modal
+// Note: This emits 'accept' event first, then closes the modal
+// Parent components should handle navigation/action in the 'accept' handler
 const accept = () => {
   emit('accept')
   close()

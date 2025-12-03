@@ -204,7 +204,7 @@
           </router-link>
 
           <!-- Otel -->
-          <button @click="handleHotelBooking" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all text-left w-full">
+          <button @click="handleHotelBookingComplete" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all text-left w-full">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
               <span class="text-3xl">🏨</span>
             </div>
@@ -1216,11 +1216,11 @@ const addBundleToCart = async (bundle: Bundle) => {
   }
 }
 
-// Hotel & Transfer Methods
-const handleHotelBooking = () => {
+// Hotel & Transfer Cross-Promotion Methods
+const handleHotelBookingComplete = () => {
   // Simulate hotel booking completion
   // In a real scenario, this would be called after successful booking
-  console.log('Hotel booking initiated')
+  console.log('Hotel booking completed - showing transfer promotion')
   
   // Show transfer recommendation modal
   showTransferPromo.value = true
