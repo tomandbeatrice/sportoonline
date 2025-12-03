@@ -85,17 +85,18 @@ onMounted(() => {
   color: #6b7280;
   font-size: 1.125rem;
 }
-</style>
-}
+
 .categories, .products {
   margin-top: 2rem;
 }
+
 .product-card {
   display: inline-block;
   width: 150px;
   margin: 1rem;
   text-align: center;
 }
+
 .product-card img {
   width: 100%;
   border-radius: 6px;
