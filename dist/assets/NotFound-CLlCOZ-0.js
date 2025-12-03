@@ -1,0 +1,1 @@
+import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{e as t,f as n,g as a}from"./index-D2hY-dD-.js";const s={},r={class:"not-found"};function c(d,e){return n(),t("div",r,[...e[0]||(e[0]=[a("h2",null,"Sayfa Bulunamadı",-1),a("p",null,"Aradığınız sayfa mevcut değil.",-1)])])}const _=o(s,[["render",c],["__scopeId","data-v-9ab7e500"]]);export{_ as default};
