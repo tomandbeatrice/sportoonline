@@ -13,7 +13,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Module Service Providers
+        $this->app->register(\App\Modules\Ecommerce\EcommerceServiceProvider::class);
+        $this->app->register(\App\Modules\Campaign\CampaignServiceProvider::class);
+        $this->app->register(\App\Modules\Seller\SellerServiceProvider::class);
+        $this->app->register(\App\Modules\Admin\AdminServiceProvider::class);
     }
 
     /**

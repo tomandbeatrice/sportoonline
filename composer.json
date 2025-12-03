@@ -1,25 +1,26 @@
 {
   "name": "sportoonline/app",
-  "description": "Sportoonline Laravel 12.21 Uygulaması",
+  "description": "Sportoonline Laravel 11 Uygulaması",
   "type": "project",
   "require": {
     "php": "^8.2",
-    "barryvdh/laravel-dompdf": "*",
-    "darkaonline/l5-swagger": "*",
-    "guzzlehttp/guzzle": "^7.0.1",
-    "iyzico/iyzipay-php": "*",
-    "laravel/framework": "10.0",
-    "laravel/sanctum": "^3.3",
-    "laravel/tinker": "^2.8",
+    "barryvdh/laravel-dompdf": "^3.0",
+    "guzzlehttp/guzzle": "^7.8",
+    "iyzico/iyzipay-php": "^2.0",
+    "laravel/framework": "^11.0",
+    "laravel/sanctum": "^4.0",
+    "laravel/tinker": "^2.9",
     "maatwebsite/excel": "^3.1",
-    "pusher/pusher-php-server": "*",
+    "pusher/pusher-php-server": "^7.2",
     "stripe/stripe-php": "^18.2"
   },
   "require-dev": {
     "fakerphp/faker": "^1.24",
-    "laravel/sail": "*",
-    "nunomaduro/collision": "^7.5",
-    "phpunit/phpunit": "^10.5"
+    "laravel/sail": "^1.31",
+    "nunomaduro/collision": "^8.0",
+    "phpunit/phpunit": "^11.0",
+    "pestphp/pest": "^3.0",
+    "pestphp/pest-plugin-laravel": "^3.0"
   },
   "autoload": {
     "psr-4": {
