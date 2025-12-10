@@ -118,7 +118,7 @@ import { Menu, Bell, ChevronRight, ChevronDown, LayoutDashboard } from 'lucide-v
 
 const route = useRoute()
 const router = useRouter()
-const isSidebarOpen = ref(false)
+const isSidebarOpen = ref(true) // Desktop'ta sidebar her zaman açık
 const showNotifications = ref(false)
 const showUserMenu = ref(false)
 

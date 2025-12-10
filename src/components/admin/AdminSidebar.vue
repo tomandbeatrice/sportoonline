@@ -1,5 +1,5 @@
 <template>
-  <aside class="fixed left-0 top-0 z-40 h-screen w-64 bg-slate-900 text-white transition-transform" :class="{ '-translate-x-full': !isOpen }">
+  <aside class="fixed left-0 top-0 z-40 h-screen w-64 bg-slate-900 text-white transition-transform lg:translate-x-0" :class="{ '-translate-x-full': !isOpen }">
     <!-- Logo -->
     <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700">
       <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg shadow-indigo-500/20">
