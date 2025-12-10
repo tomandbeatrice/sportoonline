@@ -266,10 +266,6 @@ import {
   ChevronDown,
   Hotel,
   Bus,
-  Car,
-  Shield,
-  Map,
-  Ticket,
   RotateCcw,
   TrendingUp
 } from 'lucide-vue-next'
@@ -330,10 +326,6 @@ const serviceMenu: MenuItem[] = [
   { name: 'Restoranlar', path: '/admin/restaurants', icon: Utensils, category: 'Hizmetler' },
   { name: 'Oteller', path: '/admin/hotels', icon: Hotel, category: 'Hizmetler' },
   { name: 'Ulaşım', path: '/admin/transport', icon: Bus, category: 'Hizmetler' },
-  { name: 'Araç Kiralama', path: '/admin/car-rental', icon: Car, category: 'Hizmetler' },
-  { name: 'Sigorta', path: '/admin/insurance', icon: Shield, category: 'Hizmetler' },
-  { name: 'Turlar', path: '/admin/tours', icon: Map, category: 'Hizmetler' },
-  { name: 'Etkinlikler', path: '/admin/activities', icon: Ticket, category: 'Hizmetler' },
 ]
 
 const contentMenu: MenuItem[] = [

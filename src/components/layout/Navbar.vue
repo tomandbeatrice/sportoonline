@@ -257,7 +257,6 @@ const primaryLinks = [
   { label: 'Yemek', to: '/food', icon: 'utensils' },
   { label: 'Ulaşım', to: '/transport', icon: 'car' },
   { label: 'Otel', to: '/hotel', icon: 'hotel' },
-  { label: 'Kariyer', to: '/career', icon: 'briefcase' },
 ]
 
 const handleSearch = () => {

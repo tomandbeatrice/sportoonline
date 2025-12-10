@@ -315,10 +315,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'transport', name: 'AdminTransport', component: () => import('@/views/admin/TransportManagement.vue'), meta: { title: 'Ulaşım' } },
       { path: 'restaurants', name: 'AdminRestaurants', component: () => import('@/views/admin/RestaurantManagement.vue'), meta: { title: 'Restoranlar' } },
       { path: 'hotels', name: 'AdminHotels', component: () => import('@/views/admin/HotelManagement.vue'), meta: { title: 'Oteller' } },
-      { path: 'car-rental', name: 'AdminCarRental', component: () => import('@/views/admin/CarRentalManagement.vue'), meta: { title: 'Araç Kiralama' } },
-      { path: 'insurance', name: 'AdminInsurance', component: () => import('@/views/admin/InsuranceManagement.vue'), meta: { title: 'Sigorta' } },
-      { path: 'tours', name: 'AdminTours', component: () => import('@/views/admin/TourManagement.vue'), meta: { title: 'Turlar' } },
-      { path: 'activities', name: 'AdminActivities', component: () => import('@/views/admin/ActivityManagement.vue'), meta: { title: 'Aktiviteler' } },
       { path: 'marketplace', name: 'MarketplaceDashboard', component: () => import('@/views/admin/MarketplaceDashboard.vue'), meta: { title: 'Marketplace' } },
     ]
   },
