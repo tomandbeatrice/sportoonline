@@ -9,7 +9,7 @@ const ComingSoon = () => import('@/pages/ComingSoon.vue')
 
 // Product & Shopping
 const ProductList = () => import('@/views/product/ProductList.vue')
-const ProductDetail = () => import('@/views/product/ProductDetail.vue')
+const ProductDetail = () => import('@/views/marketplace/ProductDetail.vue')
 const Cart = () => import('@/views/cart/Cart.vue')
 const Checkout = () => import('@/views/cart/Checkout.vue')
 
