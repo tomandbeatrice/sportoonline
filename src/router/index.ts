@@ -27,7 +27,7 @@ const ApplyAsSeller = () => import('@/views/seller/ApplyAsSeller.vue')
 const SellerProducts = () => import('@/views/seller/SellerProducts.vue')
 
 // Admin
-const AdminDashboard = () => import('@/views/admin/AdminDashboard.vue')
+const AdminDashboard = () => import('@/views/admin/AdminDashboardNew.vue')
 const AdminOrders = () => import('@/views/admin/OrderManagement.vue')
 const AdminSellers = () => import('@/views/admin/SellerManagement.vue')
 const AdminCustomers = () => import('@/views/admin/CustomerManagement.vue')
@@ -67,7 +67,6 @@ const SegmentSuccessPrediction = () => import('@/views/segment/SegmentSuccessPre
 const SegmentSuccessRegression = () => import('@/views/segment/SegmentSuccessRegression.vue')
 
 // Seller (extended)
-const SellerDashboard = () => import('@/views/seller/SellerOnboarding.vue') // Using onboarding as dashboard
 const SellerLogin = () => import('@/views/seller/SellerLogin.vue')
 const SellerRegistration = () => import('@/views/seller/SellerRegistration.vue')
 const SellerOnboarding = () => import('@/views/seller/SellerOnboarding.vue')
