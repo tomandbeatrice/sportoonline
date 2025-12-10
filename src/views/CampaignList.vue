@@ -40,7 +40,9 @@ onMounted(async () => {
   loading.value = true
   loadError.value = null
   try {
-    campaigns.value = await get<Campaign[]>('/admin/campaign-list')
+    const response = await get<Campaign[] | { data: Campaign[] }>('/admin/campaign-list')
+    // API response'u array veya {data: array} formatında olabilir
+    campaigns.value = Array.isArray(response) ? response : (response?.data || [])
   } catch (error: any) {
     console.warn('API bağlantısı başarısız, mock data kullanılıyor:', error.message)
     loadError.value = 'Backend sunucusuna bağlanılamadı. Demo veriler gösteriliyor.'
@@ -58,6 +60,7 @@ onMounted(async () => {
 })
 
 const filteredCampaigns = computed(() => {
+  if (!Array.isArray(campaigns.value)) return []
   return campaigns.value
     .filter(c => {
       const matchSearch = c.name.toLowerCase().includes(search.value.toLowerCase())
