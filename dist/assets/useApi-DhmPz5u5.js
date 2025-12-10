@@ -1,1 +1,0 @@
-import{D as n}from"./index-D2hY-dD-.js";const p=()=>({get:async(t,a)=>{const{data:s}=await n.get(t,{params:a});return s},post:async(t,a)=>{const{data:s}=await n.post(t,a);return s},put:async(t,a)=>{const{data:s}=await n.put(t,a);return s},del:async t=>{const{data:a}=await n.delete(t);return a}});export{p as u};

@@ -1,3 +1,5 @@
+<?php
+
 // database/migrations/xxxx_create_variants_table.php
 public function up()
 {

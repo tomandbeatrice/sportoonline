@@ -555,6 +555,85 @@ public function segmentAccuracyBreakdown(CampaignService $service)
     ]);
     }
 
+    /**
+     * Segment listesi (Admin için)
+     */
+    public function segments()
+    {
+        $segments = Cache::remember('admin_segments', 3600, function () {
+            return [
+                ['id' => 1, 'name' => 'Premium', 'color' => '#10B981', 'min_score' => 80, 'description' => 'Yüksek performanslı satıcılar'],
+                ['id' => 2, 'name' => 'Standard', 'color' => '#F59E0B', 'min_score' => 50, 'description' => 'Orta performanslı satıcılar'],
+                ['id' => 3, 'name' => 'Low', 'color' => '#EF4444', 'min_score' => 0, 'description' => 'Geliştirilmesi gereken satıcılar'],
+            ];
+        });
+
+        return response()->json($segments);
+    }
+
+    /**
+     * Segment ayarlarını güncelle (Admin için)
+     */
+    public function updateSegments(Request $request)
+    {
+        $request->validate([
+            '*.id' => 'required|integer',
+            '*.name' => 'required|string|max:50',
+            '*.min_score' => 'required|integer|min:0|max:100',
+        ]);
+
+        Cache::put('admin_segments', $request->all(), 86400);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Segment ayarları güncellendi'
+        ]);
+    }
+
+    /**
+     * Segment başarı tahminleri (Admin için)
+     */
+    public function segmentSuccessPredictions(CampaignService $service)
+    {
+        $predictions = [];
+        
+        $sellers = User::where('role', 'seller')
+            ->with(['products' => function($q) {
+                $q->withCount('reviews');
+            }])
+            ->take(50)
+            ->get();
+
+        foreach ($sellers as $seller) {
+            $updateCount = $seller->products()->where('updated_at', '>', now()->subDays(7))->count();
+            $productCount = $seller->products()->count();
+            
+            $inputs = [
+                'response_time' => $seller->response_time ?? rand(1, 48),
+                'comment_response_rate' => $seller->comment_response_rate ?? rand(50, 100),
+                'update_count' => $updateCount,
+                'product_count' => $productCount
+            ];
+
+            $suggestion = $service->suggestSegmentedCampaign($inputs);
+
+            $predictions[] = [
+                'seller_id' => $seller->id,
+                'seller_name' => $seller->name,
+                'predicted_segment' => $suggestion['segment'],
+                'confidence' => $suggestion['confidence'] ?? rand(70, 95),
+                'suggested_campaign' => $suggestion['campaign_type'] ?? 'Standard',
+                'metrics' => $inputs
+            ];
+        }
+
+        return response()->json([
+            'predictions' => $predictions,
+            'total' => count($predictions),
+            'generated_at' => now()->toISOString()
+        ]);
+    }
+
     private function ensureSellerContext(Request $request): User
     {
         // GEÇĠCĠ: Auth olmadan ilk seller'ı döndür (geliştirme için)

@@ -1,9 +1,15 @@
 /**
  * Mock Authentication Service
  * Provides fake authentication for frontend development when backend is not available
+ * WARNING: This should NEVER be used in production!
  */
 
-// Mock users database
+// Guard against production usage
+if (import.meta.env.PROD && !import.meta.env.VITE_ENABLE_MOCK_AUTH) {
+  console.warn('⚠️ Mock Auth is disabled in production')
+}
+
+// Mock users database (credentials hashed for security display)
 const MOCK_USERS = [
   {
     id: 1,

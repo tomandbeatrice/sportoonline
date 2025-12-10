@@ -16,21 +16,85 @@ class SellerApplicationController extends Controller
      */
     public function register(Request $request)
     {
-        $data = $request->validate([
+        // Temel validasyon
+        $baseRules = [
+            'service_type' => 'required|string|in:products,food,hotel,transport,services,career',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:seller_applications,email|unique:users,email',
             'phone' => 'required|string|max:20',
             'company_name' => 'required|string|max:255',
-            'tax_number' => 'required|string|max:11',
+            'tax_number' => 'nullable|string|max:11',
             'tax_office' => 'nullable|string|max:255',
             'company_address' => 'required|string',
-            'bank_name' => 'required|string|max:255',
-            'iban' => 'required|string|size:26|starts_with:TR',
-            'account_holder' => 'required|string|max:255',
-            'categories' => 'required|array|min:1',
-            'categories.*' => 'exists:categories,id',
-        ]);
+            'bank_name' => 'nullable|string|max:255',
+            'iban' => 'nullable|string|max:26',
+            'account_holder' => 'nullable|string|max:255',
+        ];
+
+        // Hizmet türüne göre ek validasyon
+        $serviceType = $request->get('service_type');
+        $serviceDataRules = [];
+
+        switch ($serviceType) {
+            case 'products':
+                $serviceDataRules = [
+                    'categories' => 'required|array|min:1',
+                ];
+                break;
+            case 'food':
+                $serviceDataRules = [
+                    'cuisines' => 'required|array|min:1',
+                    'seating_capacity' => 'nullable|integer|min:1',
+                    'has_delivery' => 'nullable|boolean',
+                ];
+                break;
+            case 'hotel':
+                $serviceDataRules = [
+                    'room_count' => 'required|integer|min:1',
+                    'star_rating' => 'required|integer|min:1|max:5',
+                    'amenities' => 'nullable|array',
+                ];
+                break;
+            case 'transport':
+                $serviceDataRules = [
+                    'vehicle_count' => 'required|integer|min:1',
+                    'vehicle_type' => 'required|string',
+                    'service_region' => 'required|string',
+                ];
+                break;
+            case 'services':
+                $serviceDataRules = [
+                    'skills' => 'required|array|min:1',
+                    'experience_years' => 'nullable|integer|min:0',
+                    'hourly_rate' => 'nullable|numeric|min:0',
+                ];
+                break;
+            case 'career':
+                $serviceDataRules = [
+                    'sectors' => 'required|array|min:1',
+                    'job_types' => 'nullable|array',
+                ];
+                break;
+        }
+
+        $data = $request->validate(array_merge($baseRules, $serviceDataRules));
+
+        // service_data JSON alanını hazırla
+        $serviceData = [];
+        $serviceFields = ['categories', 'cuisines', 'seating_capacity', 'has_delivery', 
+                         'room_count', 'star_rating', 'amenities', 'vehicle_count', 
+                         'vehicle_type', 'service_region', 'skills', 'experience_years', 
+                         'hourly_rate', 'sectors', 'job_types'];
+        
+        foreach ($serviceFields as $field) {
+            if (isset($data[$field])) {
+                $serviceData[$field] = $data[$field];
+                unset($data[$field]);
+            }
+        }
+        
+        $data['service_data'] = $serviceData;
 
         $application = SellerApplication::create($data);
 
@@ -54,13 +118,47 @@ class SellerApplicationController extends Controller
     public function index(Request $request)
     {
         $status = $request->get('status', 'pending');
+        $serviceType = $request->get('service_type');
         
-        $applications = SellerApplication::where('status', $status)
-            ->with('approvedBy:id,name')
+        $query = SellerApplication::where('status', $status);
+        
+        // Hizmet türüne göre filtrele
+        if ($serviceType && $serviceType !== 'all') {
+            $query->where('service_type', $serviceType);
+        }
+        
+        $applications = $query->with('approvedBy:id,name')
             ->orderByDesc('created_at')
             ->paginate(20);
 
         return response()->json($applications);
+    }
+
+    /**
+     * Admin - Hizmet türüne göre istatistikler
+     */
+    public function statsByServiceType(Request $request)
+    {
+        $serviceType = $request->get('service_type');
+        
+        $query = SellerApplication::query();
+        
+        if ($serviceType && $serviceType !== 'all') {
+            $query->where('service_type', $serviceType);
+        }
+        
+        $stats = [
+            'pending' => (clone $query)->where('status', 'pending')->count(),
+            'approved' => (clone $query)->where('status', 'approved')->count(),
+            'rejected' => (clone $query)->where('status', 'rejected')->count(),
+            'total' => $query->count(),
+            'by_service_type' => SellerApplication::selectRaw('service_type, status, COUNT(*) as count')
+                ->groupBy('service_type', 'status')
+                ->get()
+                ->groupBy('service_type'),
+        ];
+
+        return response()->json($stats);
     }
 
     /**

@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Exports;
 
 use Illuminate\Support\Collection;

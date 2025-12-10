@@ -310,5 +310,6 @@ const searchRides = () => {
 const selectRoute = (route: any) => {
   bookingForm.pickup = route.from
   bookingForm.dropoff = route.to
+  searchRides()
 }
 </script>

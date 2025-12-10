@@ -44,12 +44,12 @@
       <div class="lg:grid lg:grid-cols-2 lg:gap-x-12 lg:items-start">
         <!-- Image Gallery -->
         <div class="relative">
-          <div class="aspect-square overflow-hidden rounded-3xl bg-white shadow-sm border border-slate-100">
-            <img
-              :src="product.image_url"
-              :alt="product.name"
-              class="h-full w-full object-cover object-center hover:scale-105 transition-transform duration-500"
-            />
+          <SmartImage 
+            :src="product.image_url" 
+            :alt="product.name" 
+            container-class="aspect-square rounded-3xl border border-slate-100 shadow-sm"
+            image-class="hover:scale-105 transition-transform duration-500"
+          />
             <!-- Badges -->
             <div class="absolute top-4 left-4 flex flex-col gap-2">
               <span v-if="product.stock < 5 && product.stock > 0" class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">
@@ -170,18 +170,102 @@
             AI Önerisi
           </span>
         </div>
-        <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-          <!-- Mock Similar Products -->
-          <div v-for="i in 4" :key="i" class="group relative rounded-2xl bg-white p-4 shadow-sm transition-all hover:shadow-md border border-slate-100">
+        
+        <!-- Loading State -->
+        <div v-if="loadingSimilar" class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+          <div v-for="i in 4" :key="i" class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
+            <Skeleton class="aspect-square w-full rounded-xl mb-4" />
+            <Skeleton class="h-4 w-3/4 mb-2" />
+            <Skeleton class="h-4 w-1/2" />
+          </div>
+        </div>
+        
+        <!-- Real AI Products -->
+        <div v-else-if="similarProducts.length > 0" class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+          <router-link 
+            v-for="similar in similarProducts" 
+            :key="similar.id" 
+            :to="`/products/${similar.id}`"
+            class="group relative rounded-2xl bg-white p-4 shadow-sm transition-all hover:shadow-md border border-slate-100 cursor-pointer"
+          >
             <div class="aspect-square w-full overflow-hidden rounded-xl bg-slate-100 mb-4">
-               <!-- Placeholder Image -->
-               <div class="w-full h-full flex items-center justify-center text-slate-300">
-                 <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-               </div>
+              <img 
+                v-if="similar.image_url" 
+                :src="similar.image_url" 
+                :alt="similar.name"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div v-else class="w-full h-full flex items-center justify-center text-slate-300">
+                <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
             </div>
-            <h3 class="text-sm font-medium text-slate-900">Benzer Ürün {{ i }}</h3>
-            <p class="text-sm text-slate-500">Kategori</p>
-            <p class="mt-2 font-bold text-blue-600">{{ (product.price * (0.8 + Math.random() * 0.4)).toFixed(2) }} TL</p>
+            <h3 class="text-sm font-medium text-slate-900 line-clamp-2">{{ similar.name }}</h3>
+            <p class="text-xs text-slate-500 mt-1">{{ similar.category?.name || 'Spor' }}</p>
+            <p class="mt-2 font-bold text-blue-600">{{ similar.price }} TL</p>
+            <span v-if="similar.match_score" class="absolute top-2 right-2 px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded-full">
+              %{{ Math.round(similar.match_score * 100) }} Eşleşme
+            </span>
+          </router-link>
+        </div>
+        
+        <!-- Fallback Empty State -->
+        <div v-else class="text-center py-12 bg-slate-50 rounded-2xl">
+          <p class="text-slate-500">Henüz benzer ürün önerisi bulunmuyor.</p>
+        </div>
+      </section>
+      
+      <!-- Frequently Bought Together (AI) -->
+      <section v-if="boughtTogetherProducts.length > 0" class="mt-16">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-2xl font-bold text-slate-900">Birlikte Sıkça Alınanlar</h2>
+          <span class="text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center gap-1">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            Müşteri Tercihi
+          </span>
+        </div>
+        
+        <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-center gap-4">
+            <!-- Current Product -->
+            <div class="text-center">
+              <SmartImage 
+                v-if="product.image_url" 
+                :src="product.image_url" 
+                :alt="product.name" 
+                container-class="w-24 h-24 rounded-xl mx-auto"
+              />
+              <p class="mt-2 text-sm font-medium text-slate-900 max-w-[120px] truncate">{{ product.name }}</p>
+              <p class="text-sm font-bold text-blue-600">{{ product.price }} TL</p>
+            </div>
+            
+            <!-- Plus Signs and Other Products -->
+            <template v-for="(item, index) in boughtTogetherProducts.slice(0, 3)" :key="item.id">
+              <span class="text-2xl text-slate-300 font-light">+</span>
+              <router-link :to="`/products/${item.id}`" class="text-center group cursor-pointer">
+                <SmartImage 
+                  v-if="item.image_url" 
+                  :src="item.image_url" 
+                  :alt="item.name" 
+                  container-class="w-24 h-24 rounded-xl mx-auto group-hover:ring-2 ring-blue-500 transition-all"
+                />
+                <p class="mt-2 text-sm font-medium text-slate-900 max-w-[120px] truncate group-hover:text-blue-600">{{ item.name }}</p>
+                <p class="text-sm font-bold text-blue-600">{{ item.price }} TL</p>
+              </router-link>
+            </template>
+            
+            <!-- Total & Add All Button -->
+            <div class="ml-8 pl-8 border-l border-slate-200">
+              <p class="text-sm text-slate-500">Toplam Fiyat</p>
+              <p class="text-2xl font-bold text-slate-900">
+                {{ (parseFloat(product.price) + boughtTogetherProducts.slice(0, 3).reduce((sum, p) => sum + parseFloat(p.price), 0)).toFixed(2) }} TL
+              </p>
+              <button 
+                @click="addBundleToCart"
+                class="mt-3 px-6 py-2 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 transition-colors"
+              >
+                Hepsini Sepete Ekle
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -299,7 +383,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import api from '@/services/api'
@@ -310,6 +394,9 @@ import { storeToRefs } from 'pinia'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 import IconStar from '@/components/icons/IconStar.vue'
+import { useTracking } from '@/composables/useTracking'
+import SmartImage from '@/components/ui/SmartImage.vue'
+import { useSEO, generateProductSchema } from '@/composables/useSEO'
 
 const route = useRoute()
 const router = useRouter()
@@ -319,15 +406,33 @@ const { products: storeProducts } = storeToRefs(productStore)
 const cartStore = useCartStore()
 const orderStore = useOrderStore()
 
+// AI Tracking System
+const { trackProductView, trackCartEvent } = useTracking()
+const { updateSEO } = useSEO()
+
 const product = ref<any>(null)
 const reviews = ref<any[]>([])
 const loading = ref(true)
 const quantity = ref(1)
 const isFavorite = ref(false)
 
+// AI Recommendations
+const similarProducts = ref<any[]>([])
+const boughtTogetherProducts = ref<any[]>([])
+const loadingSimilar = ref(false)
+const loadingBoughtTogether = ref(false)
+
 const newReview = ref({
   rating: 5,
   comment: ''
+})
+
+watch(reviews, () => {
+  if (product.value) {
+    updateSEO({
+      jsonLd: generateProductSchema(product.value, reviews.value)
+    })
+  }
 })
 
 const isAuthenticated = computed(() => {
@@ -342,6 +447,14 @@ const fetchProduct = async () => {
     
     if (found) {
       product.value = found
+      
+      // Update SEO
+      updateSEO({
+        title: `${found.name} - SportoOnline`,
+        description: found.description || `${found.name} en uygun fiyatlarla SportoOnline'da.`,
+        image: found.image_url,
+        jsonLd: generateProductSchema(found, reviews.value)
+      })
     } else {
       // Fallback to API if not in store (or handle 404)
       // For now, just mock it or redirect
@@ -362,18 +475,73 @@ const fetchProduct = async () => {
 
 const fetchReviews = async () => {
   try {
-    // Mock reviews
+    const { data } = await api.get(`/products/${product.value?.id}/reviews`)
+    reviews.value = data.reviews || data.data || data || []
+  } catch (error) {
+    console.error('Yorumlar yüklenemedi:', error)
+    // Fallback demo data
     reviews.value = [
       { id: 1, user: { name: 'Mehmet K.' }, rating: 5, comment: 'Harika bir ürün, çok memnun kaldım.', created_at: '2025-11-10' },
       { id: 2, user: { name: 'Ayşe Y.' }, rating: 4, comment: 'Kargo biraz geç geldi ama ürün kaliteli.', created_at: '2025-11-12' }
     ]
+  }
+}
+
+// AI: Benzer Ürünleri Getir
+const fetchSimilarProducts = async () => {
+  if (!product.value?.id) return
+  loadingSimilar.value = true
+  try {
+    const { data } = await api.get(`/ai/products/${product.value.id}/similar`)
+    similarProducts.value = data.similar_products || []
   } catch (error) {
-    console.error('Yorumlar yüklenemedi:', error)
+    console.error('Benzer ürünler yüklenemedi:', error)
+    // Fallback to random products from store
+    similarProducts.value = storeProducts.value
+      .filter(p => p.id !== product.value.id && p.category_id === product.value.category_id)
+      .slice(0, 4)
+  } finally {
+    loadingSimilar.value = false
+  }
+}
+
+// AI: Birlikte Alınan Ürünleri Getir
+const fetchBoughtTogether = async () => {
+  if (!product.value?.id) return
+  loadingBoughtTogether.value = true
+  try {
+    const { data } = await api.get(`/ai/products/${product.value.id}/bought-together`)
+    boughtTogetherProducts.value = data.bought_together || []
+  } catch (error) {
+    console.error('Birlikte alınan ürünler yüklenemedi:', error)
+    // Fallback
+    boughtTogetherProducts.value = storeProducts.value
+      .filter(p => p.id !== product.value.id)
+      .slice(0, 3)
+  } finally {
+    loadingBoughtTogether.value = false
   }
 }
 
 const addToCart = async () => {
   cartStore.addToCart(product.value, quantity.value)
+  // AI: Sepete ekleme olayını takip et
+  trackCartEvent(product.value.id, 'add', quantity.value, parseFloat(product.value.price))
+}
+
+// AI: Birlikte alınan ürünleri sepete ekle
+const addBundleToCart = () => {
+  // Ana ürünü ekle
+  cartStore.addToCart(product.value, 1)
+  trackCartEvent(product.value.id, 'add', 1, parseFloat(product.value.price))
+  
+  // Birlikte alınan ürünleri ekle
+  boughtTogetherProducts.value.slice(0, 3).forEach(item => {
+    cartStore.addToCart(item, 1)
+    trackCartEvent(item.id, 'add', 1, parseFloat(item.price))
+  })
+  
+  toast.success(`${boughtTogetherProducts.value.slice(0, 3).length + 1} ürün sepete eklendi!`)
 }
 
 const toggleFavorite = async () => {
@@ -422,5 +590,16 @@ const formatDate = (date: string) => {
 onMounted(() => {
   fetchProduct()
   fetchReviews()
+})
+
+// Ürün yüklendiğinde AI verilerini getir ve görüntülemeyi takip et
+watch(product, (newProduct) => {
+  if (newProduct?.id) {
+    // AI: Ürün görüntüleme olayını takip et
+    trackProductView(newProduct.id, 'product_detail')
+    // AI önerilerini getir
+    fetchSimilarProducts()
+    fetchBoughtTogether()
+  }
 })
 </script>

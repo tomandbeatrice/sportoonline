@@ -126,4 +126,101 @@ class AuthController extends Controller
             'application' => $application
         ]);
     }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        
+        // Generate reset token
+        $token = \Str::random(64);
+        
+        \DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email],
+            [
+                'token' => Hash::make($token),
+                'created_at' => now()
+            ]
+        );
+
+        // Send reset email
+        try {
+            \Mail::to($request->email)->send(new \App\Mail\PasswordResetMail($user, $token));
+        } catch (\Exception $e) {
+            \Log::error('Password reset email failed: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.'
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'password' => 'required|min:6|confirmed'
+        ]);
+
+        // Find the reset record
+        $reset = \DB::table('password_reset_tokens')
+            ->where('created_at', '>', now()->subHours(24))
+            ->first();
+
+        if (!$reset) {
+            return response()->json([
+                'message' => 'Geçersiz veya süresi dolmuş token.'
+            ], 400);
+        }
+
+        // Verify token
+        if (!Hash::check($request->token, $reset->token)) {
+            return response()->json([
+                'message' => 'Geçersiz token.'
+            ], 400);
+        }
+
+        // Update password
+        $user = User::where('email', $reset->email)->first();
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        // Delete reset token
+        \DB::table('password_reset_tokens')->where('email', $reset->email)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Şifreniz başarıyla güncellendi.'
+        ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:6|confirmed'
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'Mevcut şifreniz hatalı.'
+            ], 400);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Şifreniz başarıyla değiştirildi.'
+        ]);
+    }
 }

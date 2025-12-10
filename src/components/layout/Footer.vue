@@ -59,8 +59,8 @@
         <div class="mt-14 grid gap-8 border-t border-white/10 pt-10 text-sm text-white/70 lg:grid-cols-3">
           <div>
             <p class="text-xs uppercase tracking-[0.35em] text-white/50">Kimlik</p>
-            <p class="mt-2 text-lg font-semibold text-white">sportoonline pazaryeri</p>
-            <p class="text-white/50">Veri odaklı satıcı paneli • Yapay zekâ kampanyaları • Esnek lojistik</p>
+            <p class="mt-2 text-lg font-semibold text-white">sportoonline MultiPrice</p>
+            <p class="text-white/50">Lifestyle Hub • Veri odaklı satıcı paneli • Yapay zekâ kampanyaları</p>
           </div>
           <div class="flex items-center gap-4">
             <span class="text-xs uppercase tracking-[0.35em] text-white/50">Ödeme</span>

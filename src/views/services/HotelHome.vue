@@ -249,6 +249,7 @@ const searchHotels = () => {
 
 const selectDestination = (destination: string) => {
   searchForm.destination = destination
+  searchHotels()
 }
 
 const goToHotel = (hotelId: number) => {

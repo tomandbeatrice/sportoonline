@@ -1,121 +1,33 @@
 <template>
   <div class="min-h-screen bg-slate-50">
-    <!-- Header with Logout -->
-    <header class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
-      <div class="flex items-center justify-between px-6 py-4">
-        <div class="flex items-center gap-4">
-          <router-link to="/dashboard" class="text-2xl font-bold text-slate-900">
-            SportoOnline
-          </router-link>
-          <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-            ADMIN
-          </span>
-        </div>
-        
-        <nav class="flex items-center gap-2">
-          <router-link to="/dashboard" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100">
-            Ana Sayfa
-          </router-link>
-          <router-link to="/admin/dashboard" class="rounded-lg bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700">
-            Dashboard
-          </router-link>
-          <router-link to="/admin/reports" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100">
-            Raporlar
-          </router-link>
-          <router-link to="/admin/settings" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100">
-            Ayarlar
-          </router-link>
-          <router-link to="/admin/notifications" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100">
-            Bildirimler
-          </router-link>
-          <router-link to="/admin/theme" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100">
-            Tema
-          </router-link>
-          
-          <!-- Notification Bell -->
-          <NotificationDropdown
-            :notifications="notifications"
-            :unreadCount="unreadCount"
-            :markAsRead="markAsRead"
-            :markAllAsRead="markAllAsRead"
-            :clearAll="clearAll"
-          />
-          
-          <div class="ml-4 flex items-center gap-3 border-l border-slate-200 pl-4">
-            <div class="text-right">
-              <p class="text-sm font-semibold text-slate-900">{{ userName }}</p>
-              <p class="text-xs text-slate-500">Administrator</p>
-            </div>
-            <button 
-              @click="handleLogout"
-              class="rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100"
-            >
-              Çıkış
-            </button>
-          </div>
-        </nav>
-      </div>
-    </header>
+    <!-- Header removed (handled by AdminLayout) -->
 
     <!-- Main Content -->
-    <div class="px-4 py-10 md:px-8">
+    <div class="px-4 py-10 md:px-8" :aria-busy="isLoading">
       <div v-if="isLoading" class="flex h-[60vh] flex-col items-center justify-center gap-3 text-slate-500">
-        <span class="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-slate-500" />
-        <p>Panon yükleniyor...</p>
+        <LoadingSkeleton variant="chart" />
+        <p class="sr-only">Panon yükleniyor...</p>
       </div>
-      <div v-else-if="loadError" class="rounded-3xl border border-orange-100 bg-white px-6 py-4 text-center text-sm text-orange-700">
-        {{ loadError }}
-      </div>
-
+      <EmptyState v-else-if="loadError" :title="'Yönetim paneli verisi alınamadı'" :description="loadError">
+        <template #icon>
+          <AlertTriangle class="h-12 w-12 text-red-500" />
+        </template>
+      </EmptyState>
+      <EmptyState v-else-if="!adminStats || Object.keys(adminStats).length === 0" :title="'Yönetim paneli verisi yok'" :description="'Henüz istatistik veya işlem kaydı bulunamadı.'">
+        <template #icon>
+          <BarChartIcon class="h-12 w-12 text-slate-400" />
+        </template>
+      </EmptyState>
       <div v-else class="space-y-10">
-      <!-- Test Chart -->
-      <Card class="border-4 border-purple-500">
-        <CardHeader>
-          <CardTitle>🧪 Test Grafik (Her Zaman Görünür)</CardTitle>
-          <CardDescription>Bu basit test grafiği her zaman çalışmalı</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LineChart :data="testChartData" :height="200" />
-        </CardContent>
-      </Card>
+      <!-- Test Chart removed -->
 
       <!-- Real-time Metrics Banner -->
-      <section v-if="realtimeMetrics" class="rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 to-cyan-50 p-6">
-        <div class="mb-4 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <div class="h-3 w-3 animate-pulse rounded-full bg-emerald-500"></div>
-            <h3 class="text-lg font-semibold text-slate-900">Canlı Metrikler</h3>
-            <span v-if="!realtimeLoading" class="text-xs text-slate-500">(Son 30 saniye)</span>
-          </div>
-          <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-            CANLI
-          </span>
-        </div>
-        <div class="grid gap-4 md:grid-cols-4">
-          <div class="rounded-xl bg-white p-4 shadow-sm">
-            <p class="text-xs uppercase tracking-wider text-slate-500">Sipariş (Canlı)</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">{{ realtimeMetrics.total_orders }}</p>
-            <p class="mt-1 text-sm text-emerald-600">+{{ realtimeMetrics.total_orders - (adminStats?.last_24h_orders || 0) }} yeni</p>
-          </div>
-          <div class="rounded-xl bg-white p-4 shadow-sm">
-            <p class="text-xs uppercase tracking-wider text-slate-500">Gelir (Canlı)</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">{{ formatCurrency(realtimeMetrics.today_revenue) }}</p>
-            <p class="mt-1 text-sm text-slate-600">Ortalama: {{ formatCurrency(realtimeMetrics.avg_order_value) }}</p>
-          </div>
-          <div class="rounded-xl bg-white p-4 shadow-sm">
-            <p class="text-xs uppercase tracking-wider text-slate-500">Aktif Kampanya</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">{{ realtimeMetrics.active_campaigns }}</p>
-            <p class="mt-1 text-sm text-slate-600">Devam eden</p>
-          </div>
-          <div class="rounded-xl bg-white p-4 shadow-sm">
-            <p class="text-xs uppercase tracking-wider text-slate-500">Dönüşüm</p>
-            <p class="mt-2 text-3xl font-bold text-slate-900">{{ realtimeMetrics.conversion_rate }}%</p>
-            <p class="mt-1 text-sm" :class="realtimeMetrics.conversion_rate > 2 ? 'text-emerald-600' : 'text-orange-600'">
-              {{ realtimeMetrics.conversion_rate > 2 ? '↗ Hedefin üstünde' : '↘ Hedefin altında' }}
-            </p>
-          </div>
-        </div>
-      </section>
+      <AdminLiveMetrics 
+        v-if="realtimeMetrics"
+        :metrics="realtimeMetrics"
+        :is-loading="realtimeLoading"
+        :previous-orders="adminStats?.last_24h_orders || 0"
+      />
 
       <section class="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
         <Card class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-900 text-white">
@@ -127,10 +39,10 @@
               </CardDescription>
             </div>
             <div class="flex flex-wrap gap-3">
-              <button @click="shareReport" class="rounded-2xl border border-white/30 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white hover:text-white">
+              <button @click="shareReport" aria-label="Raporu paylaş" class="rounded-2xl border border-white/30 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white">
                 Raporu Paylaş
               </button>
-              <button @click="createCriticalAlert" class="rounded-2xl bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-slate-900/40 transition hover:-translate-y-[2px]">
+              <button @click="createCriticalAlert" aria-label="Kritik uyarı oluştur" class="rounded-2xl bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-slate-900/40 transition hover:-translate-y-[2px] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500">
                 Kritik Alert Oluştur
               </button>
             </div>
@@ -181,87 +93,15 @@
         </Card>
       </section>
 
-      <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card v-for="stat in statGrid" :key="stat.id" class="relative overflow-hidden">
-          <CardHeader class="space-y-1">
-            <CardDescription class="text-xs uppercase tracking-[0.4em] text-slate-400">{{ stat.label }}</CardDescription>
-            <CardTitle class="text-3xl">{{ stat.value }}</CardTitle>
-          </CardHeader>
-          <CardContent class="flex items-center justify-between text-sm text-slate-500">
-            <span>{{ stat.hint }}</span>
-            <span :class="stat.trend === 'up' ? 'text-emerald-600' : 'text-orange-600'">{{ stat.delta }}</span>
-          </CardContent>
-          <div class="pointer-events-none absolute -right-4 top-1/2 h-16 w-16 -translate-y-1/2 rounded-full" :class="stat.trend === 'up' ? 'bg-emerald-100' : 'bg-orange-100'" />
-        </Card>
-      </section>
+      <AdminStatsGrid :stats="statGrid" />
 
       <!-- Charts Section -->
-      <section class="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>📊 Gelir Trendi</CardTitle>
-            <CardDescription>Son 7 günlük gelir ve sipariş grafiği</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div v-if="!revenueChartData" class="flex h-[300px] items-center justify-center text-sm">
-              <div class="text-center">
-                <p class="text-slate-400">Grafik verisi yükleniyor...</p>
-                <p class="mt-2 text-xs text-slate-300">Financial Report: {{ financialReport ? 'Var' : 'Yok' }}</p>
-                <p class="text-xs text-slate-300">Transactions: {{ financialReport?.recent_transactions?.length || 0 }}</p>
-              </div>
-            </div>
-            <LineChart v-else :data="revenueChartData" :height="300" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>💰 Satıcı Gelir Dağılımı</CardTitle>
-            <CardDescription>Top 5 satıcının gelir paylaşımı</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div v-if="!sellerRevenueChart" class="flex h-[300px] items-center justify-center text-sm">
-              <div class="text-center">
-                <p class="text-slate-400">Grafik verisi yükleniyor...</p>
-                <p class="mt-2 text-xs text-slate-300">Sellers: {{ financialReport?.sales_by_seller?.length || 0 }}</p>
-              </div>
-            </div>
-            <BarChart v-else :data="sellerRevenueChart" :height="300" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle class="inline-flex items-center gap-2"><BadgeIcon name="box" cls="w-5 h-5 text-blue-600" /> Sipariş Durumu</CardTitle>
-            <CardDescription>Sipariş durum dağılımı</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div v-if="!orderStatusChart" class="flex h-[300px] items-center justify-center text-sm">
-              <div class="text-center">
-                <p class="text-slate-400">Grafik verisi yükleniyor...</p>
-                <p class="mt-2 text-xs text-slate-300">Admin Stats: {{ adminStats ? 'Var' : 'Yok' }}</p>
-              </div>
-            </div>
-            <DoughnutChart v-else :data="orderStatusChart" :height="300" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>💵 Komisyon Analizi</CardTitle>
-            <CardDescription>Platform geliri vs satıcı payı</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div v-if="!commissionChart" class="flex h-[300px] items-center justify-center text-sm">
-              <div class="text-center">
-                <p class="text-slate-400">Grafik verisi yükleniyor...</p>
-                <p class="mt-2 text-xs text-slate-300">Summary: {{ financialReport?.summary ? 'Var' : 'Yok' }}</p>
-              </div>
-            </div>
-            <DoughnutChart v-else :data="commissionChart" :height="300" />
-          </CardContent>
-        </Card>
-      </section>
+      <AdminChartsSection 
+        :revenue-data="revenueChartData"
+        :seller-data="sellerRevenueChart"
+        :order-status-data="orderStatusChart"
+        :commission-data="commissionChart"
+      />
 
       <section>
         <Card class="space-y-6">
@@ -328,19 +168,28 @@
             <CardDescription>Takibe alınan aksiyon maddeleri</CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion defaultValue="task-1" class="space-y-4">
-              <AccordionItem v-for="task in opsTasks" :key="task.id" :value="task.id">
-                <div class="p-4">
-                  <AccordionTrigger class="text-sm font-semibold text-slate-900">
-                    {{ task.title }} · <span class="text-slate-400">{{ task.department }}</span>
-                  </AccordionTrigger>
-                  <AccordionContent class="text-sm text-slate-500">
-                    <p>{{ task.description }}</p>
-                    <p class="mt-3 text-xs uppercase tracking-[0.3em] text-slate-400">Teslim: {{ task.due }}</p>
-                  </AccordionContent>
+            <div class="space-y-4">
+              <div v-for="task in opsTasks" :key="task.id" class="group relative rounded-xl border border-slate-100 p-4 hover:bg-slate-50 transition-colors">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h4 class="text-sm font-semibold text-slate-900">{{ task.title }}</h4>
+                    <p class="text-xs text-slate-500 mt-1">{{ task.department }}</p>
+                  </div>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-600">
+                    {{ task.due }}
+                  </span>
                 </div>
-              </AccordionItem>
-            </Accordion>
+                <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+                  {{ task.description }}
+                </p>
+                <div class="mt-3 flex items-center gap-2">
+                  <div class="h-1.5 flex-1 rounded-full bg-slate-100">
+                    <div class="h-full w-2/3 rounded-full bg-indigo-500"></div>
+                  </div>
+                  <span class="text-[10px] font-medium text-slate-400">%65</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -407,7 +256,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, onUnmounted } from 'vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { useToast } from 'vue-toastification'
+import { AlertTriangle, BarChart as BarChartIcon } from 'lucide-vue-next'
 import {
   Card,
   CardHeader,
@@ -426,8 +277,20 @@ import { performanceMonitor } from '@/services/performanceMonitor'
 import LineChart from '@/components/charts/LineChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
+import ChartWrapper from '@/components/ui/ChartWrapper.vue'
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton.vue'
 import NotificationDropdown from '@/components/NotificationDropdown.vue'
 import { useNotifications } from '@/composables/useNotifications'
+import AdminLiveMetrics from '@/components/admin/dashboard/AdminLiveMetrics.vue'
+import AdminStatsGrid from '@/components/admin/dashboard/AdminStatsGrid.vue'
+import AdminChartsSection from '@/components/admin/dashboard/AdminChartsSection.vue'
+import AdminObservabilityPanel from '@/components/admin/dashboard/AdminObservabilityPanel.vue'
+import AdminQuickActions from '@/components/admin/dashboard/AdminQuickActions.vue'
+
+// Lazy loaders for charts (used with ChartWrapper)
+const LineChartLoader = () => import('@/components/charts/LineChart.vue')
+const BarChartLoader = () => import('@/components/charts/BarChart.vue')
+const DoughnutChartLoader = () => import('@/components/charts/DoughnutChart.vue')
 
 const productStore = useProductStore()
 const orderStore = useOrderStore()
@@ -1116,7 +979,10 @@ async function loadAdminDashboard() {
       recent_transactions: []
     }
     
-    loadError.value = error.message || 'Veriler yüklenemedi. Mock data gösteriliyor.'
+    // Don't block UI with error, just show toast and use mock data
+    // loadError.value = error.message || 'Veriler yüklenemedi. Mock data gösteriliyor.'
+    toast.error('API bağlantısı başarısız. Mock veriler gösteriliyor.')
+    loadError.value = null
   } finally {
     isLoading.value = false
   }

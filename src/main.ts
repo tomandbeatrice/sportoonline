@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router/index.js'
 import { createPinia } from 'pinia'
 import { createHead } from '@vueuse/head'
+import i18n from './i18n'
 import Toastify from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import './assets/tailwind.css'
@@ -12,13 +13,13 @@ import { registerServiceWorker, setupInstallPrompt } from './utils/pwa.js'
 import { analytics } from './services/analytics.js'
 import { errorTracking } from './services/errorTracking.js'
 import { performanceMonitoring } from './services/performanceMonitoring.js'
-import mockAuth from './services/mockAuth.js'
+// import mockAuth from './services/mockAuth.js'
 
 // Initialize Mock Auth auto-detection
-mockAuth.autoDetectMockAuth()
+// mockAuth.autoDetectMockAuth()
 
 // Axios global configuration
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api'
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
@@ -72,6 +73,7 @@ if (import.meta.env.DEV) {
 app.use(pinia)
 app.use(head)
 app.use(router)
+app.use(i18n)
 app.use(Toastify, {
   autoClose: 3000,
   position: 'top-right'

@@ -31,7 +31,7 @@ const error = ref(null)
 onMounted(async () => {
   try {
     loading.value = true
-    const res = await axios.get('/api/admin/segments')
+    const res = await axios.get('/api/v1/admin/segments')
     segments.value = res.data
   } catch (err) {
     console.warn('Backend not available:', err.message)
@@ -50,7 +50,7 @@ onMounted(async () => {
 const save = async () => {
   try {
     loading.value = true
-    await axios.post('/api/admin/segments/update', segments.value)
+    await axios.post('/api/v1/admin/segments/update', segments.value)
     alert('Segmentler kaydedildi!')
   } catch (err) {
     console.warn('Save failed:', err.message)

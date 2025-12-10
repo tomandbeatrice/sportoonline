@@ -8,7 +8,6 @@ use App\Http\Controllers\{
     AuthController,
     ProductController,
     OrderController,
-    CartController,
     CategoryController,
     DashboardController,
     SellerController,
@@ -20,6 +19,7 @@ use App\Http\Controllers\{
 };
 
 use App\Http\Controllers\Api\{
+    CartController,
     C2CDashboardController,
     PaymentController as ApiPaymentController,
     TurboCompetitionController
@@ -93,7 +93,33 @@ Route::prefix('products')->name('v1.products.')->group(function () {
     // Product reviews
     Route::get('/{product}/reviews', [\App\Http\Controllers\ReviewController::class, 'productReviews'])
         ->name('reviews');
-    
+});
+
+// ============================================
+// Banners & Campaigns & Services (Public)
+// ============================================
+Route::get('/banners', [\App\Http\Controllers\Api\BannerController::class, 'index']);
+Route::get('/campaigns/active', [\App\Http\Controllers\Api\PublicCampaignController::class, 'index']);
+Route::get('/services', [\App\Http\Controllers\Api\ServiceModuleController::class, 'index']);
+
+// ============================================
+// Orders (Active)
+// ============================================
+Route::get('/orders/active', [OrderController::class, 'active'])->middleware('auth:sanctum')->name('v1.orders.active');
+
+// ============================================
+// Segments (Admin)
+// ============================================
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('v1.admin.')->group(function () {
+    Route::get('/segments', [SellerController::class, 'segments'])->name('segments');
+    Route::post('/segments/update', [SellerController::class, 'updateSegments'])->name('segments.update');
+    Route::get('/segment-success-predictions', [SellerController::class, 'segmentSuccessPredictions'])->name('segment-predictions');
+});
+
+// ============================================
+// Products (Protected)
+// ============================================
+Route::prefix('products')->name('v1.products.')->group(function () {
     // Protected routes (sellers only)
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/', [ProductController::class, 'store'])->name('store');
@@ -185,3 +211,57 @@ Route::prefix('seller')->middleware(['auth:sanctum'])->name('v1.seller.')->group
 Route::prefix('buyer')->middleware(['auth:sanctum'])->name('v1.buyer.')->group(function () {
     Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('dashboard');
 });
+
+// ============================================
+// AI Recommendations
+// ============================================
+Route::prefix('ai')->name('v1.ai.')->group(function () {
+    Route::get('/recommendations', [\App\Http\Controllers\AIRecommendationController::class, 'getPersonalizedRecommendations'])->name('recommendations');
+    Route::get('/recommendations/refresh', [\App\Http\Controllers\AIRecommendationController::class, 'refreshRecommendations'])->middleware('auth:sanctum')->name('recommendations.refresh');
+    Route::get('/products/{productId}/similar', [\App\Http\Controllers\AIRecommendationController::class, 'getSimilarProducts'])->name('similar');
+    Route::get('/products/{productId}/bought-together', [\App\Http\Controllers\AIRecommendationController::class, 'getFrequentlyBoughtTogether'])->name('bought-together');
+    Route::get('/dashboard', [\App\Http\Controllers\AIRecommendationController::class, 'dashboard'])->middleware('auth:sanctum')->name('dashboard');
+});
+
+// ============================================
+// User Behavior Tracking
+// ============================================
+Route::prefix('tracking')->name('v1.tracking.')->group(function () {
+    // Görüntüleme takibi
+    Route::post('/product-view', [\App\Http\Controllers\UserBehaviorController::class, 'trackProductView'])->name('product-view');
+    Route::post('/view-duration', [\App\Http\Controllers\UserBehaviorController::class, 'updateViewDuration'])->name('view-duration');
+    
+    // Kampanya takibi
+    Route::post('/campaign-view', [\App\Http\Controllers\UserBehaviorController::class, 'trackCampaignView'])->name('campaign-view');
+    Route::post('/campaign-click', [\App\Http\Controllers\UserBehaviorController::class, 'trackCampaignClick'])->name('campaign-click');
+    
+    // Arama takibi
+    Route::post('/search', [\App\Http\Controllers\UserBehaviorController::class, 'trackSearch'])->name('search');
+    Route::post('/search-click', [\App\Http\Controllers\UserBehaviorController::class, 'trackSearchClick'])->name('search-click');
+    
+    // Sepet takibi
+    Route::post('/cart-event', [\App\Http\Controllers\UserBehaviorController::class, 'trackCartEvent'])->name('cart-event');
+    
+    // Veri okuma
+    Route::get('/recent-views', [\App\Http\Controllers\UserBehaviorController::class, 'getRecentViews'])->name('recent-views');
+    Route::get('/popular-searches', [\App\Http\Controllers\UserBehaviorController::class, 'getPopularSearches'])->name('popular-searches');
+    Route::get('/trending', [\App\Http\Controllers\UserBehaviorController::class, 'getTrendingProducts'])->name('trending');
+});
+
+// ============================================
+// Discovery & Maps
+// ============================================
+Route::get('/discovery/places', [\App\Http\Controllers\Api\DiscoveryController::class, 'index'])->name('v1.discovery.places');
+
+
+// ============================================
+// Gamification
+// ============================================
+Route::middleware('auth:sanctum')->get('/gamification/status', [\App\Http\Controllers\Api\GamificationController::class, 'status'])->name('v1.gamification.status');
+
+
+// ============================================
+// AI Chat Assistant
+// ============================================
+Route::post('/chat/message', [\App\Http\Controllers\Api\ChatController::class, 'sendMessage'])->name('v1.chat.message');
+

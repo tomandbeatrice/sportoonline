@@ -173,4 +173,107 @@ class PaytrService implements PaymentGatewayInterface
         $parts = explode('_', $merchant_oid);
         return isset($parts[1]) ? intval($parts[1]) : null;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initiatePayment(Order $order, array $customerData): array
+    {
+        try {
+            $result = $this->initializePayment($order);
+            
+            if (isset($result['status']) && $result['status'] === 'success') {
+                return [
+                    'success' => true,
+                    'data' => [
+                        'token' => $result['token'] ?? null,
+                    ],
+                    'error' => null,
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'data' => null,
+                'error' => $result['reason'] ?? 'Payment initialization failed',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'data' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleCallback(array $request): array
+    {
+        if (!$this->verifyCallback($request)) {
+            return [
+                'success' => false,
+                'order_id' => null,
+                'transaction_id' => null,
+                'error' => 'Hash verification failed',
+            ];
+        }
+
+        $orderId = $this->extractOrderId($request['merchant_oid'] ?? '');
+        $status = $request['status'] ?? 'error';
+
+        return [
+            'success' => $status === 'success',
+            'order_id' => $orderId,
+            'transaction_id' => $request['merchant_oid'] ?? null,
+            'error' => $status !== 'success' ? 'Payment failed' : null,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleWebhook(array $request): array
+    {
+        return $this->handleCallback($request);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refund(string $transactionId, float $amount, ?string $reason = null): array
+    {
+        // PayTR refund implementation would go here
+        // For now, return a placeholder
+        return [
+            'success' => false,
+            'refund_id' => null,
+            'error' => 'Refund not implemented for PayTR',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isTestMode(): bool
+    {
+        return (bool) $this->testMode;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return 'paytr';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConfigured(): bool
+    {
+        return !empty($this->merchantId) && !empty($this->merchantKey) && !empty($this->merchantSalt);
+    }
 }

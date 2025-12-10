@@ -19,11 +19,12 @@
           <div class="flex bg-white rounded-xl overflow-hidden shadow-lg">
             <input
               v-model="searchQuery"
+              @keyup.enter="handleSearch"
               type="text"
               placeholder="Restoran veya yemek ara..."
               class="flex-1 px-4 py-3 text-slate-800 focus:outline-none"
             />
-            <button class="bg-orange-600 hover:bg-orange-700 px-6 py-3 font-medium transition-colors">
+            <button @click="handleSearch" class="bg-orange-600 hover:bg-orange-700 px-6 py-3 font-medium transition-colors">
               Ara
             </button>
           </div>
@@ -208,5 +209,11 @@ const selectCategory = (categoryId: string) => {
 
 const goToRestaurant = (restaurantId: number) => {
   router.push(`/food/restaurant/${restaurantId}`)
+}
+
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ path: '/food/restaurants', query: { q: searchQuery.value } })
+  }
 }
 </script>

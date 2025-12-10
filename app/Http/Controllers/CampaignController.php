@@ -222,6 +222,60 @@ class CampaignController extends Controller
         return response()->json($stats);
     }
 
+    /**
+     * Admin: List all campaigns
+     */
+    public function adminIndex(Request $request)
+    {
+        $query = Campaign::with(['seller:id,name,email'])
+            ->withCount('usages');
+
+        if ($request->has('status')) {
+            if ($request->status === 'active') {
+                $query->where('is_active', true)
+                    ->where('start_date', '<=', now())
+                    ->where('end_date', '>=', now());
+            } elseif ($request->status === 'expired') {
+                $query->where('end_date', '<', now());
+            } elseif ($request->status === 'scheduled') {
+                $query->where('start_date', '>', now());
+            }
+        }
+
+        if ($request->has('seller_id')) {
+            $query->where('seller_id', $request->seller_id);
+        }
+
+        $campaigns = $query->orderByDesc('created_at')
+            ->paginate($request->get('per_page', 20));
+
+        return response()->json($campaigns);
+    }
+
+    /**
+     * Admin: Apply segment to campaign
+     */
+    public function applySegment(Request $request, $id)
+    {
+        $campaign = Campaign::findOrFail($id);
+        
+        $request->validate([
+            'segment' => 'required|string|in:Premium,Standard,Low'
+        ]);
+
+        $campaign->update([
+            'segment' => $request->segment,
+            'segment_applied_at' => now(),
+            'segment_applied_by' => auth()->id()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Segment başarıyla uygulandı',
+            'campaign' => $campaign->fresh()
+        ]);
+    }
+
     private function ensureSeller(Request $request)
     {
         $user = $request->user();

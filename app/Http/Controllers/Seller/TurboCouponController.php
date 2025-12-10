@@ -149,7 +149,7 @@ class TurboCouponController extends Controller
     /**
      * Validate and check coupon
      */
-    public function validate(Request $request)
+    public function validateCoupon(Request $request)
     {
         $request->validate([
             'code' => 'required|string',

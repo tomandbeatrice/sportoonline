@@ -20,6 +20,15 @@ import AdminIndex from '../views/admin/AdminIndex.vue'
 import AdminFinancialReport from '../views/admin/AdminFinancialReport.vue'
 import CampaignAI from '../views/admin/CampaignAI.vue'
 
+// New Admin Management Pages
+import RestaurantManagement from '../views/admin/RestaurantManagement.vue'
+import HotelManagement from '../views/admin/HotelManagement.vue'
+import TransportManagement from '../views/admin/TransportManagement.vue'
+import BlogManagement from '../views/admin/BlogManagement.vue'
+import ReservationManagement from '../views/admin/ReservationManagement.vue'
+import FoodOrderManagement from '../views/admin/FoodOrderManagement.vue'
+import BlogCategoryManagement from '../views/admin/BlogCategoryManagement.vue'
+
 // Seller Components
 import SellerDashboard from '../views/seller/SellerDashboard.vue'
 
@@ -67,7 +76,60 @@ const routes = [
         name: 'CampaignAI',
         component: CampaignAI,
       },
-      // Add more admin routes here
+      // Restaurant Management
+      {
+        path: 'restaurants',
+        name: 'RestaurantManagement',
+        component: RestaurantManagement,
+      },
+      {
+        path: 'food-orders',
+        name: 'FoodOrderManagement',
+        component: FoodOrderManagement,
+      },
+      // Hotel Management
+      {
+        path: 'hotels',
+        name: 'HotelManagement',
+        component: HotelManagement,
+      },
+      {
+        path: 'reservations',
+        name: 'ReservationManagement',
+        component: ReservationManagement,
+      },
+      // Transport Management
+      {
+        path: 'vehicles',
+        name: 'VehicleManagement',
+        component: TransportManagement,
+      },
+      {
+        path: 'drivers',
+        name: 'DriverManagement',
+        component: TransportManagement,
+      },
+      {
+        path: 'transfers',
+        name: 'TransferManagement',
+        component: TransportManagement,
+      },
+      {
+        path: 'routes',
+        name: 'RouteManagement',
+        component: TransportManagement,
+      },
+      // Blog Management
+      {
+        path: 'blog-posts',
+        name: 'BlogPostManagement',
+        component: BlogManagement,
+      },
+      {
+        path: 'blog-categories',
+        name: 'BlogCategoryManagement',
+        component: BlogCategoryManagement,
+      },
     ],
   },
 

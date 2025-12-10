@@ -43,8 +43,8 @@ const { error, loading, withLoading } = useErrorHandler()
 
 onMounted(async () => {
   await withLoading(async () => {
-    const res = await axios.get('/api/admin/segment-success-predictions')
-    predictions.value = res.data
+    const res = await axios.get('/api/v1/admin/segment-success-predictions')
+    predictions.value = res.data.predictions || res.data
   })
 })
 </script>

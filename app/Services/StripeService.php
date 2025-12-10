@@ -119,4 +119,140 @@ class StripeService implements PaymentGatewayInterface
             throw new \Exception('Stripe oturum bilgisi alınamadı');
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initiatePayment(Order $order, array $customerData): array
+    {
+        try {
+            $result = $this->createCheckoutSession($order);
+            
+            return [
+                'success' => true,
+                'data' => [
+                    'session_id' => $result['session_id'],
+                    'checkout_url' => $result['checkout_url'],
+                ],
+                'error' => null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'data' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleCallback(array $request): array
+    {
+        $sessionId = $request['session_id'] ?? null;
+        
+        if (!$sessionId) {
+            return [
+                'success' => false,
+                'order_id' => null,
+                'transaction_id' => null,
+                'error' => 'Session ID not provided',
+            ];
+        }
+
+        try {
+            $session = $this->retrieveSession($sessionId);
+            
+            return [
+                'success' => $session->payment_status === 'paid',
+                'order_id' => (int) ($session->metadata->order_id ?? $session->client_reference_id),
+                'transaction_id' => $session->payment_intent,
+                'error' => $session->payment_status !== 'paid' ? 'Payment not completed' : null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'order_id' => null,
+                'transaction_id' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleWebhook(array $request): array
+    {
+        $event = $request['event'] ?? null;
+        
+        if (!$event) {
+            return [
+                'success' => false,
+                'order_id' => null,
+                'status' => 'error',
+                'error' => 'Event not provided',
+            ];
+        }
+
+        $orderId = $event->data->object->metadata->order_id ?? null;
+        
+        return [
+            'success' => true,
+            'order_id' => (int) $orderId,
+            'status' => $event->type,
+            'error' => null,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refund(string $transactionId, float $amount, ?string $reason = null): array
+    {
+        try {
+            $refund = \Stripe\Refund::create([
+                'payment_intent' => $transactionId,
+                'amount' => intval($amount * 100), // Kuruş cinsinden
+                'reason' => $reason === 'duplicate' ? 'duplicate' : ($reason === 'fraudulent' ? 'fraudulent' : 'requested_by_customer'),
+            ]);
+
+            return [
+                'success' => true,
+                'refund_id' => $refund->id,
+                'error' => null,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'refund_id' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isTestMode(): bool
+    {
+        return str_starts_with($this->secretKey, 'sk_test_');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return 'stripe';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConfigured(): bool
+    {
+        return !empty($this->secretKey);
+    }
 }

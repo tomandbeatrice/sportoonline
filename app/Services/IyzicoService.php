@@ -102,4 +102,161 @@ class IyzicoService implements PaymentGatewayInterface
 
         return $payWithIyzicoInitialize;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initiatePayment(Order $order, array $customerData): array
+    {
+        try {
+            $result = $this->initializePayment($order);
+            
+            if ($result->getStatus() === 'success') {
+                return [
+                    'success' => true,
+                    'data' => [
+                        'payment_page_url' => $result->getPayWithIyzicoPageUrl(),
+                        'token' => $result->getToken(),
+                    ],
+                    'error' => null,
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'data' => null,
+                'error' => $result->getErrorMessage(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'data' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleCallback(array $request): array
+    {
+        // Handle Iyzico callback
+        $token = $request['token'] ?? null;
+        
+        if (!$token) {
+            return [
+                'success' => false,
+                'order_id' => null,
+                'transaction_id' => null,
+                'error' => 'Token not provided',
+            ];
+        }
+
+        try {
+            $retrieveRequest = new \Iyzipay\Request\RetrievePayWithIyzicoRequest();
+            $retrieveRequest->setLocale(\Iyzipay\Model\Locale::TR);
+            $retrieveRequest->setToken($token);
+
+            $result = \Iyzipay\Model\PayWithIyzico::retrieve($retrieveRequest, $this->options);
+
+            if ($result->getStatus() === 'success') {
+                return [
+                    'success' => true,
+                    'order_id' => (int) $result->getBasketId(),
+                    'transaction_id' => $result->getPaymentId(),
+                    'error' => null,
+                ];
+            }
+
+            return [
+                'success' => false,
+                'order_id' => null,
+                'transaction_id' => null,
+                'error' => $result->getErrorMessage(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'order_id' => null,
+                'transaction_id' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handleWebhook(array $request): array
+    {
+        // Iyzico webhook handling
+        return [
+            'success' => true,
+            'order_id' => (int) ($request['basketId'] ?? 0),
+            'status' => $request['status'] ?? 'unknown',
+            'error' => null,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refund(string $transactionId, float $amount, ?string $reason = null): array
+    {
+        try {
+            $request = new \Iyzipay\Request\CreateRefundRequest();
+            $request->setLocale(\Iyzipay\Model\Locale::TR);
+            $request->setConversationId('REFUND-' . uniqid());
+            $request->setPaymentTransactionId($transactionId);
+            $request->setPrice($amount);
+            $request->setIp(request()->ip());
+
+            $refund = \Iyzipay\Model\Refund::create($request, $this->options);
+
+            if ($refund->getStatus() === 'success') {
+                return [
+                    'success' => true,
+                    'refund_id' => $refund->getPaymentId(),
+                    'error' => null,
+                ];
+            }
+
+            return [
+                'success' => false,
+                'refund_id' => null,
+                'error' => $refund->getErrorMessage(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'refund_id' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isTestMode(): bool
+    {
+        return Config::get('iyzico.base_url') === 'https://sandbox-api.iyzipay.com';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return 'iyzico';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConfigured(): bool
+    {
+        return !empty(Config::get('iyzico.api_key')) && !empty(Config::get('iyzico.secret_key'));
+    }
 }

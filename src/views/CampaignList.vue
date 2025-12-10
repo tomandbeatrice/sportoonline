@@ -1,5 +1,7 @@
+import EmptyState from '@/components/ui/EmptyState.vue'
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton.vue'
 import { useApi } from '@/composables/useApi'
 import { toast } from 'vue3-toastify'
 import CampaignCreate from './CampaignCreate.vue'
@@ -31,9 +33,28 @@ const editingItem = ref<Campaign | null>(null)
 
 const deleting = ref(false)
 const deletingItem = ref<Campaign | null>(null)
+const loading = ref(false)
+const loadError = ref<string | null>(null)
 
 onMounted(async () => {
-  campaigns.value = await get<Campaign[]>('/admin/campaign-list')
+  loading.value = true
+  loadError.value = null
+  try {
+    campaigns.value = await get<Campaign[]>('/admin/campaign-list')
+  } catch (error: any) {
+    console.warn('API bağlantısı başarısız, mock data kullanılıyor:', error.message)
+    loadError.value = 'Backend sunucusuna bağlanılamadı. Demo veriler gösteriliyor.'
+    // Fallback mock data
+    campaigns.value = [
+      { id: 1, name: 'Yaz İndirimi', status: 'active', start_date: '2025-06-01', end_date: '2025-08-31', score: 85 },
+      { id: 2, name: 'Black Friday', status: 'passive', start_date: '2025-11-25', end_date: '2025-11-30', score: 92 },
+      { id: 3, name: 'Yılbaşı Kampanyası', status: 'active', start_date: '2025-12-15', end_date: '2026-01-05', score: 78 },
+      { id: 4, name: 'Bahar Festivali', status: 'active', start_date: '2025-03-21', end_date: '2025-04-21', score: 65 },
+      { id: 5, name: 'Okula Dönüş', status: 'passive', start_date: '2025-09-01', end_date: '2025-09-30', score: 71 }
+    ]
+  } finally {
+    loading.value = false
+  }
 })
 
 const filteredCampaigns = computed(() => {
@@ -105,3 +126,23 @@ const removeCampaign = (id: number) => {
   toast.success('🗑 Kampanya silindi!')
 }
 </script>
+<template>
+  <div :aria-busy="loading">
+    <div v-if="loading" class="py-6">
+      <LoadingSkeleton variant="list" :lines="5" />
+    </div>
+    <EmptyState v-else-if="loadError" :title="'Kampanya verisi alınamadı'" :description="loadError">
+      <template #icon>
+        <span class="text-5xl">⚠️</span>
+      </template>
+    </EmptyState>
+    <EmptyState v-else-if="!filteredCampaigns.value.length" :title="'Kampanya bulunamadı'" :description="'Kriterlere uygun kampanya yok.'">
+      <template #icon>
+        <span class="text-5xl">🗒️</span>
+      </template>
+    </EmptyState>
+    <div v-else>
+      <!-- ...existing campaign list UI... -->
+    </div>
+  </div>
+</template>

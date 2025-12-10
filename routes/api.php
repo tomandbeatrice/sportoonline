@@ -1,6 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UnifiedDashboardController;
+use App\Http\Controllers\Admin\AdminTourController;
+use App\Http\Controllers\Admin\AdminCarRentalController;
+use App\Http\Controllers\Admin\AdminInsuranceController;
+use App\Http\Controllers\Admin\AdminActivityController;
+use App\Http\Controllers\Api\NearbyBusinessController;
+use App\Http\Controllers\Api\MarketplaceController;
+use App\Http\Controllers\Api\PublicServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +39,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\ExportLogController;
 use App\Http\Controllers\Admin\PaymentLogController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\FeatureController;
 
 // Controller Gruplama
 use App\Http\Controllers\{
@@ -59,7 +68,6 @@ use App\Http\Controllers\{
     SellerSettingsController,
     SellerApplicationController,
     BuyerDashboardController,
-    Seller\SellerOrderController,
     InvitationController,
     WebhookController,
     ShippingController,
@@ -82,16 +90,45 @@ use App\Http\Controllers\Admin\WithholdingTaxController;
 use App\Http\Controllers\Api\TurboCompetitionController;
 use App\Http\Controllers\Seller\TurboCouponController;
 
+// Return/Refund Controllers
+use App\Http\Controllers\ReturnController;
+use App\Http\Controllers\Admin\AdminReturnController;
+use App\Http\Controllers\Seller\SellerReturnController;
+use App\Http\Controllers\Seller\SellerOrderController;
+
 // C2C Marketplace
 use App\Http\Controllers\Api\C2CDashboardController;
 
 // Auth Routes
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+// v1 prefix aliases for frontend compatibility
+Route::prefix('v1')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/change-password', [AuthController::class, 'changePassword']);
+    });
+});
+
+// Public Seller Application (no auth required)
+Route::post('/seller-application/register', [SellerApplicationController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/apply-seller', [AuthController::class, 'applySeller']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+
+    // User Tasks
+    Route::apiResource('user-tasks', \App\Http\Controllers\UserTaskController::class);
 });
 
 // Kullanıcı Bilgisi
@@ -107,8 +144,30 @@ Route::prefix('c2c')->middleware('auth:sanctum')->group(function () {
 // Marketplace Stats (Public)
 Route::get('/marketplace/stats', [DashboardController::class, 'marketplaceStats']);
 
+// Marketplace Home API (Public)
+Route::prefix('marketplace')->group(function () {
+    Route::get('/', [MarketplaceController::class, 'index']);
+    Route::get('/campaigns', [MarketplaceController::class, 'campaigns']);
+    Route::get('/banners', [MarketplaceController::class, 'banners']);
+    Route::get('/tasks', [MarketplaceController::class, 'tasks']);
+    Route::get('/bundles', [MarketplaceController::class, 'bundles']);
+});
+
 // Categories (Public)
 Route::get('/categories', [CategoryController::class, 'index']);
+
+// Public Services (Tours, Cars, Insurance, Activities)
+Route::prefix('services')->group(function () {
+    Route::get('/tours', [PublicServiceController::class, 'tours']);
+    Route::get('/tours/{id}', [PublicServiceController::class, 'showTour']);
+    Route::get('/cars', [PublicServiceController::class, 'cars']);
+    Route::get('/cars/{id}', [PublicServiceController::class, 'showCar']);
+    Route::get('/insurance', [PublicServiceController::class, 'insurance']);
+    Route::get('/insurance/{id}', [PublicServiceController::class, 'showInsurance']);
+    Route::get('/activities', [PublicServiceController::class, 'activities']);
+    Route::get('/activities/{id}', [PublicServiceController::class, 'showActivity']);
+    Route::get('/search', [PublicServiceController::class, 'search']);
+});
 
 // Ürünler (Herkese açık: listeleme ve detay)
 Route::prefix('products')->group(function () {
@@ -174,6 +233,7 @@ Route::post('/checkout', [OrderController::class, 'store'])->middleware('auth:sa
 
 Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [OrderController::class, 'index']);
+    Route::get('/active', [OrderController::class, 'active']);
     Route::get('/{id}', [OrderController::class, 'show']);
     Route::post('/', [OrderController::class, 'store']);
     Route::put('/{id}/status', [OrderController::class, 'updateStatus']);
@@ -263,12 +323,19 @@ Route::prefix('seller/commissions')->middleware('auth:sanctum')->group(function 
 });
 
 // Admin Commissions
-Route::prefix('admin/commissions')->middleware('auth:sanctum')->group(function () {
+Route::prefix('admin/commissions')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/', [AdminCommissionController::class, 'index']);
     Route::get('/statistics', [AdminCommissionController::class, 'statistics']);
     Route::post('/calculate-month', [AdminCommissionController::class, 'calculateMonth']);
     Route::post('/{commissionId}/mark-paid', [AdminCommissionController::class, 'markAsPaid']);
     Route::get('/{userId}/{month}', [AdminCommissionController::class, 'show']);
+});
+
+// Admin Subscription Plans Management
+Route::prefix('admin/subscription-plans')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/', [SubscriptionController::class, 'getPlans']);
+    Route::put('/{id}', [SubscriptionController::class, 'updatePlan']);
+    Route::post('/', [SubscriptionController::class, 'createPlan']);
 });
 
 // Seller Shipping Fees
@@ -281,8 +348,52 @@ Route::prefix('seller/shipping')->middleware('auth:sanctum')->group(function () 
     Route::post('/calculate', [ShippingFeeController::class, 'calculate']);
 });
 
+// ════════════════════════════════════════════════════════════════════════════
+// İADE / RETURN - REFUND ROUTES
+// ════════════════════════════════════════════════════════════════════════════
+
+// Customer Returns (Müşteri İade İşlemleri)
+Route::prefix('returns')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [ReturnController::class, 'index']);
+    Route::post('/', [ReturnController::class, 'store']);
+    Route::get('/reasons', [ReturnController::class, 'getReasons']);
+    Route::get('/check-eligibility/{orderId}', [ReturnController::class, 'checkEligibility']);
+    Route::get('/{id}', [ReturnController::class, 'show']);
+    Route::post('/{id}/ship', [ReturnController::class, 'markAsShipped']);
+    Route::post('/{id}/cancel', [ReturnController::class, 'cancel']);
+});
+
+// Seller Returns (Satıcı İade Yönetimi)
+Route::prefix('seller/returns')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [SellerReturnController::class, 'index']);
+    Route::get('/statistics', [SellerReturnController::class, 'statistics']);
+    Route::get('/{id}', [SellerReturnController::class, 'show']);
+    Route::post('/{id}/approve', [SellerReturnController::class, 'approve']);
+    Route::post('/{id}/reject', [SellerReturnController::class, 'reject']);
+    Route::post('/{id}/shipping-code', [SellerReturnController::class, 'sendShippingCode']);
+    Route::post('/{id}/receive', [SellerReturnController::class, 'markAsReceived']);
+    Route::post('/{id}/inspect', [SellerReturnController::class, 'markAsInspected']);
+    Route::post('/{id}/note', [SellerReturnController::class, 'addNote']);
+});
+
+// Admin Returns (Admin İade Yönetimi)
+Route::prefix('admin/returns')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/', [AdminReturnController::class, 'index']);
+    Route::get('/statistics', [AdminReturnController::class, 'statistics']);
+    Route::get('/export', [AdminReturnController::class, 'export']);
+    Route::get('/{id}', [AdminReturnController::class, 'show']);
+    Route::post('/{id}/approve', [AdminReturnController::class, 'approve']);
+    Route::post('/{id}/reject', [AdminReturnController::class, 'reject']);
+    Route::post('/{id}/receive', [AdminReturnController::class, 'markAsReceived']);
+    Route::post('/{id}/inspect', [AdminReturnController::class, 'markAsInspected']);
+    Route::post('/{id}/refund', [AdminReturnController::class, 'initiateRefund']);
+    Route::post('/{id}/refund-complete', [AdminReturnController::class, 'completeRefund']);
+    Route::post('/{id}/complete', [AdminReturnController::class, 'complete']);
+    Route::post('/{id}/note', [AdminReturnController::class, 'addNote']);
+});
+
 // Admin Withholding Tax Reports
-Route::prefix('admin/withholding-tax')->middleware('auth:sanctum')->group(function () {
+Route::prefix('admin/withholding-tax')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/monthly-summary', [WithholdingTaxController::class, 'monthlySummary']);
     Route::get('/annual-report', [WithholdingTaxController::class, 'annualReport']);
     Route::get('/export', [WithholdingTaxController::class, 'export']);
@@ -307,7 +418,7 @@ Route::prefix('seller/turbo-coupons')->middleware('auth:sanctum')->group(functio
     Route::get('/', [TurboCouponController::class, 'index']);
     Route::post('/{id}/toggle', [TurboCouponController::class, 'toggle']);
     Route::get('/{id}/usage', [TurboCouponController::class, 'usage']);
-    Route::post('/validate', [TurboCouponController::class, 'validate']);
+    Route::post('/validate', [TurboCouponController::class, 'validateCoupon']);
 });
 
 // Vendors / Satıcılar
@@ -384,7 +495,7 @@ Route::prefix('seller')->middleware('auth:sanctum')->group(function () {
     Route::get('/financial-report', [SellerController::class, 'financialReport']);
     
     // Satıcı Sipariş Yönetimi
-    Route::patch('/order-items/{orderItem}/status', [Seller\SellerOrderController::class, 'updateStatus']);
+    Route::patch('/order-items/{orderItem}/status', [SellerOrderController::class, 'updateStatus']);
     
     // Satıcı Ayarları
     Route::get('/settings', [SellerSettingsController::class, 'index']);
@@ -408,16 +519,17 @@ Route::prefix('buyer')->middleware('auth:sanctum')->group(function () {
 });
 
 // 🛡️ Admin Panel
-// Geçici olarak middleware kaldırıldı - geliştirme aşamasında
-Route::prefix('admin')->group(function () {
+// PRODUCTION: Admin auth ve role kontrolü aktif
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Dashboard Stats
     Route::get('/stats', [AdminController::class, 'stats']);
     Route::get('/realtime-metrics', [AdminController::class, 'realtimeMetrics']);
     Route::get('/financial-report', [AdminController::class, 'financialReport']);
     
-    // Seller Application Management
+    // Seller Application Management (supports ?service_type=food|hotel|transport|services|career)
     Route::get('/seller-applications', [SellerApplicationController::class, 'index']);
     Route::get('/seller-applications/stats', [SellerApplicationController::class, 'stats']);
+    Route::get('/seller-applications/stats-by-type', [SellerApplicationController::class, 'statsByServiceType']);
     Route::get('/seller-applications/{application}', [SellerApplicationController::class, 'show']);
     Route::post('/seller-applications/{application}/approve', [SellerApplicationController::class, 'approve']);
     Route::post('/seller-applications/{application}/reject', [SellerApplicationController::class, 'reject']);
@@ -454,8 +566,15 @@ Route::prefix('admin')->group(function () {
     Route::get('/suggestion-rules', fn() => Cache::get('suggestion_rules'));
     Route::put('/suggestion-rules', [IncentiveCampaignController::class, 'updateSuggestionRules']);
     Route::post('/refresh-campaign-strategy', [SellerController::class, 'refreshCampaignStrategy']);
+    
+    // 📋 Campaign Management (Admin)
+    Route::get('/campaigns', [\App\Http\Controllers\CampaignController::class, 'adminIndex']);
+    Route::post('/campaigns/{id}/apply-segment', [\App\Http\Controllers\CampaignController::class, 'applySegment']);
+    
     Route::get('/payment-logs', [PaymentLogController::class, 'index']); // 💳 Ödeme logları
     Route::get('/payment-logs/export', [PaymentLogController::class, 'exportCsv']); // 🧾 CSV export
+    Route::post('/payment-logs/{id}/approve', [PaymentLogController::class, 'approve']); // ✅ Onayla
+    Route::post('/payment-logs/{id}/reject', [PaymentLogController::class, 'reject']); // ❌ Reddet
     Route::get('/export-logs', [ExportLogController::class, 'index']);
     Route::get('/export-logs/export', [ExportLogController::class, 'export']);
     
@@ -475,14 +594,30 @@ Route::prefix('admin')->group(function () {
         Route::put('/{moduleId}/config', [\App\Http\Controllers\Admin\DashboardModuleController::class, 'updateConfig']);
     });
     
+    // 🌍 Tour Management
+    Route::get('/tours', [AdminTourController::class, 'index']);
+    Route::get('/tours/stats', [AdminTourController::class, 'stats']);
+
+    // 🚗 Car Rental Management
+    Route::get('/cars', [AdminCarRentalController::class, 'index']);
+    Route::get('/cars/stats', [AdminCarRentalController::class, 'stats']);
+
+    // 🛡️ Insurance Management
+    Route::get('/insurance', [AdminInsuranceController::class, 'index']);
+    Route::get('/insurance/stats', [AdminInsuranceController::class, 'stats']);
+
+    // 🏃 Activity Management
+    Route::get('/activities', [AdminActivityController::class, 'index']);
+    Route::get('/activities/stats', [AdminActivityController::class, 'stats']);
+
     // 📈 Admin Dashboard Stats
     Route::get('/stats', [AdminController::class, 'stats']);
     Route::get('/financial-report', [AdminController::class, 'financialReport']);
 });
 
 // 🛒 Satıcı Paneli (C2C Multivendor)
-// Geçici olarak middleware kaldırıldı - geliştirme aşamasında
-Route::prefix('seller')->group(function () {
+// PRODUCTION: Seller auth ve role kontrolü aktif
+Route::prefix('seller')->middleware(['auth:sanctum', 'role:seller'])->group(function () {
     Route::get('/stats', [\App\Http\Controllers\SellerController::class, 'stats']);
     Route::get('/products', [\App\Http\Controllers\SellerController::class, 'products']);
     Route::get('/orders', [\App\Http\Controllers\SellerController::class, 'orders']);
@@ -823,4 +958,181 @@ Route::middleware(['auth:sanctum', 'can.viewExportLogs'])->get('/api/admin/payme
     }
 
     return $query->orderByDesc('exported_at')->paginate(50);
+});
+
+// ============================================
+// API Version 1 (Current Stable)
+
+// Unified Dashboard Routes
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/recent-activities', [UnifiedDashboardController::class, 'recentActivities']);
+    Route::get('/active-campaigns', [UnifiedDashboardController::class, 'activeCampaigns']);
+    Route::get('/performance', [UnifiedDashboardController::class, 'performance']);
+    Route::get('/top-sellers', [UnifiedDashboardController::class, 'topSellers']);
+    Route::get('/pending-orders', [UnifiedDashboardController::class, 'pendingOrders']);
+});
+
+// Nearby Businesses
+Route::get('/nearby-businesses', [NearbyBusinessController::class, 'index']);
+
+// ============================================
+// Food, Hotel, Transport, Blog Management Routes
+// ============================================
+
+use App\Http\Controllers\Admin\RestaurantController;
+use App\Http\Controllers\Admin\HotelController;
+use App\Http\Controllers\Admin\TransportController;
+use App\Http\Controllers\Admin\BlogController;
+
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    
+    // 🍕 Restaurant/Food Management
+    Route::prefix('restaurants')->group(function () {
+        Route::get('/', [RestaurantController::class, 'index']);
+        Route::get('/stats', [RestaurantController::class, 'stats']);
+        Route::post('/', [RestaurantController::class, 'store']);
+        Route::get('/{restaurant}', [RestaurantController::class, 'show']);
+        Route::put('/{restaurant}', [RestaurantController::class, 'update']);
+        Route::delete('/{restaurant}', [RestaurantController::class, 'destroy']);
+        Route::post('/{restaurant}/toggle-status', [RestaurantController::class, 'toggleStatus']);
+        Route::post('/{restaurant}/toggle-featured', [RestaurantController::class, 'toggleFeatured']);
+        
+        // Menu Items
+        Route::get('/{restaurant}/menu-items', [RestaurantController::class, 'menuItems']);
+        Route::post('/{restaurant}/menu-items', [RestaurantController::class, 'storeMenuItem']);
+        Route::put('/menu-items/{menuItem}', [RestaurantController::class, 'updateMenuItem']);
+        Route::delete('/menu-items/{menuItem}', [RestaurantController::class, 'destroyMenuItem']);
+    });
+    
+    // Food Orders
+    Route::prefix('food-orders')->group(function () {
+        Route::get('/', [RestaurantController::class, 'orders']);
+        Route::get('/stats', [RestaurantController::class, 'orderStats']);
+        Route::get('/{order}', [RestaurantController::class, 'showOrder']);
+        Route::put('/{order}/status', [RestaurantController::class, 'updateOrderStatus']);
+    });
+
+    // 🏨 Hotel Management
+    Route::prefix('hotels')->group(function () {
+        Route::get('/', [HotelController::class, 'index']);
+        Route::get('/stats', [HotelController::class, 'stats']);
+        Route::post('/', [HotelController::class, 'store']);
+        Route::get('/{hotel}', [HotelController::class, 'show']);
+        Route::put('/{hotel}', [HotelController::class, 'update']);
+        Route::delete('/{hotel}', [HotelController::class, 'destroy']);
+        Route::post('/{hotel}/toggle-status', [HotelController::class, 'toggleStatus']);
+        Route::post('/{hotel}/toggle-featured', [HotelController::class, 'toggleFeatured']);
+        
+        // Rooms
+        Route::get('/{hotel}/rooms', [HotelController::class, 'rooms']);
+        Route::post('/{hotel}/rooms', [HotelController::class, 'storeRoom']);
+        Route::put('/rooms/{room}', [HotelController::class, 'updateRoom']);
+        Route::delete('/rooms/{room}', [HotelController::class, 'destroyRoom']);
+        
+        // Availability
+        Route::get('/{hotel}/availability', [HotelController::class, 'availability']);
+    });
+    
+    // Reservations
+    Route::prefix('reservations')->group(function () {
+        Route::get('/', [HotelController::class, 'reservations']);
+        Route::get('/stats', [HotelController::class, 'reservationStats']);
+        Route::get('/calendar', [HotelController::class, 'reservationCalendar']);
+        Route::get('/{reservation}', [HotelController::class, 'showReservation']);
+        Route::put('/{reservation}/status', [HotelController::class, 'updateReservationStatus']);
+        Route::post('/{reservation}/cancel', [HotelController::class, 'cancelReservation']);
+    });
+
+    // 🚗 Transport Management
+    Route::prefix('vehicles')->group(function () {
+        Route::get('/', [TransportController::class, 'vehicles']);
+        Route::post('/', [TransportController::class, 'storeVehicle']);
+        Route::get('/{vehicle}', [TransportController::class, 'showVehicle']);
+        Route::put('/{vehicle}', [TransportController::class, 'updateVehicle']);
+        Route::delete('/{vehicle}', [TransportController::class, 'destroyVehicle']);
+        Route::post('/{vehicle}/toggle-availability', [TransportController::class, 'toggleVehicleAvailability']);
+    });
+    
+    Route::prefix('drivers')->group(function () {
+        Route::get('/', [TransportController::class, 'drivers']);
+        Route::post('/', [TransportController::class, 'storeDriver']);
+        Route::get('/{driver}', [TransportController::class, 'showDriver']);
+        Route::put('/{driver}', [TransportController::class, 'updateDriver']);
+        Route::delete('/{driver}', [TransportController::class, 'destroyDriver']);
+        Route::post('/{driver}/verify', [TransportController::class, 'verifyDriver']);
+        Route::post('/{driver}/toggle-availability', [TransportController::class, 'toggleDriverAvailability']);
+    });
+    
+    Route::prefix('transfers')->group(function () {
+        Route::get('/', [TransportController::class, 'transfers']);
+        Route::get('/stats', [TransportController::class, 'transferStats']);
+        Route::get('/today', [TransportController::class, 'todayTransfers']);
+        Route::get('/{transfer}', [TransportController::class, 'showTransfer']);
+        Route::put('/{transfer}/status', [TransportController::class, 'updateTransferStatus']);
+        Route::post('/{transfer}/assign-driver', [TransportController::class, 'assignDriver']);
+        Route::post('/{transfer}/cancel', [TransportController::class, 'cancelTransfer']);
+    });
+    
+    Route::prefix('routes')->group(function () {
+        Route::get('/', [TransportController::class, 'routes']);
+        Route::post('/', [TransportController::class, 'storeRoute']);
+        Route::get('/{route}', [TransportController::class, 'showRoute']);
+        Route::put('/{route}', [TransportController::class, 'updateRoute']);
+        Route::delete('/{route}', [TransportController::class, 'destroyRoute']);
+        Route::post('/{route}/toggle-active', [TransportController::class, 'toggleRouteActive']);
+        Route::post('/{route}/toggle-popular', [TransportController::class, 'toggleRoutePopular']);
+    });
+    
+    // Transport Stats
+    Route::get('/transport/stats', [TransportController::class, 'stats']);
+
+    // 📝 Blog Management
+    Route::prefix('blog')->group(function () {
+        // Categories
+        Route::get('/categories', [BlogController::class, 'categories']);
+        Route::post('/categories', [BlogController::class, 'storeCategory']);
+        Route::put('/categories/{category}', [BlogController::class, 'updateCategory']);
+        Route::delete('/categories/{category}', [BlogController::class, 'destroyCategory']);
+        
+        // Posts
+        Route::get('/posts', [BlogController::class, 'posts']);
+        Route::get('/posts/stats', [BlogController::class, 'stats']);
+        Route::post('/posts', [BlogController::class, 'storePost']);
+        Route::get('/posts/{post}', [BlogController::class, 'showPost']);
+        Route::put('/posts/{post}', [BlogController::class, 'updatePost']);
+        Route::delete('/posts/{post}', [BlogController::class, 'destroyPost']);
+        Route::post('/posts/{post}/publish', [BlogController::class, 'publishPost']);
+        Route::post('/posts/{post}/unpublish', [BlogController::class, 'unpublishPost']);
+        Route::post('/posts/{post}/toggle-featured', [BlogController::class, 'toggleFeatured']);
+    });
+});
+
+// Public Blog API (no auth required)
+Route::prefix('blog')->group(function () {
+    Route::get('/categories', [BlogController::class, 'publicCategories']);
+    Route::get('/posts', [BlogController::class, 'publicPosts']);
+    Route::get('/posts/featured', [BlogController::class, 'featuredPosts']);
+    Route::get('/posts/{slug}', [BlogController::class, 'publicShowPost']);
+});
+
+// Public Food/Restaurant API
+Route::prefix('restaurants')->group(function () {
+    Route::get('/', [RestaurantController::class, 'publicIndex']);
+    Route::get('/{slug}', [RestaurantController::class, 'publicShow']);
+    Route::get('/{restaurant}/menu', [RestaurantController::class, 'publicMenu']);
+});
+
+// Public Hotel API
+Route::prefix('hotels')->group(function () {
+    Route::get('/', [HotelController::class, 'publicIndex']);
+    Route::get('/{slug}', [HotelController::class, 'publicShow']);
+    Route::get('/{hotel}/rooms', [HotelController::class, 'publicRooms']);
+    Route::post('/{hotel}/check-availability', [HotelController::class, 'checkAvailability']);
+});
+
+// Public Transport API
+Route::prefix('transport')->group(function () {
+    Route::get('/routes', [TransportController::class, 'publicRoutes']);
+    Route::get('/routes/{slug}', [TransportController::class, 'publicShowRoute']);
+    Route::post('/calculate-price', [TransportController::class, 'calculatePrice']);
 });

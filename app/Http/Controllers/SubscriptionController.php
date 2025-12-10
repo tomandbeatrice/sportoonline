@@ -332,4 +332,76 @@ class SubscriptionController extends Controller
             'days_remaining' => $subscription->daysRemaining(),
         ]);
     }
+
+    /**
+     * Admin: Update a subscription plan
+     */
+    public function updatePlan(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'price' => 'sometimes|numeric|min:0',
+            'yearly_price' => 'sometimes|numeric|min:0',
+            'commission_rate' => 'sometimes|numeric|min:0|max:100',
+            'product_limit' => 'sometimes|integer|min:0',
+            'is_active' => 'sometimes|boolean',
+        ]);
+
+        $plan = SubscriptionPlan::findOrFail($id);
+        
+        $plan->update($request->only([
+            'name',
+            'price',
+            'yearly_price',
+            'commission_rate',
+            'product_limit',
+            'trial_days',
+            'features',
+            'is_active',
+            'image_limit_per_product',
+            'max_file_size_mb',
+            'bulk_upload',
+        ]));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Plan başarıyla güncellendi',
+            'plan' => $plan->fresh(),
+        ]);
+    }
+
+    /**
+     * Admin: Create a new subscription plan
+     */
+    public function createPlan(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'yearly_price' => 'sometimes|numeric|min:0',
+            'commission_rate' => 'required|numeric|min:0|max:100',
+            'product_limit' => 'required|integer|min:0',
+        ]);
+
+        $plan = SubscriptionPlan::create([
+            'name' => $request->name,
+            'slug' => \Str::slug($request->name),
+            'price' => $request->price,
+            'yearly_price' => $request->yearly_price ?? $request->price * 10,
+            'commission_rate' => $request->commission_rate,
+            'product_limit' => $request->product_limit,
+            'trial_days' => $request->trial_days ?? 0,
+            'features' => $request->features ?? [],
+            'is_active' => $request->is_active ?? true,
+            'image_limit_per_product' => $request->image_limit_per_product ?? 5,
+            'max_file_size_mb' => $request->max_file_size_mb ?? 5,
+            'bulk_upload' => $request->bulk_upload ?? false,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Plan başarıyla oluşturuldu',
+            'plan' => $plan,
+        ], 201);
+    }
 }

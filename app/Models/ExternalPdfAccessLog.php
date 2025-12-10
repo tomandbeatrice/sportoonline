@@ -1,3 +1,5 @@
+<?php
+
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;

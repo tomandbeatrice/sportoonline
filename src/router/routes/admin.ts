@@ -10,7 +10,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'dashboard',
         name: 'AdminDashboard',
-        component: () => import('@/views/admin/Dashboard.vue'),
+        component: () => import('@/views/admin/AdminDashboardNew.vue'),
       },
       {
         path: 'export-logs',

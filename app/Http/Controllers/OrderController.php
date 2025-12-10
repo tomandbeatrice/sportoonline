@@ -174,6 +174,21 @@ class OrderController extends Controller
     }
 
     /**
+     * Aktif siparişler (devam eden)
+     */
+    public function active()
+    {
+        $orders = Order::where('user_id', auth()->id())
+            ->whereNotIn('status', ['delivered', 'cancelled', 'completed', 'refunded'])
+            ->with('items.product')
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
+        return response()->json($orders);
+    }
+
+    /**
      * Sipariş detayları
      */
     public function show($id)

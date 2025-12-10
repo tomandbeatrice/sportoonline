@@ -9,18 +9,18 @@
           <ol class="relative z-10 flex justify-between text-sm font-medium text-slate-500">
             <li class="flex items-center gap-2 bg-slate-50 p-2" :class="{ 'text-blue-600': step >= 1 }">
               <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold" :class="step >= 1 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'">1</span>
-              <span class="hidden sm:block">Adres Bilgileri</span>
+              <span class="hidden sm:block">{{ hasPhysicalItems ? 'Teslimat Adresi' : 'Fatura Adresi' }}</span>
             </li>
-            <li class="flex items-center gap-2 bg-slate-50 p-2" :class="{ 'text-blue-600': step >= 2 }">
+            <li v-if="hasPhysicalItems" class="flex items-center gap-2 bg-slate-50 p-2" :class="{ 'text-blue-600': step >= 2 }">
               <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold" :class="step >= 2 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'">2</span>
               <span class="hidden sm:block">Kargo Seçimi</span>
             </li>
             <li class="flex items-center gap-2 bg-slate-50 p-2" :class="{ 'text-blue-600': step >= 3 }">
-              <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold" :class="step >= 3 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'">3</span>
+              <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold" :class="step >= 3 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'">{{ hasPhysicalItems ? '3' : '2' }}</span>
               <span class="hidden sm:block">Ödeme</span>
             </li>
             <li class="flex items-center gap-2 bg-slate-50 p-2" :class="{ 'text-blue-600': step >= 4 }">
-              <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold" :class="step >= 4 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'">4</span>
+              <span class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold" :class="step >= 4 ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'">{{ hasPhysicalItems ? '4' : '3' }}</span>
               <span class="hidden sm:block">Onay</span>
             </li>
           </ol>
@@ -33,7 +33,7 @@
           <!-- Step 1: Address -->
           <div v-if="step === 1" class="space-y-6">
             <div class="rounded-2xl bg-white p-6 shadow-sm border border-slate-100">
-              <h2 class="text-lg font-bold text-slate-900 mb-4">Teslimat Adresi</h2>
+              <h2 class="text-lg font-bold text-slate-900 mb-4">{{ hasPhysicalItems ? 'Teslimat Adresi' : 'Fatura Adresi' }}</h2>
               <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
                 <div class="sm:col-span-2">
                   <label class="block text-sm font-medium text-slate-700">Adres Başlığı</label>
@@ -183,16 +183,28 @@
             
             <ul class="divide-y divide-slate-100">
               <li v-for="item in cartStore.items" :key="item.id" class="flex py-4">
-                <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200">
-                  <img :src="item.image_url || item.image" :alt="item.name" class="h-full w-full object-cover object-center" />
-                </div>
+                <SmartImage 
+                  :src="item.image || item.image_url" 
+                  :alt="item.name" 
+                  container-class="h-16 w-16 flex-shrink-0 rounded-lg border border-slate-200"
+                />
                 <div class="ml-4 flex flex-1 flex-col">
                   <div>
                     <div class="flex justify-between text-base font-medium text-slate-900">
                       <h3>{{ item.name }}</h3>
                       <p class="ml-4">{{ formatPrice(item.price * item.quantity) }} TL</p>
                     </div>
-                    <p class="mt-1 text-sm text-slate-500">{{ item.category?.name || 'Genel' }}</p>
+                    
+                    <!-- Type Specific Details -->
+                    <div class="mt-1 text-sm text-slate-500">
+                      <p v-if="item.type === 'product' && item.variant">{{ item.variant }}</p>
+                      <p v-if="item.type === 'service' && item.duration">⏱️ {{ item.duration }} dk</p>
+                      <div v-if="item.type === 'booking'">
+                        <p>📅 {{ formatDate(item.startDate) }} - {{ formatDate(item.endDate) }}</p>
+                        <p>👥 {{ item.guests }} Misafir</p>
+                      </div>
+                      <p v-if="!item.type">{{ item.category?.name || 'Genel' }}</p>
+                    </div>
                   </div>
                   <div class="flex flex-1 items-end justify-between text-sm">
                     <p class="text-slate-500">Adet {{ item.quantity }}</p>
@@ -206,7 +218,7 @@
                 <p class="text-sm text-slate-600">Ara Toplam</p>
                 <p class="text-sm font-medium text-slate-900">{{ formatPrice(subtotal) }} TL</p>
               </div>
-              <div class="flex items-center justify-between">
+              <div v-if="hasPhysicalItems" class="flex items-center justify-between">
                 <p class="text-sm text-slate-600">Kargo</p>
                 <p class="text-sm font-medium text-slate-900">{{ formatPrice(shippingCost) }} TL</p>
               </div>
@@ -229,6 +241,7 @@ import { useCartStore } from '../../stores/cartStore'
 import { useOrderStore } from '../../stores/orderStore'
 import { useRouter } from 'vue-router'
 import { useFormValidation } from '@/composables/useFormValidation'
+import SmartImage from '@/components/ui/SmartImage.vue'
 
 const toast = useToast()
 const cartStore = useCartStore()
@@ -253,9 +266,14 @@ const form = reactive({
 
 const { validate, errors } = useFormValidation()
 
+const hasPhysicalItems = computed(() => {
+  return cartStore.groupedItems.cargo.length > 0 || cartStore.groupedItems.instant.length > 0
+})
+
 const subtotal = computed(() => cartStore.subtotal)
 
 const shippingCost = computed(() => {
+  if (!hasPhysicalItems.value) return 0
   return form.shippingMethod === 'express' ? 29.90 : 0
 })
 
@@ -265,6 +283,11 @@ const total = computed(() => {
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(price)
+}
+
+const formatDate = (dateStr: string | undefined) => {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })
 }
 
 const validateStep1 = () => {
@@ -305,10 +328,18 @@ const validateStep3 = () => {
   return validate(form, rules)
 }
 
-const nextStep = () => {
+const isProcessing = ref(false)
+
+const nextStep = async () => {
   if (step.value === 1) {
     if (!validateStep1()) {
       toast.warning('Lütfen formu eksiksiz doldurun')
+      return
+    }
+    // Skip shipping step if no physical items
+    if (!hasPhysicalItems.value) {
+      step.value = 3
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
   }
@@ -319,13 +350,18 @@ const nextStep = () => {
       return
     }
 
+    isProcessing.value = true
     toast.info('Ödeme işleniyor...', { timeout: 2000 })
-    setTimeout(() => {
-      orderStore.createOrder(cartStore.items, Number(total.value), form)
+    
+    try {
+      await orderStore.createOrder(cartStore.items, Number(total.value), form)
       step.value = 4
       cartStore.clearCart()
-      toast.success('Siparişiniz başarıyla oluşturuldu!')
-    }, 2000)
+    } catch (error) {
+      toast.error('Sipariş oluşturulurken bir hata oluştu')
+    } finally {
+      isProcessing.value = false
+    }
     return
   }
 

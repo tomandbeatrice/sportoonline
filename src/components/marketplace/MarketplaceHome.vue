@@ -15,379 +15,29 @@
     <!-- ═══════════════════════════════════════════════════════════════════
          🔗 HİZMET SEKMELERİ - Yemek, Otel, Rides, Hizmet, Kariyer
          ═══════════════════════════════════════════════════════════════════ -->
-    <nav class="bg-white border-b border-slate-200 sticky top-[120px] sm:top-[140px] lg:top-[130px] z-40 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide py-3">
-          <!-- Ana Mağaza -->
-          <router-link 
-            to="/"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-            :class="$route.path === '/' 
-              ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-200' 
-              : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'"
-          >
-            <span class="text-xl">🛒</span>
-            <span>Mağaza</span>
-          </router-link>
-
-          <!-- Yemek -->
-          <router-link 
-            to="/food"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-            :class="$route.path === '/food' 
-              ? 'bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-200' 
-              : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300 hover:bg-orange-50'"
-          >
-            <span class="text-xl">🍔</span>
-            <span>Yemek</span>
-            <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-600 font-bold">Yeni</span>
-          </router-link>
-
-          <!-- Otel -->
-          <router-link 
-            to="/hotels"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-            :class="$route.path.startsWith('/hotels') 
-              ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-200' 
-              : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300 hover:bg-blue-50'"
-          >
-            <span class="text-xl">🏨</span>
-            <span>Otel</span>
-          </router-link>
-
-          <!-- Yolculuk/Rides -->
-          <router-link 
-            to="/rides"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-            :class="$route.path === '/rides' 
-              ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-200' 
-              : 'bg-white text-slate-700 border-slate-200 hover:border-green-300 hover:bg-green-50'"
-          >
-            <span class="text-xl">🚗</span>
-            <span>Ulaşım</span>
-          </router-link>
-
-          <!-- Hizmet -->
-          <router-link 
-            to="/services"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-            :class="$route.path === '/services' 
-              ? 'bg-purple-500 text-white border-purple-500 shadow-lg shadow-purple-200' 
-              : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300 hover:bg-purple-50'"
-          >
-            <span class="text-xl">🔧</span>
-            <span>Hizmet</span>
-          </router-link>
-
-          <!-- Kariyer -->
-          <router-link 
-            to="/career"
-            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-            :class="$route.path === '/career' 
-              ? 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-200' 
-              : 'bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:bg-amber-50'"
-          >
-            <span class="text-xl">💼</span>
-            <span>Kariyer</span>
-            <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-600 font-bold">12</span>
-          </router-link>
-        </div>
-      </div>
-    </nav>
+    <MarketplaceNavigation />
 
     <!-- ═══════════════════════════════════════════════════════════════════
          🦸 HERO SECTION - Sade, Açık Arka Plan
          ═══════════════════════════════════════════════════════════════════ -->
-    <section class="relative bg-gradient-to-b from-slate-50 to-white py-16 md:py-24">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          <!-- Content -->
-          <div class="space-y-8">
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-sm font-medium text-indigo-600">
-              <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              {{ heroContent.badge }}
-            </div>
-            
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-slate-900">
-              {{ heroContent.title }}
-            </h1>
-            
-            <p class="text-lg md:text-xl text-slate-600 max-w-lg leading-relaxed">
-              {{ heroContent.subtitle }}
-            </p>
-            
-            <div class="flex flex-wrap gap-4">
-              <router-link 
-                :to="heroContent.primaryCta.to"
-                class="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-              >
-                {{ heroContent.primaryCta.label }}
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                </svg>
-              </router-link>
-              <router-link 
-                :to="heroContent.secondaryCta.to"
-                class="inline-flex items-center gap-2 px-8 py-4 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
-              >
-                {{ heroContent.secondaryCta.label }}
-              </router-link>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4">
-              <div v-for="stat in heroContent.stats" :key="stat.label" class="text-center md:text-left">
-                <p class="text-3xl md:text-4xl font-bold text-indigo-600">{{ stat.value }}</p>
-                <p class="text-sm text-slate-500 mt-1">{{ stat.label }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Daily Deal Card -->
-          <div class="hidden md:block">
-            <div class="relative bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
-              <div class="absolute -top-4 -right-4 px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-full shadow-lg animate-bounce">
-                🔥 Günün Fırsatı
-              </div>
-              <p class="text-xl font-bold text-slate-900 mb-6">{{ heroContent.dailyDeal }}</p>
-              <div class="aspect-video bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center mb-6">
-                <span class="text-8xl">🎁</span>
-              </div>
-              <button class="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
-                Fırsatı Yakala
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <MarketplaceHero />
 
     <!-- ═══════════════════════════════════════════════════════════════════
          🎯 MODÜL GRİD - 6 Ana Hizmet
          ═══════════════════════════════════════════════════════════════════ -->
-    <section class="py-12 md:py-16 bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <div class="text-center mb-10">
-          <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3">Tüm Hizmetlerimiz</h2>
-          <p class="text-slate-500">İhtiyacınıza uygun hizmeti seçin</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Mağaza -->
-          <router-link to="/search" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-indigo-200 hover:shadow-lg hover:-translate-y-1 transition-all">
-            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
-              <span class="text-3xl">🛒</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">Mağaza</h3>
-            <p class="text-slate-500 mb-4">50.000+ ürün, güvenli alışveriş</p>
-            <span class="inline-flex items-center text-sm font-medium text-indigo-600 group-hover:gap-2 transition-all">
-              Alışverişe Başla
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
-
-          <!-- Yemek -->
-          <div class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-orange-200 hover:shadow-lg hover:-translate-y-1 transition-all">
-            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-orange-200 group-hover:scale-110 transition-transform">
-              <span class="text-3xl">🍔</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">Yemek Siparişi</h3>
-            <p class="text-slate-500 mb-4">150+ restoran, hızlı teslimat</p>
-            
-            <div class="space-y-2">
-              <router-link 
-                to="/food"
-                class="inline-flex items-center text-sm font-medium text-orange-600 group-hover:gap-2 transition-all"
-              >
-                Restoranlara Göz At
-                <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </router-link>
-              
-              <button
-                @click="toggleGroupOrder"
-                class="w-full mt-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-semibold rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-              >
-                <span>👥</span>
-                Grup Siparişi
-              </button>
-            </div>
-          </div>
-
-          <!-- Otel -->
-          <router-link to="/hotels" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-blue-200 hover:shadow-lg hover:-translate-y-1 transition-all">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
-              <span class="text-3xl">🏨</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">Otel Rezervasyonu</h3>
-            <p class="text-slate-500 mb-4">En iyi fiyat garantisi</p>
-            <span class="inline-flex items-center text-sm font-medium text-blue-600 group-hover:gap-2 transition-all">
-              Otel Ara
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
-
-          <!-- Ulaşım -->
-          <router-link to="/rides" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-green-200 hover:shadow-lg hover:-translate-y-1 transition-all">
-            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-green-200 group-hover:scale-110 transition-transform">
-              <span class="text-3xl">🚗</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-green-600 transition-colors">Yolculuk Paylaşımı</h3>
-            <p class="text-slate-500 mb-4">Ekonomik ve çevreci ulaşım</p>
-            <span class="inline-flex items-center text-sm font-medium text-green-600 group-hover:gap-2 transition-all">
-              Yolculuk Bul
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
-
-          <!-- Hizmet -->
-          <router-link to="/services" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-purple-200 hover:shadow-lg hover:-translate-y-1 transition-all">
-            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform">
-              <span class="text-3xl">🔧</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-purple-600 transition-colors">Hizmet Marketplace</h3>
-            <p class="text-slate-500 mb-4">Masaj, koçluk, eğitim</p>
-            <span class="inline-flex items-center text-sm font-medium text-purple-600 group-hover:gap-2 transition-all">
-              Hizmetleri Keşfet
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
-
-          <!-- Kariyer -->
-          <router-link to="/career" class="group bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-amber-200 hover:shadow-lg hover:-translate-y-1 transition-all">
-            <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-amber-200 group-hover:scale-110 transition-transform">
-              <span class="text-3xl">💼</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">Kariyer Fırsatları</h3>
-            <p class="text-slate-500 mb-4">12 açık pozisyon</p>
-            <span class="inline-flex items-center text-sm font-medium text-amber-600 group-hover:gap-2 transition-all">
-              İş İlanlarını Gör
-              <svg class="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </span>
-          </router-link>
-        </div>
-      </div>
-    </section>
+    <MarketplaceServices @toggle-group-order="toggleGroupOrder" />
 
     <!-- ═══════════════════════════════════════════════════════════════════
          🏷️ KAMPANYA SLIDER
          ═══════════════════════════════════════════════════════════════════ -->
-    <section 
-      v-if="campaigns.length > 0"
-      class="campaign-slider relative"
-      @mouseenter="pauseCampaignAutoPlay"
-      @mouseleave="resumeCampaignAutoPlay"
-      @touchstart="handleCampaignTouchStart"
-      @touchend="handleCampaignTouchEnd"
-    >
-      <div 
-        class="relative overflow-hidden"
-        :style="currentCampaignGradient"
-      >
-        <!-- Campaign Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-8">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <!-- Campaign Info -->
-            <div class="flex-1 text-white">
-              <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-sm mb-3">
-                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                {{ t('campaign.live') }}
-              </span>
-              <h2 class="text-2xl md:text-3xl font-bold mb-2">
-                🎉 {{ currentCampaign.title }}
-              </h2>
-              <p class="text-white/90 text-sm md:text-base max-w-xl">
-                {{ currentCampaign.description }}
-              </p>
-            </div>
+    <MarketplaceCampaigns />
 
-            <!-- Countdown Timer -->
-            <div v-if="campaignCountdown" class="flex items-center gap-3 md:gap-4">
-              <div 
-                v-for="(unit, key) in countdownUnits" 
-                :key="key"
-                class="text-center"
-              >
-                <div class="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 md:px-4 md:py-3 min-w-[60px]">
-                  <span class="text-2xl md:text-3xl font-bold text-white">
-                    {{ String(campaignCountdown[key]).padStart(2, '0') }}
-                  </span>
-                </div>
-                <span class="text-xs text-white/70 mt-1 block">{{ unit }}</span>
-              </div>
-            </div>
-          </div>
+    <!-- ═══════════════════════════════════════════════════════════════════
+         🚀 TURBO MOD - Aylık Yarışma Paneli
+         ═══════════════════════════════════════════════════════════════════ -->
+    <MarketplaceTurbo />
 
-          <!-- CTA Button -->
-          <div class="mt-4">
-            <button 
-              @click="goToCampaign(currentCampaign)"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg shadow-lg hover:bg-slate-50 transition-all"
-            >
-              {{ t('campaign.shopNow') }}
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="absolute bottom-0 left-0 w-full h-1 bg-black/20">
-          <div 
-            class="h-full bg-white/60 transition-all duration-100 ease-linear"
-            :style="{ width: campaignProgress + '%' }"
-          ></div>
-        </div>
-
-        <!-- Navigation Arrows -->
-        <template v-if="campaigns.length > 1">
-          <button 
-            @click="prevCampaign"
-            class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-colors"
-            :aria-label="t('common.previous')"
-          >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-          </button>
-          <button 
-            @click="nextCampaign"
-            class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-colors"
-            :aria-label="t('common.next')"
-          >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </button>
-        </template>
-
-        <!-- Dot Indicators -->
-        <div v-if="campaigns.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          <button
-            v-for="(_, idx) in campaigns"
-            :key="idx"
-            @click="goToCampaignSlide(idx)"
-            class="w-2.5 h-2.5 rounded-full transition-all"
-            :class="idx === currentCampaignIndex 
-              ? 'bg-white w-6' 
-              : 'bg-white/40 hover:bg-white/60'"
-            :aria-label="`Kampanya ${idx + 1}`"
-          />
-        </div>
-      </div>
-    </section>
+    <MarketplaceCategories />
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -395,284 +45,46 @@
       <!-- ═══════════════════════════════════════════════════════════════════
            2. 📦 AKTİF SİPARİŞLER - Kritik Bilgi
            ═══════════════════════════════════════════════════════════════════ -->
-      <section v-if="activeOrders.length > 0" class="active-orders">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-              📦
-            </span>
-            {{ t('order.activeOrders') }}
-          </h2>
-          <router-link 
-            to="/orders" 
-            class="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-          >
-            {{ t('common.viewAll') }} →
-          </router-link>
-        </div>
-
-        <!-- Mobile: Swipe Tab / Desktop: Grid -->
-        <div 
-          class="orders-container overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0"
-          ref="ordersContainer"
-          @scroll="handleOrdersScroll"
-        >
-          <div class="flex gap-4 md:grid md:grid-cols-3 min-w-max md:min-w-0">
-            <div 
-              v-for="order in activeOrders.slice(0, 6)"
-              :key="order.id"
-              class="order-card flex-shrink-0 w-72 md:w-auto bg-white rounded-xl shadow-sm border border-slate-100 p-4 hover:shadow-md transition-shadow"
-            >
-              <div class="flex gap-3">
-                <!-- Product Image -->
-                <div class="relative">
-                  <img 
-                    :src="order.product?.image || '/placeholder.jpg'" 
-                    :alt="order.product?.title"
-                    class="w-16 h-16 rounded-lg object-cover"
-                    loading="lazy"
-                  />
-                  <span 
-                    v-if="order.itemCount > 1"
-                    class="absolute -top-1 -right-1 w-5 h-5 bg-indigo-600 text-white text-xs rounded-full flex items-center justify-center"
-                  >
-                    +{{ order.itemCount - 1 }}
-                  </span>
-                </div>
-
-                <!-- Order Info -->
-                <div class="flex-1 min-w-0">
-                  <p class="font-medium text-slate-900 truncate">
-                    {{ order.product?.title || `Sipariş #${order.id}` }}
-                  </p>
-                  <p class="text-sm text-slate-500">
-                    {{ formatDate(order.createdAt) }}
-                  </p>
-                  
-                  <!-- Status Badge -->
-                  <div class="mt-2 flex items-center gap-2">
-                    <span 
-                      class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium"
-                      :class="getOrderStatusClass(order.status)"
-                    >
-                      <span class="w-1.5 h-1.5 rounded-full" :class="getOrderStatusDotClass(order.status)"></span>
-                      {{ getOrderStatusText(order.status) }}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Track Button -->
-                <button 
-                  @click="trackOrder(order)"
-                  class="self-start p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                  :aria-label="t('order.track')"
-                >
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Delivery Progress -->
-              <div v-if="order.deliveryProgress" class="mt-3">
-                <div class="flex justify-between text-xs text-slate-500 mb-1">
-                  <span>{{ t('order.delivery') }}</span>
-                  <span>{{ order.deliveryProgress }}%</span>
-                </div>
-                <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all"
-                    :style="{ width: order.deliveryProgress + '%' }"
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scroll Indicator (Mobile) -->
-        <div class="flex justify-center gap-1.5 mt-3 md:hidden">
-          <span 
-            v-for="i in Math.ceil(activeOrders.length / 2)"
-            :key="i"
-            class="w-1.5 h-1.5 rounded-full transition-colors"
-            :class="currentOrderPage === i - 1 ? 'bg-indigo-600' : 'bg-slate-300'"
-          />
-        </div>
-      </section>
+      <MarketplaceActiveOrders />
 
       <!-- ═══════════════════════════════════════════════════════════════════
-           3. 🎯 ANA CTA ALANI - Sepete Ekle, Bundle Teklifleri
+           3. 🎯 ÖZEL TEKLİFLER - Tablı Yapı
            ═══════════════════════════════════════════════════════════════════ -->
-      <section class="main-cta bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-6 md:p-8 text-white">
-        <div class="text-center max-w-2xl mx-auto">
-          <h2 class="text-2xl md:text-3xl font-bold mb-3">
-            {{ t('cta.specialOffers') }} 🎁
-          </h2>
-          <p class="text-white/80 mb-6">
-            {{ t('cta.specialOffersDesc') }}
-          </p>
-          
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              @click="scrollToBundles"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:bg-slate-50 transition-all transform hover:scale-105"
-            >
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
-              </svg>
-              {{ t('cta.viewBundles') }}
-            </button>
-            
-            <router-link 
-              to="/products"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-xl hover:bg-white/30 transition-all"
-            >
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-              </svg>
-              {{ t('cta.browseProducts') }}
-            </router-link>
-          </div>
-        </div>
+      <MarketplaceOffers />
 
-        <!-- Floating Elements -->
-        <div class="absolute top-4 left-4 text-4xl opacity-20 animate-bounce">🏀</div>
-        <div class="absolute bottom-4 right-4 text-4xl opacity-20 animate-bounce delay-300">⚽</div>
-      </section>
+      <MarketplaceBrands />
 
       <!-- ═══════════════════════════════════════════════════════════════════
-           4. 🛒 BUNDLE TEKLİFLERİ - Grid Layout
+           🥗 SAĞLIKLI YAŞAM & SPORCU MUTFAĞI - Yeni Özellik
            ═══════════════════════════════════════════════════════════════════ -->
-      <section ref="bundlesSection" class="bundle-offers">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span class="w-10 h-10 bg-gradient-to-br from-orange-400 to-pink-500 rounded-xl flex items-center justify-center text-white">
-              🎁
-            </span>
-            {{ t('product.bundleOffers') }}
-          </h2>
-          <div class="flex items-center gap-3">
-            <span class="px-3 py-1 bg-red-100 text-red-600 text-sm font-medium rounded-full">
-              {{ t('common.limitedTime') }}
-            </span>
-            <div class="hidden md:flex gap-2">
-              <button 
-                @click="scrollBundles('left')"
-                class="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
-              >
-                <svg class="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-              </button>
-              <button 
-                @click="scrollBundles('right')"
-                class="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
-              >
-                <svg class="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+      <MarketplaceHealthy />
 
-        <!-- Loading State -->
-        <div v-if="loadingBundles" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div v-for="n in 4" :key="n" class="animate-pulse">
-            <div class="bg-white rounded-2xl p-6 h-48">
-              <div class="flex gap-4">
-                <div class="w-24 h-24 bg-slate-200 rounded-xl"></div>
-                <div class="flex-1 space-y-3">
-                  <div class="h-4 bg-slate-200 rounded w-3/4"></div>
-                  <div class="h-4 bg-slate-200 rounded w-1/2"></div>
-                  <div class="h-8 bg-slate-200 rounded w-full mt-4"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- ═══════════════════════════════════════════════════════════════════
+           ✅ GÜNLÜK GÖREVLER - Lifestyle Hub
+           ═══════════════════════════════════════════════════════════════════ -->
+      <MarketplaceTasks />
 
-        <!-- Bundle Cards - Horizontal Carousel -->
-        <div 
-          v-else-if="bundles.length > 0" 
-          ref="bundleCarousel"
-          class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide"
-          style="scroll-behavior: smooth;"
-        >
-          <div 
-            v-for="bundle in bundles"
-            :key="bundle.id"
-            class="bundle-card flex-shrink-0 w-[320px] md:w-[380px] snap-start bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-all group"
-          >
-            <!-- Bundle Header -->
-            <div class="relative bg-gradient-to-r from-indigo-50 to-purple-50 p-4">
-              <span class="absolute top-3 right-3 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                %{{ bundle.discount }} {{ t('product.discount') }}
-              </span>
-              
-              <div class="flex items-center gap-3">
-                <img 
-                  :src="bundle.main?.image" 
-                  :alt="bundle.main?.title"
-                  class="w-20 h-20 rounded-xl object-cover shadow-md group-hover:scale-105 transition-transform"
-                  loading="lazy"
-                />
-                <div class="text-2xl font-bold text-indigo-600">+</div>
-                <img 
-                  :src="bundle.extra?.image" 
-                  :alt="bundle.extra?.title"
-                  class="w-20 h-20 rounded-xl object-cover shadow-md group-hover:scale-105 transition-transform"
-                  loading="lazy"
-                />
-              </div>
-            </div>
+      <MarketplaceBundles />
 
-            <!-- Bundle Content -->
-            <div class="p-4">
-              <h3 class="font-semibold text-slate-900 mb-1">
-                {{ bundle.main?.title }} + {{ bundle.extra?.title }}
-              </h3>
-              <p class="text-sm text-slate-500 mb-3">
-                {{ bundle.description || t('bundle.saveMoreTogether') }}
-              </p>
+      <MarketplaceRecentlyViewed />
 
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="text-2xl font-bold text-indigo-600">
-                    {{ formatCurrency(bundle.totalPrice) }}
-                  </span>
-                  <span class="text-sm text-slate-400 line-through ml-2">
-                    {{ formatCurrency(bundle.originalPrice) }}
-                  </span>
-                </div>
-                
-                <button 
-                  @click="addBundleToCart(bundle)"
-                  :disabled="addingBundleId === bundle.id"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-                >
-                  <svg v-if="addingBundleId === bundle.id" class="w-4 h-4 animate-spin" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                  </svg>
-                  <svg v-else class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                  </svg>
-                  {{ t('product.addBundle') }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <MarketplaceTrending />
 
-        <!-- Empty State -->
-        <div v-else class="text-center py-12 bg-white rounded-2xl">
-          <div class="text-4xl mb-3">📦</div>
-          <p class="text-slate-500">{{ t('bundle.noBundles') }}</p>
-        </div>
-      </section>
+      <MarketplaceFlashSales />
+
+      <MarketplaceCollections />
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           📅 ALIŞVERİŞ ETKİNLİKLERİ - Yeni Özellik
+           ═══════════════════════════════════════════════════════════════════ -->
+      <MarketplaceEvents />
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           💎 AYRICALIKLI HİZMETLER - Premium Features
+           ═══════════════════════════════════════════════════════════════════ -->
+      <MarketplacePremium />
+
+      <MarketplaceBlog />
 
     </main>
 
@@ -783,6 +195,23 @@
               İptal
             </button>
           </div>
+          <!-- Popüler Aramalar -->
+          <div v-if="popularSearches.length > 0" class="mt-4">
+            <p class="text-xs text-slate-500 mb-2 flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              Popüler Aramalar
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button 
+                v-for="(search, index) in popularSearches.slice(0, 6)" 
+                :key="index"
+                @click="searchQuery = search; performSearch(); showMobileSearch = false"
+                class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-100 text-slate-700 hover:text-indigo-700 text-sm rounded-full transition-colors"
+              >
+                {{ search }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </Transition>
@@ -811,127 +240,47 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+import MarketplaceNavigation from './MarketplaceNavigation.vue'
+import MarketplaceHero from './MarketplaceHero.vue'
+import MarketplaceServices from './MarketplaceServices.vue'
+import MarketplaceCampaigns from './MarketplaceCampaigns.vue'
+import MarketplaceTurbo from './MarketplaceTurbo.vue'
+import MarketplaceCategories from './MarketplaceCategories.vue'
+import MarketplaceActiveOrders from './MarketplaceActiveOrders.vue'
+import MarketplaceOffers from './MarketplaceOffers.vue'
+import MarketplaceBundles from './MarketplaceBundles.vue'
+import MarketplaceRecentlyViewed from './MarketplaceRecentlyViewed.vue'
+import MarketplaceTrending from './MarketplaceTrending.vue'
+import MarketplaceFlashSales from './MarketplaceFlashSales.vue'
+import MarketplaceBrands from './MarketplaceBrands.vue'
+import MarketplaceHealthy from './MarketplaceHealthy.vue'
+import MarketplaceCollections from './MarketplaceCollections.vue'
+import MarketplaceBlog from './MarketplaceBlog.vue'
+import MarketplaceTasks from './MarketplaceTasks.vue'
+import MarketplaceEvents from './MarketplaceEvents.vue'
+import MarketplacePremium from './MarketplacePremium.vue'
 import FoodGroupOrder from './FoodGroupOrder.vue'
+import { useTracking } from '@/composables/useTracking'
+import { useFeatureFlags } from '@/services/featureFlags'
+import { useI18n } from 'vue-i18n'
+
+// Tracking system
+const { getTrendingProducts: fetchTrendingFromAI, getPopularSearches } = useTracking()
+const { flags } = useFeatureFlags()
+const { t } = useI18n()
 
 // Simple i18n helpers
 const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
 const formatDate = (date: string) => new Date(date).toLocaleDateString('tr-TR')
-
-// Turkish translations dictionary
-const translations: Record<string, string> = {
-  // Product
-  'product.bundleOffers': 'Paket Teklifleri',
-  'product.bundle.addToCart': 'Paketi Sepete Ekle',
-  'product.bundle.savings': 'Kazancınız',
-  'product.bundle.includes': 'Paket İçeriği',
-  'product.addBundle': 'Paketi Ekle',
-  'product.discount': 'İndirim',
-  'product.addToCart': 'Sepete Ekle',
-  'product.buyNow': 'Hemen Al',
-  'product.outOfStock': 'Stokta Yok',
-  'product.inStock': 'Stokta Var',
-  
-  // Bundle
-  'bundle.saveMoreTogether': 'Birlikte alın, daha çok kazanın!',
-  'bundle.noBundles': 'Şu anda aktif paket teklifi bulunmuyor.',
-  
-  // CTA (Call to Action)
-  'cta.specialOffers': 'Özel Teklifler',
-  'cta.specialOffersDesc': 'Size özel indirimli ürünleri kaçırmayın!',
-  'cta.viewOffers': 'Teklifleri Gör',
-  'cta.viewBundles': 'Paketleri Gör',
-  'cta.browseProducts': 'Ürünlere Göz At',
-  'cta.shopNow': 'Alışverişe Başla',
-  'cta.learnMore': 'Daha Fazla Bilgi',
-  
-  // Common
-  'common.limitedTime': 'Sınırlı Süre',
-  'common.viewAll': 'Tümünü Gör',
-  'common.loading': 'Yükleniyor...',
-  'common.error': 'Hata',
-  'common.success': 'Başarılı',
-  'common.cancel': 'İptal',
-  'common.save': 'Kaydet',
-  'common.delete': 'Sil',
-  'common.edit': 'Düzenle',
-  'common.add': 'Ekle',
-  'common.search': 'Ara',
-  'common.filter': 'Filtrele',
-  'common.sort': 'Sırala',
-  'common.price': 'Fiyat',
-  'common.quantity': 'Adet',
-  'common.total': 'Toplam',
-  'common.discount': 'İndirim',
-  'common.new': 'Yeni',
-  'common.popular': 'Popüler',
-  'common.recommended': 'Önerilen',
-  'common.previous': 'Önceki',
-  'common.next': 'Sonraki',
-  
-  // Order
-  'order.status.pending': 'Beklemede',
-  'order.status.confirmed': 'Onaylandı',
-  'order.status.processing': 'Hazırlanıyor',
-  'order.status.shipped': 'Kargoya Verildi',
-  'order.status.delivered': 'Teslim Edildi',
-  'order.trackOrder': 'Siparişi Takip Et',
-  'order.activeOrders': 'Aktif Siparişler',
-  'order.track': 'Takip Et',
-  'order.delivery': 'Teslimat',
-  
-  // Campaign
-  'campaign.endingSoon': 'Bitiyor',
-  'campaign.viewDetails': 'Detayları Gör',
-  'campaign.active': 'Aktif Kampanyalar',
-  'campaign.live': 'Canlı',
-  'campaign.shopNow': 'Hemen Alışveriş Yap',
-  
-  // Search
-  'search.placeholder': 'Ürün, marka veya kategori ara...',
-  
-  // Time
-  'time.days': 'gün',
-  'time.hours': 'saat',
-  'time.minutes': 'dakika',
-  'time.seconds': 'saniye',
-}
-
-const t = (key: string) => translations[key] || key
-
 // Types
-interface Campaign {
-  id: number
-  title: string
-  description: string
-  endDate?: string
-  colorFrom?: string
-  colorTo?: string
-  link?: string
-}
-
-interface Order {
-  id: number
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered'
-  createdAt: string
-  product?: { title: string; image: string }
-  itemCount: number
-  deliveryProgress?: number
-}
-
-interface Bundle {
-  id: number
-  main: { title: string; image: string; price: number }
-  extra: { title: string; image: string; price: number }
-  totalPrice: number
-  originalPrice: number
-  discount: number
-  description?: string
-}
 
 // Removed: Review, Product, Restaurant, Hotel interfaces - sections removed from template
 
 // Composables
+import { useAuthStore } from '@/stores/auth'
 const router = useRouter()
+const authStore = useAuthStore()
 
 // ═══════════════════════════════════════════════════════════════════
 // State
@@ -939,8 +288,11 @@ const router = useRouter()
 
 // Header & Auth
 const searchQuery = ref('')
-const isAuthenticated = ref(false) // TODO: Connect to auth store
-const userInitials = ref('MK')
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const userInitials = computed(() => {
+  const name = authStore.user?.name || ''
+  return name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
+})
 const voiceAssistantActive = ref(false)
 const showLanguageMenu = ref(false)
 const currentLanguage = ref('tr')
@@ -958,24 +310,61 @@ const currentLanguageCode = computed(() => currentLanguage.value.toUpperCase())
 
 // Main Services
 const activeService = ref('marketplace')
-const mainServices = ref([
-  { id: 'marketplace', name: 'Mağaza', icon: '🛒', badge: null, badgeClass: '' },
-  { id: 'food', name: 'Yemek', icon: '🍔', badge: 'Yeni', badgeClass: 'bg-green-100 text-green-600' },
-  { id: 'hotel', name: 'Otel', icon: '🏨', badge: null, badgeClass: '' },
-  { id: 'rides', name: 'Ulaşım', icon: '🚗', badge: null, badgeClass: '' },
-  { id: 'services', name: 'Hizmet', icon: '🔧', badge: null, badgeClass: '' },
-  { id: 'career', name: 'Kariyer', icon: '💼', badge: '12', badgeClass: 'bg-blue-100 text-blue-600' }
-])
+const mainServices = ref<any[]>([])
 
-// Premium Features
-const premiumFeatures = ref([
-  { id: 'kitchen', name: 'Sporcu Mutfağı', icon: '🥗', isNew: true },
-  { id: 'virtual-try', name: 'Sanal Deneme Kabini', icon: '👕', isNew: true },
-  { id: 'ai-suggest', name: 'AI Öneri Motoru', icon: '🤖', isNew: false },
-  { id: 'nutrition', name: 'Beslenme Danışmanı', icon: '🥑', isNew: false },
-  { id: 'trainer', name: 'Kişisel Antrenör', icon: '🏋️', isNew: false },
-  { id: 'live-support', name: 'Canlı Destek', icon: '💬', isNew: false }
-])
+const fetchServices = async () => {
+  try {
+    const response = await axios.get('/api/v1/services')
+    mainServices.value = response.data.map((service: any) => ({
+      id: service.slug,
+      name: service.name,
+      icon: service.icon,
+      badge: service.badge,
+      badgeClass: service.badge_class
+    }))
+  } catch (error) {
+    console.error('Error fetching services:', error)
+    // Fallback to default if API fails
+    mainServices.value = [
+      { id: 'marketplace', name: 'Mağaza', icon: '🛒', badge: null, badgeClass: '' },
+      { id: 'food', name: 'Yemek', icon: '🍔', badge: 'Yeni', badgeClass: 'bg-green-100 text-green-600' },
+      { id: 'hotel', name: 'Otel', icon: '🏨', badge: null, badgeClass: '' },
+      { id: 'rides', name: 'Ulaşım', icon: '🚗', badge: null, badgeClass: '' },
+      { id: 'services', name: 'Hizmet', icon: '🔧', badge: null, badgeClass: '' },
+      { id: 'career', name: 'Kariyer', icon: '💼', badge: '12', badgeClass: 'bg-blue-100 text-blue-600' }
+    ]
+  }
+}
+
+// Popular Categories removed (moved to MarketplaceCategories.vue)
+
+// Featured Brands removed (moved to MarketplaceBrands.vue)
+
+// Trending Products removed (moved to MarketplaceTrending.vue)
+
+// Recently Viewed Products removed (moved to MarketplaceRecentlyViewed.vue)
+
+// Popular Searches (AI Tracking)
+const popularSearches = ref<string[]>([])
+
+const fetchPopularSearches = async () => {
+  try {
+    const searches = await getPopularSearches(8)
+    popularSearches.value = searches.map((s: any) => s.query || s)
+  } catch (error) {
+    console.error('Popüler aramalar alınamadı:', error)
+    // Fallback
+    popularSearches.value = ['Spor ayakkabı', 'Fitness', 'Yoga', 'Koşu bandı', 'Dumbell']
+  }
+}
+
+// Flash Sales removed (moved to MarketplaceFlashSales.vue)
+
+// Collections removed (moved to MarketplaceCollections.vue)
+
+// Blog Posts removed (moved to MarketplaceBlog.vue)
+
+// Premium Features removed (moved to MarketplacePremium.vue)
 
 // Announcements (Duyurular)
 const announcements = ref([
@@ -986,21 +375,7 @@ const announcements = ref([
   '🎁 Hediye Çeki: Her 1000 TL\'lik alışverişe 100 TL hediye çeki kazanın'
 ])
 
-// Hero Content
-const heroContent = ref({
-  badge: '🚀 Hızlı Teslimat',
-  title: 'En İyi Fiyatlarla Alışveriş',
-  subtitle: 'Binlerce ürün, güvenli ödeme ve hızlı kargo ile kapınızda. Ücretsiz kargo fırsatını kaçırmayın!',
-  primaryCta: { label: 'Alışverişe Başla', to: '/search' },
-  secondaryCta: { label: 'Kampanyalar', to: '/campaigns' },
-  stats: [
-    { label: 'Aktif Kullanıcı', value: '12.4K' },
-    { label: 'Günlük Sipariş', value: '840' },
-    { label: 'Memnuniyet', value: '%98' },
-    { label: 'Ürün Çeşidi', value: '25K+' }
-  ],
-  dailyDeal: '🔥 Bugünün Fırsatı: Elektronik kategorisinde %40 indirim!'
-})
+// Hero Content removed (moved to MarketplaceHero.vue)
 
 // Live Metrics
 const liveMetrics = ref([
@@ -1010,46 +385,17 @@ const liveMetrics = ref([
   { icon: '⭐', label: 'Ortalama Puan', value: '4.8/5', trend: '+0.2', trendUp: true }
 ])
 
-// Campaigns
-const campaigns = ref<Campaign[]>([])
-const currentCampaignIndex = ref(0)
-const campaignCountdown = ref<{ days: number; hours: number; minutes: number; seconds: number } | null>(null)
-const campaignProgress = ref(0)
-let campaignAutoPlayInterval: ReturnType<typeof setInterval> | null = null
-let campaignProgressInterval: ReturnType<typeof setInterval> | null = null
-let campaignCountdownInterval: ReturnType<typeof setInterval> | null = null
-let campaignTouchStartX = 0
+// Shopping Events (Now Active Campaigns) removed (moved to MarketplaceEvents.vue)
 
-// Orders
-const activeOrders = ref<Order[]>([])
-const currentOrderPage = ref(0)
-const ordersContainer = ref<HTMLElement | null>(null)
+// Daily Tasks removed (moved to MarketplaceTasks.vue)
 
-// Bundles - Mock data ile başlat
-const bundles = ref<Bundle[]>([
-  {
-    id: 1,
-    discount: 15,
-    main: { image: '/images/products/marshall-kulaklik.jpg', title: 'Marshall Kulaklık' },
-    extra: { image: '/images/products/yoga-mati.jpg', title: 'Yoga Matı' },
-    description: 'Müzik ve spor birlikte!',
-    totalPrice: 2420,
-    originalPrice: 2848
-  },
-  {
-    id: 2,
-    discount: 20,
-    main: { image: '/images/products/protein-tozu.jpg', title: 'Protein Tozu' },
-    extra: { image: '/images/products/fistoq.jpg', title: 'Fıstık Ezmesi' },
-    description: 'Sağlıklı beslenme paketi',
-    totalPrice: 870,
-    originalPrice: 1088
-  }
-])
-const loadingBundles = ref(false)
-const addingBundleId = ref<number | null>(null)
-const bundlesSection = ref<HTMLElement | null>(null)
-const bundleCarousel = ref<HTMLElement | null>(null)
+// Campaigns removed (moved to MarketplaceCampaigns.vue)
+
+// Turbo Competition removed (moved to MarketplaceTurbo.vue)
+
+// Orders removed (moved to MarketplaceActiveOrders.vue)
+
+// Bundles removed (moved to MarketplaceBundles.vue)
 
 // Mobile Bottom Navigation
 const showMobileSearch = ref(false)
@@ -1061,25 +407,13 @@ const showGroupOrder = ref(false)
 // Cart
 const cartItemCount = ref(0)
 
+// Special Offers removed (moved to MarketplaceOffers.vue)
+
 // ═══════════════════════════════════════════════════════════════════
 // Computed
 // ═══════════════════════════════════════════════════════════════════
 
-const currentCampaign = computed(() => campaigns.value[currentCampaignIndex.value] || {})
 
-const currentCampaignGradient = computed(() => {
-  const campaign = currentCampaign.value
-  const from = campaign.colorFrom || '#4f46e5'
-  const to = campaign.colorTo || '#7c3aed'
-  return { background: `linear-gradient(135deg, ${from}, ${to})` }
-})
-
-const countdownUnits = computed(() => ({
-  days: t('time.days'),
-  hours: t('time.hours'),
-  minutes: t('time.minutes'),
-  seconds: t('time.seconds')
-}))
 
 // ═══════════════════════════════════════════════════════════════════
 // Methods
@@ -1149,175 +483,11 @@ const goToAdmin = () => {
   }
 }
 
-// Campaign Methods
-const startCampaignAutoPlay = () => {
-  if (campaigns.value.length <= 1) return
-  
-  pauseCampaignAutoPlay()
-  campaignProgress.value = 0
+// Campaign Methods removed (moved to MarketplaceCampaigns.vue)
 
-  campaignAutoPlayInterval = setInterval(() => {
-    nextCampaign()
-  }, 5000)
+// Order Methods removed (moved to MarketplaceActiveOrders.vue)
 
-  campaignProgressInterval = setInterval(() => {
-    if (campaignProgress.value < 100) {
-      campaignProgress.value += 2
-    }
-  }, 100)
-}
-
-const pauseCampaignAutoPlay = () => {
-  if (campaignAutoPlayInterval) clearInterval(campaignAutoPlayInterval)
-  if (campaignProgressInterval) clearInterval(campaignProgressInterval)
-}
-
-const resumeCampaignAutoPlay = () => {
-  if (campaigns.value.length > 1) {
-    startCampaignAutoPlay()
-  }
-}
-
-const nextCampaign = () => {
-  currentCampaignIndex.value = (currentCampaignIndex.value + 1) % campaigns.value.length
-  campaignProgress.value = 0
-  updateCampaignCountdown()
-}
-
-const prevCampaign = () => {
-  currentCampaignIndex.value = (currentCampaignIndex.value - 1 + campaigns.value.length) % campaigns.value.length
-  campaignProgress.value = 0
-  updateCampaignCountdown()
-}
-
-const goToCampaignSlide = (index: number) => {
-  currentCampaignIndex.value = index
-  campaignProgress.value = 0
-  updateCampaignCountdown()
-}
-
-const goToCampaign = (campaign: Campaign) => {
-  if (campaign.link) {
-    router.push(campaign.link)
-  } else {
-    router.push(`/campaigns/${campaign.id}`)
-  }
-}
-
-const updateCampaignCountdown = () => {
-  if (campaignCountdownInterval) clearInterval(campaignCountdownInterval)
-  
-  const campaign = currentCampaign.value
-  if (!campaign.endDate) {
-    campaignCountdown.value = null
-    return
-  }
-
-  const endDate = new Date(campaign.endDate)
-  
-  campaignCountdownInterval = setInterval(() => {
-    const now = new Date()
-    const diff = endDate.getTime() - now.getTime()
-    
-    if (diff <= 0) {
-      campaignCountdown.value = { days: 0, hours: 0, minutes: 0, seconds: 0 }
-      if (campaignCountdownInterval) clearInterval(campaignCountdownInterval)
-      return
-    }
-    
-    campaignCountdown.value = {
-      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((diff / (1000 * 60)) % 60),
-      seconds: Math.floor((diff / 1000) % 60)
-    }
-  }, 1000)
-}
-
-const handleCampaignTouchStart = (e: TouchEvent) => {
-  campaignTouchStartX = e.changedTouches[0].clientX
-}
-
-const handleCampaignTouchEnd = (e: TouchEvent) => {
-  const touchEndX = e.changedTouches[0].clientX
-  const diff = touchEndX - campaignTouchStartX
-  
-  if (diff < -50) nextCampaign()
-  else if (diff > 50) prevCampaign()
-}
-
-// Order Methods
-const handleOrdersScroll = () => {
-  if (!ordersContainer.value) return
-  const scrollLeft = ordersContainer.value.scrollLeft
-  const cardWidth = 288 + 16 // card width + gap
-  currentOrderPage.value = Math.round(scrollLeft / (cardWidth * 2))
-}
-
-const getOrderStatusClass = (status: string) => {
-  const classes: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-700',
-    confirmed: 'bg-blue-100 text-blue-700',
-    processing: 'bg-purple-100 text-purple-700',
-    shipped: 'bg-indigo-100 text-indigo-700',
-    delivered: 'bg-green-100 text-green-700'
-  }
-  return classes[status] || 'bg-slate-100 text-slate-700'
-}
-
-const getOrderStatusDotClass = (status: string) => {
-  const classes: Record<string, string> = {
-    pending: 'bg-yellow-500',
-    confirmed: 'bg-blue-500',
-    processing: 'bg-purple-500',
-    shipped: 'bg-indigo-500',
-    delivered: 'bg-green-500'
-  }
-  return classes[status] || 'bg-slate-500'
-}
-
-const getOrderStatusText = (status: string) => {
-  return t(`order.statuses.${status}`)
-}
-
-const trackOrder = (order: Order) => {
-  router.push(`/orders/${order.id}/track`)
-}
-
-// Bundle Methods
-const scrollToBundles = () => {
-  bundlesSection.value?.scrollIntoView({ behavior: 'smooth' })
-}
-
-const scrollBundles = (direction: 'left' | 'right') => {
-  if (!bundleCarousel.value) return
-  const scrollAmount = 400
-  bundleCarousel.value.scrollBy({
-    left: direction === 'right' ? scrollAmount : -scrollAmount,
-    behavior: 'smooth'
-  })
-}
-
-const addBundleToCart = async (bundle: Bundle) => {
-  addingBundleId.value = bundle.id
-  try {
-    // API call disabled - backend not running
-    // await fetch('/api/cart/bundle', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ bundle_id: bundle.id })
-    // })
-    
-    // Simulate adding to cart
-    await new Promise(resolve => setTimeout(resolve, 500))
-    cartItemCount.value += 2
-    // Show success toast
-  } catch (error) {
-    console.error('Bundle eklenemedi:', error)
-  } finally {
-    addingBundleId.value = null
-  }
-}
+// Bundle Methods removed (moved to MarketplaceBundles.vue)
 
 // Group Order Methods
 const toggleGroupOrder = () => {
@@ -1328,42 +498,9 @@ const toggleGroupOrder = () => {
 // Data Fetching
 // ═══════════════════════════════════════════════════════════════════
 
-const loadCampaigns = async () => {
-  try {
-    const response = await fetch('/api/campaigns/active')
-    campaigns.value = response.ok ? await response.json() : []
-    if (campaigns.value.length > 0) {
-      updateCampaignCountdown()
-      startCampaignAutoPlay()
-    }
-  } catch (error) {
-    console.error('Kampanyalar yüklenemedi:', error)
-  }
-}
 
-const loadActiveOrders = async () => {
-  try {
-    const response = await fetch('/api/orders/active')
-    activeOrders.value = response.ok ? await response.json() : []
-  } catch (error) {
-    console.error('Siparişler yüklenemedi:', error)
-  }
-}
 
-const loadBundles = async () => {
-  // Mock data zaten yüklendi, API çağrısı isteğe bağlı
-  loadingBundles.value = false
-  // try {
-  //   const data = await fetchWithCache<Bundle[]>('/api/bundles/featured')
-  //   if (data && data.length > 0) {
-  //     bundles.value = data
-  //   }
-  // } catch (error) {
-  //   console.error('Bundle teklifleri yüklenemedi, mock data kullanılıyor:', error)
-  // } finally {
-  //   loadingBundles.value = false
-  // }
-}
+
 
 const loadCartCount = async () => {
   try {
@@ -1381,21 +518,16 @@ const loadCartCount = async () => {
 
 onMounted(async () => {
   // Load all data in parallel
-  // API calls disabled - backend not running
-  // await Promise.all([
-  //   loadCampaigns(),
-  //   loadActiveOrders(),
-  //   loadBundles(),
-  //   loadCartCount()
-  // ])
+  await Promise.all([
+    fetchServices(),
+    fetchPopularSearches()
+  ])
   
-  // Just load mock bundles
-  loadBundles()
+
 })
 
 onUnmounted(() => {
-  pauseCampaignAutoPlay()
-  if (campaignCountdownInterval) clearInterval(campaignCountdownInterval)
+  // Cleanup
 })
 </script>
 

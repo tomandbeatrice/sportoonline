@@ -19,11 +19,12 @@
           <div class="flex bg-white rounded-xl overflow-hidden shadow-lg">
             <input
               v-model="searchQuery"
+              @keyup.enter="handleSearch"
               type="text"
               placeholder="Ne tür bir hizmete ihtiyacınız var?"
               class="flex-1 px-4 py-4 text-slate-800 focus:outline-none"
             />
-            <button class="bg-purple-600 hover:bg-purple-700 px-6 py-4 font-medium transition-colors">
+            <button @click="handleSearch" class="bg-purple-600 hover:bg-purple-700 px-6 py-4 font-medium transition-colors">
               🔍 Ara
             </button>
           </div>
@@ -171,8 +172,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import ServiceNav from '@/components/shared/ServiceNav.vue'
 
+const router = useRouter()
 const searchQuery = ref('')
 const selectedCategory = ref<string | null>(null)
 
@@ -261,6 +264,12 @@ const topProviders = [
 ]
 
 const selectCategory = (categoryId: string) => {
-  selectedCategory.value = categoryId
+  router.push({ path: '/services/all', query: { category: categoryId } })
+}
+
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ path: '/services/all', query: { q: searchQuery.value } })
+  }
 }
 </script>

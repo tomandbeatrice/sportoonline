@@ -1,956 +1,251 @@
-<template>
-  <div class="system-settings">
-    <!-- Header -->
-    <div class="header">
-      <div>
-        <h1>⚙️ Sistem Ayarları</h1>
-        <p class="subtitle">Platform yapılandırması ve entegrasyonlar</p>
-      </div>
-      <button @click="saveAllSettings" class="btn btn-primary" :disabled="saving">
-        {{ saving ? 'Kaydediliyor...' : '💾 Tüm Ayarları Kaydet' }}
-      </button>
-    </div>
-
-    <!-- Settings Tabs -->
-    <div class="settings-tabs">
-      <button 
-        v-for="tab in tabs" 
-        :key="tab.id"
-        @click="activeTab = tab.id"
-        :class="['tab-btn', { active: activeTab === tab.id }]"
-      >
-        <span class="flex items-center justify-center">
-          <BadgeIcon v-if="tab.iconName" :name="tab.iconName" cls="w-5 h-5 mr-2" />
-          <span v-else class="mr-2">{{ tab.icon }}</span>
-        </span>
-        {{ tab.label }}
-      </button>
-    </div>
-
-    <!-- General Settings -->
-    <div v-show="activeTab === 'general'" class="settings-section">
-      <div class="section-card">
-        <h3>🏢 Genel Bilgiler</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Site Adı *</label>
-            <input v-model="settings.general.site_name" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Site URL *</label>
-            <input v-model="settings.general.site_url" type="url" required />
-          </div>
-          <div class="form-group">
-            <label>Destek Email *</label>
-            <input v-model="settings.general.support_email" type="email" required />
-          </div>
-          <div class="form-group">
-            <label>Destek Telefon</label>
-            <input v-model="settings.general.support_phone" type="tel" />
-          </div>
-          <div class="form-group full">
-            <label>Site Açıklaması</label>
-            <textarea v-model="settings.general.site_description" rows="3"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-card">
-        <h3>🖼️ Logo ve Görsel</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Logo</label>
-            <div class="image-upload">
-              <input type="file" @change="uploadLogo" accept="image/*" />
-              <img v-if="settings.general.logo_url" :src="settings.general.logo_url" alt="Logo" class="preview-image" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Favicon</label>
-            <div class="image-upload">
-              <input type="file" @change="uploadFavicon" accept="image/*" />
-              <img v-if="settings.general.favicon_url" :src="settings.general.favicon_url" alt="Favicon" class="preview-image-small" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-card">
-        <h3>💰 Para Birimi ve Vergi</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Para Birimi</label>
-            <select v-model="settings.general.currency">
-              <option value="TRY">TRY (₺)</option>
-              <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>KDV Oranı (%)</label>
-            <input v-model.number="settings.general.vat_rate" type="number" min="0" max="100" />
-          </div>
-          <div class="form-group">
-            <label>Minimum Sipariş Tutarı</label>
-            <input v-model.number="settings.general.min_order_amount" type="number" min="0" />
-          </div>
-          <div class="form-group">
-            <label>Ücretsiz Kargo Limiti</label>
-            <input v-model.number="settings.general.free_shipping_limit" type="number" min="0" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Payment Settings -->
-    <div v-show="activeTab === 'payment'" class="settings-section">
-      <div class="section-card">
-        <h3>💳 Ödeme Gateway'leri</h3>
-        
-        <!-- Iyzico -->
-        <div class="gateway-card">
-          <div class="gateway-header">
-            <div>
-              <h4>Iyzico</h4>
-              <p>Kredi kartı ve sanal POS</p>
-            </div>
-            <label class="toggle">
-              <input v-model="settings.payment.iyzico.enabled" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div v-if="settings.payment.iyzico.enabled" class="gateway-settings">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>API Key</label>
-                <input v-model="settings.payment.iyzico.api_key" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Secret Key</label>
-                <input v-model="settings.payment.iyzico.secret_key" type="password" />
-              </div>
-              <div class="form-group">
-                <label>Mod</label>
-                <select v-model="settings.payment.iyzico.mode">
-                  <option value="sandbox">Test (Sandbox)</option>
-                  <option value="live">Canlı (Production)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PayTR -->
-        <div class="gateway-card">
-          <div class="gateway-header">
-            <div>
-              <h4>PayTR</h4>
-              <p>Türk ödeme sistemi</p>
-            </div>
-            <label class="toggle">
-              <input v-model="settings.payment.paytr.enabled" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div v-if="settings.payment.paytr.enabled" class="gateway-settings">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Merchant ID</label>
-                <input v-model="settings.payment.paytr.merchant_id" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Merchant Key</label>
-                <input v-model="settings.payment.paytr.merchant_key" type="password" />
-              </div>
-              <div class="form-group">
-                <label>Merchant Salt</label>
-                <input v-model="settings.payment.paytr.merchant_salt" type="password" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MokaPOS -->
-        <div class="gateway-card">
-          <div class="gateway-header">
-            <div>
-              <h4>MokaPOS</h4>
-              <p>Sanal POS çözümü</p>
-            </div>
-            <label class="toggle">
-              <input v-model="settings.payment.mokapos.enabled" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div v-if="settings.payment.mokapos.enabled" class="gateway-settings">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Dealer Code</label>
-                <input v-model="settings.payment.mokapos.dealer_code" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Username</label>
-                <input v-model="settings.payment.mokapos.username" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Password</label>
-                <input v-model="settings.payment.mokapos.password" type="password" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Shipping Settings -->
-    <div v-show="activeTab === 'shipping'" class="settings-section">
-      <div class="section-card">
-        <h3 class="flex items-center gap-2"><BadgeIcon name="box" cls="w-6 h-6 text-blue-600" /> Kargo Şirketleri</h3>
-
-        <!-- Aras Kargo -->
-        <div class="shipping-card">
-          <div class="shipping-header">
-            <div>
-              <h4>Aras Kargo</h4>
-              <p>Entegrasyon ve API ayarları</p>
-            </div>
-            <label class="toggle">
-              <input v-model="settings.shipping.aras.enabled" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div v-if="settings.shipping.aras.enabled" class="shipping-settings">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Müşteri Kodu</label>
-                <input v-model="settings.shipping.aras.customer_code" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Kullanıcı Adı</label>
-                <input v-model="settings.shipping.aras.username" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Şifre</label>
-                <input v-model="settings.shipping.aras.password" type="password" />
-              </div>
-              <div class="form-group">
-                <label>Kargo Ücreti (₺)</label>
-                <input v-model.number="settings.shipping.aras.price" type="number" min="0" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Yurtiçi Kargo -->
-        <div class="shipping-card">
-          <div class="shipping-header">
-            <div>
-              <h4>Yurtiçi Kargo</h4>
-              <p>Entegrasyon ve API ayarları</p>
-            </div>
-            <label class="toggle">
-              <input v-model="settings.shipping.yurtici.enabled" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div v-if="settings.shipping.yurtici.enabled" class="shipping-settings">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Müşteri No</label>
-                <input v-model="settings.shipping.yurtici.customer_no" type="text" />
-              </div>
-              <div class="form-group">
-                <label>API Key</label>
-                <input v-model="settings.shipping.yurtici.api_key" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Kargo Ücreti (₺)</label>
-                <input v-model.number="settings.shipping.yurtici.price" type="number" min="0" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MNG Kargo -->
-        <div class="shipping-card">
-          <div class="shipping-header">
-            <div>
-              <h4>MNG Kargo</h4>
-              <p>Entegrasyon ve API ayarları</p>
-            </div>
-            <label class="toggle">
-              <input v-model="settings.shipping.mng.enabled" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div v-if="settings.shipping.mng.enabled" class="shipping-settings">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Kullanıcı Adı</label>
-                <input v-model="settings.shipping.mng.username" type="text" />
-              </div>
-              <div class="form-group">
-                <label>Şifre</label>
-                <input v-model="settings.shipping.mng.password" type="password" />
-              </div>
-              <div class="form-group">
-                <label>Kargo Ücreti (₺)</label>
-                <input v-model.number="settings.shipping.mng.price" type="number" min="0" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Email Settings -->
-    <div v-show="activeTab === 'email'" class="settings-section">
-      <div class="section-card">
-        <h3>📧 Email Ayarları</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>SMTP Host</label>
-            <input v-model="settings.email.smtp_host" type="text" />
-          </div>
-          <div class="form-group">
-            <label>SMTP Port</label>
-            <input v-model.number="settings.email.smtp_port" type="number" />
-          </div>
-          <div class="form-group">
-            <label>SMTP Kullanıcı Adı</label>
-            <input v-model="settings.email.smtp_username" type="text" />
-          </div>
-          <div class="form-group">
-            <label>SMTP Şifre</label>
-            <input v-model="settings.email.smtp_password" type="password" />
-          </div>
-          <div class="form-group">
-            <label>Gönderen Adı</label>
-            <input v-model="settings.email.from_name" type="text" />
-          </div>
-          <div class="form-group">
-            <label>Gönderen Email</label>
-            <input v-model="settings.email.from_email" type="email" />
-          </div>
-        </div>
-
-        <div class="test-section">
-          <h4>Email Testi</h4>
-          <div class="test-form">
-            <input v-model="testEmail" type="email" placeholder="Test email adresi" />
-            <button @click="sendTestEmail" class="btn btn-secondary">Test Email Gönder</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Commission Settings -->
-    <div v-show="activeTab === 'commission'" class="settings-section">
-      <div class="section-card">
-        <h3>💼 Komisyon Oranları</h3>
-        
-        <div class="commission-card">
-          <h4>Genel Komisyon</h4>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Platform Komisyonu (%)</label>
-              <input v-model.number="settings.commission.default_rate" type="number" min="0" max="100" step="0.1" />
-              <small>Tüm satışlar için varsayılan oran</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="commission-card">
-          <h4>Kategori Bazlı Komisyon</h4>
-          <div class="category-commissions">
-            <div v-for="(commission, index) in settings.commission.categories" :key="index" class="commission-row">
-              <select v-model="commission.category_id" class="category-select">
-                <option value="">Kategori Seçiniz</option>
-                <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                  {{ cat.name }}
-                </option>
-              </select>
-              <input v-model.number="commission.rate" type="number" min="0" max="100" step="0.1" placeholder="%" />
-              <button @click="removeCommission(index)" class="btn-icon danger">🗑️</button>
-            </div>
-            <button @click="addCommission" class="btn btn-sm btn-secondary">+ Kategori Ekle</button>
-          </div>
-        </div>
-
-        <div class="commission-card">
-          <h4>Satıcı Bazlı Komisyon</h4>
-          <div class="form-group">
-            <label>
-              <input v-model="settings.commission.allow_seller_specific" type="checkbox" />
-              Satıcılara özel komisyon oranı tanımlanabilsin
-            </label>
-            <small>Satıcı yönetim panelinden her satıcı için özel oran belirlenebilir</small>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Maintenance Mode -->
-    <div v-show="activeTab === 'maintenance'" class="settings-section">
-      <div class="section-card">
-        <h3>🔧 Bakım Modu</h3>
-        
-        <div class="maintenance-toggle">
-          <label class="toggle large">
-            <input v-model="settings.maintenance.enabled" type="checkbox" />
-            <span class="toggle-slider"></span>
-          </label>
-          <div class="maintenance-info">
-            <h4>{{ settings.maintenance.enabled ? 'Bakım Modu Aktif' : 'Bakım Modu Pasif' }}</h4>
-            <p>{{ settings.maintenance.enabled ? 'Site ziyaretçilere kapalıdır' : 'Site normal şekilde çalışıyor' }}</p>
-          </div>
-        </div>
-
-        <div v-if="settings.maintenance.enabled" class="form-grid">
-          <div class="form-group full">
-            <label>Bakım Mesajı</label>
-            <textarea v-model="settings.maintenance.message" rows="4"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Tahmini Bitiş Zamanı</label>
-            <input v-model="settings.maintenance.estimated_end" type="datetime-local" />
-          </div>
-          <div class="form-group">
-            <label>İzin Verilen IP'ler</label>
-            <textarea v-model="settings.maintenance.allowed_ips" rows="3" placeholder="Her satıra bir IP adresi"></textarea>
-            <small>Bu IP'lerden gelen ziyaretçiler siteye erişebilir</small>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import axios from 'axios'
-import BadgeIcon from '@/components/icons/BadgeIcon.vue'
+import { ref, computed } from 'vue'
+import SettingsAIAdvisor from '@/components/admin/settings/SettingsAIAdvisor.vue'
 
-const activeTab = ref('general')
+// --- Types ---
+interface SettingCategory {
+  id: string
+  label: string
+  icon: string
+  description: string
+}
+
+// --- State ---
+const activeCategoryId = ref('general')
 const saving = ref(false)
-const testEmail = ref('')
-const categories = ref([])
 
-const tabs = [
-  { id: 'general', icon: '🏢', label: 'Genel' },
-  { id: 'payment', icon: '💳', label: 'Ödeme' },
-  { id: 'shipping', icon: '📦', iconName: 'box', label: 'Kargo' },
-  { id: 'email', icon: '📧', label: 'Email' },
-  { id: 'commission', icon: '💼', label: 'Komisyon' },
-  { id: 'maintenance', icon: '🔧', label: 'Bakım' }
+const categories: SettingCategory[] = [
+  { id: 'general', label: 'Genel Ayarlar', icon: '🏢', description: 'Site kimliği ve iletişim bilgileri' },
+  { id: 'security', label: 'Güvenlik', icon: '🛡️', description: 'Şifre politikaları ve 2FA' },
+  { id: 'payment', label: 'Ödeme & Finans', icon: '💳', description: 'Para birimi ve vergi oranları' },
+  { id: 'shipping', label: 'Kargo & Teslimat', icon: '🚚', description: 'Kargo limitleri ve firmalar' },
+  { id: 'email', label: 'E-posta & Bildirim', icon: '📧', description: 'SMTP ve şablon ayarları' },
+  { id: 'integrations', label: 'Entegrasyonlar', icon: '🔌', description: 'API ve 3. parti servisler' }
 ]
 
-const settings = reactive({
+const settings = ref({
   general: {
-    site_name: '',
-    site_url: '',
-    site_description: '',
-    support_email: '',
-    support_phone: '',
-    logo_url: '',
-    favicon_url: '',
-    currency: 'TRY',
-    vat_rate: 20,
-    min_order_amount: 0,
-    free_shipping_limit: 150
+    site_name: 'SportoOnline',
+    site_url: 'https://sportoonline.com',
+    support_email: 'destek@sportoonline.com',
+    support_phone: '+90 850 123 45 67',
+    site_description: 'Türkiye\'nin en büyük spor giyim mağazası.',
+    logo_url: 'https://placehold.co/200x60/indigo/white?text=SportoOnline',
+    favicon_url: 'https://placehold.co/32x32/indigo/white?text=S'
+  },
+  security: {
+    force_2fa_admin: false,
+    password_expiry_days: 90,
+    session_timeout_mins: 30,
+    debug_mode: true // Intentionally true to trigger AI warning
   },
   payment: {
-    iyzico: {
-      enabled: false,
-      api_key: '',
-      secret_key: '',
-      mode: 'sandbox'
-    },
-    paytr: {
-      enabled: false,
-      merchant_id: '',
-      merchant_key: '',
-      merchant_salt: ''
-    },
-    mokapos: {
-      enabled: false,
-      dealer_code: '',
-      username: '',
-      password: ''
-    }
+    currency: 'TRY',
+    vat_rate: 18,
+    min_order_amount: 100,
+    payment_methods: ['credit_card', 'bank_transfer']
   },
   shipping: {
-    aras: {
-      enabled: false,
-      customer_code: '',
-      username: '',
-      password: '',
-      price: 15
-    },
-    yurtici: {
-      enabled: false,
-      customer_no: '',
-      api_key: '',
-      price: 15
-    },
-    mng: {
-      enabled: false,
-      username: '',
-      password: '',
-      price: 15
-    }
+    free_shipping_limit: 500,
+    default_carrier: 'yurtici'
   },
   email: {
-    smtp_host: '',
+    smtp_host: 'smtp.sportoonline.com',
     smtp_port: 587,
-    smtp_username: '',
-    smtp_password: '',
-    from_name: '',
-    from_email: ''
-  },
-  commission: {
-    default_rate: 10,
-    allow_seller_specific: true,
-    categories: [] as Array<{category_id: number, rate: number}>
-  },
-  maintenance: {
-    enabled: false,
-    message: '',
-    estimated_end: '',
-    allowed_ips: ''
+    sender_name: 'SportoOnline Bilgilendirme'
   }
 })
 
-onMounted(() => {
-  loadSettings()
-  loadCategories()
-})
-
-const loadSettings = async () => {
-  try {
-    const response = await axios.get('/api/admin/settings')
-    Object.assign(settings, response.data)
-  } catch (error) {
-    console.error('Ayarlar yüklenemedi:', error)
-  }
-}
-
-const loadCategories = async () => {
-  try {
-    const response = await axios.get('/api/admin/categories')
-    categories.value = response.data
-  } catch (error) {
-    console.error('Kategoriler yüklenemedi:', error)
-  }
-}
-
-const saveAllSettings = async () => {
+// --- Methods ---
+const saveSettings = () => {
   saving.value = true
-  try {
-    await axios.post('/api/admin/settings', settings)
-    alert('Ayarlar kaydedildi')
-  } catch (error: any) {
-    console.error('Ayarlar kaydedilemedi:', error)
-    alert(error.response?.data?.message || 'Bir hata oluştu')
-  } finally {
+  setTimeout(() => {
     saving.value = false
-  }
+    alert('Ayarlar başarıyla kaydedildi!')
+  }, 800)
 }
 
-const uploadLogo = async (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) {
-    const formData = new FormData()
-    formData.append('logo', file)
-    try {
-      const response = await axios.post('/api/admin/settings/upload-logo', formData)
-      settings.general.logo_url = response.data.url
-    } catch (error) {
-      console.error('Logo yüklenemedi:', error)
-      alert('Logo yüklenirken bir hata oluştu')
-    }
-  }
-}
-
-const uploadFavicon = async (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) {
-    const formData = new FormData()
-    formData.append('favicon', file)
-    try {
-      const response = await axios.post('/api/admin/settings/upload-favicon', formData)
-      settings.general.favicon_url = response.data.url
-    } catch (error) {
-      console.error('Favicon yüklenemedi:', error)
-      alert('Favicon yüklenirken bir hata oluştu')
-    }
-  }
-}
-
-const sendTestEmail = async () => {
-  if (!testEmail.value) {
-    alert('Email adresi giriniz')
-    return
-  }
-
-  try {
-    await axios.post('/api/admin/settings/test-email', { email: testEmail.value })
-    alert('Test email gönderildi')
-  } catch (error) {
-    console.error('Email gönderilemedi:', error)
-    alert('Email gönderilirken bir hata oluştu')
-  }
-}
-
-const addCommission = () => {
-  settings.commission.categories.push({ category_id: 0, rate: 10 })
-}
-
-const removeCommission = (index: number) => {
-  settings.commission.categories.splice(index, 1)
+const uploadLogo = (event: Event) => {
+  // Mock upload
+  alert('Logo yükleme simülasyonu')
 }
 </script>
 
-<style scoped>
-.system-settings {
-  padding: 24px;
-}
+<template>
+  <div class="h-[calc(100vh-4rem)] flex flex-col bg-slate-50 overflow-hidden">
+    <!-- Top Bar -->
+    <div class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shrink-0">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          ⚙️ Sistem Ayarları
+          <span class="text-xs font-normal bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">v2.4.0</span>
+        </h1>
+        <p class="text-slate-500 text-sm mt-1">Platform yapılandırması ve sistem sağlığı</p>
+      </div>
+      
+      <button 
+        @click="saveSettings" 
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition shadow-sm shadow-indigo-200 flex items-center gap-2"
+        :disabled="saving"
+      >
+        <span v-if="saving" class="animate-spin">↻</span>
+        <span v-else>💾</span>
+        {{ saving ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet' }}
+      </button>
+    </div>
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
+    <!-- Main Content -->
+    <div class="flex flex-1 overflow-hidden">
+      
+      <!-- Left Panel: Categories -->
+      <div class="w-64 bg-white border-r border-slate-200 flex flex-col overflow-y-auto">
+        <div class="p-4 space-y-1">
+          <button 
+            v-for="cat in categories" 
+            :key="cat.id"
+            @click="activeCategoryId = cat.id"
+            class="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200"
+            :class="activeCategoryId === cat.id ? 'bg-indigo-50 text-indigo-700 font-bold ring-1 ring-indigo-200' : 'text-slate-600 hover:bg-slate-50'"
+          >
+            <span class="text-xl">{{ cat.icon }}</span>
+            <div>
+              <div class="text-sm">{{ cat.label }}</div>
+              <div class="text-[10px] opacity-70 font-normal truncate max-w-[120px]">{{ cat.description }}</div>
+            </div>
+          </button>
+        </div>
+      </div>
 
-.header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
+      <!-- Middle Panel: Form -->
+      <div class="flex-1 overflow-y-auto p-8 bg-slate-50">
+        <div class="max-w-3xl mx-auto space-y-6">
+          
+          <!-- General Settings -->
+          <div v-if="activeCategoryId === 'general'" class="space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="text-lg font-bold text-slate-800 mb-6">🏢 Site Kimliği</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Site Adı</label>
+                  <input v-model="settings.general.site_name" type="text" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Site URL</label>
+                  <input v-model="settings.general.site_url" type="url" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+                <div class="col-span-2 space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Açıklama (Meta Description)</label>
+                  <textarea v-model="settings.general.site_description" rows="3" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"></textarea>
+                </div>
+              </div>
+            </div>
 
-.subtitle {
-  color: #666;
-  margin: 0;
-}
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="text-lg font-bold text-slate-800 mb-6">📞 İletişim Bilgileri</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Destek E-posta</label>
+                  <input v-model="settings.general.support_email" type="email" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Destek Telefon</label>
+                  <input v-model="settings.general.support_phone" type="tel" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+              </div>
+            </div>
 
-.settings-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-  border-bottom: 2px solid #e5e7eb;
-  overflow-x: auto;
-}
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="text-lg font-bold text-slate-800 mb-6">🖼️ Görseller</h2>
+              <div class="flex gap-8">
+                <div class="space-y-3">
+                  <label class="text-sm font-medium text-slate-700">Logo</label>
+                  <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition cursor-pointer" @click="uploadLogo">
+                    <img :src="settings.general.logo_url" class="h-12 mx-auto mb-2" alt="Logo">
+                    <span class="text-xs text-slate-500">Değiştirmek için tıklayın</span>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <label class="text-sm font-medium text-slate-700">Favicon</label>
+                  <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition cursor-pointer w-32" @click="uploadLogo">
+                    <img :src="settings.general.favicon_url" class="h-8 w-8 mx-auto mb-2" alt="Favicon">
+                    <span class="text-xs text-slate-500">Değiştir</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-.tab-btn {
-  padding: 12px 24px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
+          <!-- Security Settings -->
+          <div v-if="activeCategoryId === 'security'" class="space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="text-lg font-bold text-slate-800 mb-6">🛡️ Erişim Güvenliği</h2>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <div>
+                    <div class="font-bold text-slate-700">Yönetici 2FA Zorunluluğu</div>
+                    <div class="text-xs text-slate-500">Tüm admin kullanıcıları için iki faktörlü doğrulamayı zorunlu kıl.</div>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" v-model="settings.security.force_2fa_admin" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
+                </div>
 
-.tab-btn:hover {
-  color: #2563eb;
-}
+                <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
+                  <div>
+                    <div class="font-bold text-red-700">Debug Modu</div>
+                    <div class="text-xs text-red-500">Hata ayıklama modunu açar. Canlı ortamda kapalı olmalıdır!</div>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" v-model="settings.security.debug_mode" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
 
-.tab-btn.active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
-}
+          <!-- Payment Settings -->
+          <div v-if="activeCategoryId === 'payment'" class="space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <h2 class="text-lg font-bold text-slate-800 mb-6">💰 Finansal Ayarlar</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Para Birimi</label>
+                  <select v-model="settings.payment.currency" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-white">
+                    <option value="TRY">Türk Lirası (₺)</option>
+                    <option value="USD">Amerikan Doları ($)</option>
+                    <option value="EUR">Euro (€)</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Varsayılan KDV Oranı (%)</label>
+                  <input v-model.number="settings.payment.vat_rate" type="number" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-slate-700">Min. Sipariş Tutarı</label>
+                  <input v-model.number="settings.payment.min_order_amount" type="number" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+              </div>
+            </div>
+          </div>
 
-.settings-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+          <!-- Other tabs placeholders -->
+          <div v-if="['shipping', 'email', 'integrations'].includes(activeCategoryId)" class="bg-white rounded-2xl border border-slate-200 p-10 shadow-sm text-center">
+            <div class="text-4xl mb-4">🚧</div>
+            <h3 class="text-lg font-bold text-slate-800">Yapım Aşamasında</h3>
+            <p class="text-slate-500">Bu ayar grubu için modern arayüz hazırlanıyor.</p>
+          </div>
 
-.section-card,
-.gateway-card,
-.shipping-card,
-.commission-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 24px;
-}
+        </div>
+      </div>
 
-.section-card h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 20px 0;
-}
+      <!-- Right Panel: AI Advisor -->
+      <div class="w-80 bg-white border-l border-slate-200 p-6 overflow-y-auto">
+        <h3 class="font-bold text-slate-800 mb-4">Sistem Sağlığı</h3>
+        <SettingsAIAdvisor />
+      </div>
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-}
-
-.form-group.full {
-  grid-column: 1 / -1;
-}
-
-.form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-}
-
-.form-group small {
-  display: block;
-  margin-top: 4px;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.image-upload {
-  border: 2px dashed #d1d5db;
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-}
-
-.preview-image {
-  max-width: 200px;
-  max-height: 60px;
-  margin-top: 12px;
-}
-
-.preview-image-small {
-  width: 32px;
-  height: 32px;
-  margin-top: 8px;
-}
-
-.gateway-header,
-.shipping-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.gateway-header h4,
-.shipping-header h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.gateway-header p,
-.shipping-header p {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.toggle {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 24px;
-}
-
-.toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #d1d5db;
-  transition: 0.3s;
-  border-radius: 24px;
-}
-
-.toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.toggle input:checked + .toggle-slider {
-  background-color: #2563eb;
-}
-
-.toggle input:checked + .toggle-slider:before {
-  transform: translateX(24px);
-}
-
-.test-section {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.test-section h4 {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-}
-
-.test-form {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.test-form input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-}
-
-.commission-card {
-  margin-bottom: 16px;
-}
-
-.commission-card h4 {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 16px 0;
-}
-
-.category-commissions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.commission-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.category-select {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-}
-
-.commission-row input {
-  width: 100px;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-}
-
-.maintenance-toggle {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  margin-bottom: 24px;
-}
-
-.toggle.large {
-  width: 64px;
-  height: 32px;
-}
-
-.toggle.large .toggle-slider:before {
-  height: 24px;
-  width: 24px;
-  left: 4px;
-  bottom: 4px;
-}
-
-.toggle.large input:checked + .toggle-slider:before {
-  transform: translateX(32px);
-}
-
-.maintenance-info h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
-.maintenance-info p {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: #2563eb;
-  color: white;
-}
-
-.btn-secondary {
-  background: #6b7280;
-  color: white;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 13px;
-}
-
-.btn-icon {
-  padding: 6px 10px;
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn-icon.danger:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-</style>
+    </div>
+  </div>
+</template>

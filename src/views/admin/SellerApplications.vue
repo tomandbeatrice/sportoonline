@@ -1,404 +1,323 @@
 <template>
-  <div class="bg-slate-50 px-4 py-10 md:px-8">
-    <section class="mb-8 grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
-      <Card class="bg-gradient-to-r from-indigo-900 via-violet-900 to-slate-900 text-white">
-        <CardHeader class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <CardTitle class="text-3xl">Satıcı Başvuru Kokpiti</CardTitle>
-            <CardDescription class="text-white/70">
-              Başvuruların onay SLA'sı {{ approvalSla }}. Şu an {{ statusSummary.pending }} bekleyen talep var.
-            </CardDescription>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <button class="rounded-2xl border border-white/30 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white hover:text-white">
-              Kılavuzu Paylaş
-            </button>
-            <button class="rounded-2xl bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-slate-900/40 transition hover:-translate-y-[2px]">
-              Otomatik Onay Akışı
-            </button>
-          </div>
-        </CardHeader>
-        <CardContent class="grid gap-6 md:grid-cols-3">
-          <div v-for="metric in summaryMetrics" :key="metric.id" class="space-y-2">
-            <p class="text-xs uppercase tracking-[0.4em] text-white/60">{{ metric.label }}</p>
-            <p class="text-4xl font-semibold">{{ metric.value }}</p>
-            <p class="text-sm text-white/70">{{ metric.hint }}</p>
-          </div>
-        </CardContent>
-      </Card>
+  <div class="min-h-screen bg-slate-50/50 p-6">
+    <!-- Header & Metrics -->
+    <div class="mb-8">
+      <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Satıcı Başvuruları</h1>
+          <p class="text-slate-500">Yeni satıcı adaylarını inceleyin ve yapay zeka desteğiyle değerlendirin.</p>
+        </div>
+        <div class="flex gap-3">
+          <button class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+            <i class="fas fa-download text-slate-400"></i>
+            Dışa Aktar
+          </button>
+          <button class="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700">
+            <i class="fas fa-cog"></i>
+            Başvuru Ayarları
+          </button>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>İstikrar Notları</CardTitle>
-          <CardDescription>Başvuru akışıyla ilgili öneriler</CardDescription>
-        </CardHeader>
-        <CardContent class="space-y-4">
-          <Alert v-for="note in reviewAlerts" :key="note.id" :title="note.title" :variant="note.variant">
-            {{ note.description }}
-          </Alert>
-        </CardContent>
-      </Card>
-    </section>
-
-    <section>
-      <Card class="space-y-6">
-        <CardHeader class="gap-4">
-          <div>
-            <CardTitle>Başvuru Listesi</CardTitle>
-            <CardDescription>Filtreleyerek bekleyen satıcıları hızla değerlendir.</CardDescription>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button
-              v-for="filter in statusFilters"
-              :key="filter.id"
-              class="rounded-2xl border px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition"
-              :class="selectedStatus === filter.id ? 'border-transparent bg-slate-900 text-white shadow' : 'border-slate-200 bg-white text-slate-500'"
-              @click="selectedStatus = filter.id"
-            >
-              {{ filter.label }}
-              <span class="ml-2 rounded-full bg-black/10 px-2 py-0.5 text-[10px]" v-if="filter.count !== undefined">
-                {{ filter.count }}
-              </span>
-            </button>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <div v-if="loading" class="flex min-h-[240px] items-center justify-center text-slate-500">
-            Başvurular yükleniyor...
-          </div>
-
-          <div v-else>
-            <div class="overflow-x-auto">
-              <table class="min-w-full text-left text-sm">
-                <thead>
-                  <tr class="text-xs uppercase tracking-[0.3em] text-slate-400">
-                    <th class="px-4 py-3">Satıcı</th>
-                    <th class="px-4 py-3">E-posta</th>
-                    <th class="px-4 py-3">Mağaza</th>
-                    <th class="px-4 py-3">Başvuru</th>
-                    <th class="px-4 py-3">Durum</th>
-                    <th class="px-4 py-3">İşlem</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="application in filteredApplications" :key="application.id" class="border-t border-slate-100">
-                    <td class="px-4 py-4 text-sm font-semibold text-slate-900">
-                      {{ application.user.name }}
-                      <p class="text-xs text-slate-400">{{ application.user.company_role || '—' }}</p>
-                    </td>
-                    <td class="px-4 py-4 text-sm text-slate-500">{{ application.user.email }}</td>
-                    <td class="px-4 py-4 text-sm text-slate-900">{{ application.name || application.store_name || '—' }}</td>
-                    <td class="px-4 py-4 text-sm text-slate-500">{{ formatDate(application.created_at) }}</td>
-                    <td class="px-4 py-4">
-                      <span :class="statusBadge(application.status)">
-                        {{ statusText(application.status) }}
-                      </span>
-                    </td>
-                    <td class="px-4 py-4 text-sm font-semibold">
-                      <div v-if="application.status === 'pending'" class="flex flex-wrap gap-2">
-                        <button class="text-slate-500 underline-offset-2 hover:text-slate-900 hover:underline" @click="viewDetails(application)">
-                          Detay
-                        </button>
-                        <button class="text-emerald-600 hover:text-emerald-800" @click="approve(application.id)">
-                          Onayla
-                        </button>
-                        <button class="text-orange-600 hover:text-orange-800" @click="reject(application.id)">
-                          Reddet
-                        </button>
-                      </div>
-                      <span v-else class="text-xs uppercase tracking-[0.3em] text-slate-400">
-                        {{ statusText(application.status) }}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div v-if="filteredApplications.length === 0" class="py-16 text-center text-sm text-slate-500">
-              Filtreye uygun başvuru bulunamadı.
+      <!-- Metrics Grid -->
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div v-for="metric in metrics" :key="metric.label" class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-slate-500">{{ metric.label }}</span>
+            <div class="rounded-lg p-2" :class="metric.bgClass">
+              <i class="fas" :class="[metric.icon, metric.textClass]"></i>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </section>
-
-    <transition name="fade">
-      <div
-        v-if="selectedApplication"
-        class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 px-4 py-10"
-        @click="closeDetails"
-      >
-        <Card class="max-h-[90vh] w-full max-w-3xl overflow-y-auto bg-white" @click.stop>
-          <CardHeader class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <CardTitle>Başvuru Detayları</CardTitle>
-              <CardDescription>{{ selectedApplication?.name || selectedApplication?.store_name }}</CardDescription>
-            </div>
-            <span v-if="selectedApplication" :class="statusBadge(selectedApplication.status)">
-              {{ statusText(selectedApplication.status) }}
+          <div class="mt-4">
+            <span class="text-2xl font-bold text-slate-900">{{ metric.value }}</span>
+            <span class="ml-2 text-xs font-medium" :class="metric.trendUp ? 'text-emerald-600' : 'text-red-600'">
+              {{ metric.trend }}
             </span>
-          </CardHeader>
-          <CardContent class="space-y-6">
-            <div class="grid gap-6 md:grid-cols-2">
-              <div v-for="field in detailFields" :key="field.id">
-                <p class="text-xs uppercase tracking-[0.3em] text-slate-400">{{ field.label }}</p>
-                <p class="text-sm font-semibold text-slate-900">{{ detailValue(field.id) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Split View Content -->
+    <div class="grid gap-6 lg:grid-cols-12">
+      <!-- Left Panel: Application List -->
+      <div class="lg:col-span-4 xl:col-span-3">
+        <div class="sticky top-6 space-y-4">
+          <!-- Search & Filter -->
+          <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              placeholder="Mağaza veya e-posta ara..." 
+              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            >
+          </div>
+
+          <!-- Filter Tabs -->
+          <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <button 
+              v-for="tab in tabs" 
+              :key="tab.id"
+              @click="activeTab = tab.id"
+              class="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
+              :class="activeTab === tab.id ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'"
+            >
+              {{ tab.label }}
+              <span class="ml-1 opacity-60">({{ tab.count }})</span>
+            </button>
+          </div>
+
+          <!-- List -->
+          <div class="flex flex-col gap-3">
+            <div 
+              v-for="app in filteredApplications" 
+              :key="app.id"
+              @click="selectedApplication = app"
+              class="cursor-pointer rounded-xl border p-4 transition-all hover:shadow-md"
+              :class="selectedApplication?.id === app.id ? 'border-indigo-500 bg-indigo-50/30 ring-1 ring-indigo-500' : 'border-slate-200 bg-white hover:border-indigo-200'"
+            >
+              <div class="mb-2 flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">
+                    {{ app.store_name.substring(0, 2).toUpperCase() }}
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-semibold text-slate-900">{{ app.store_name }}</h3>
+                    <p class="text-xs text-slate-500">{{ app.created_at_formatted }}</p>
+                  </div>
+                </div>
+                <span 
+                  class="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                  :class="statusClasses[app.status]"
+                >
+                  {{ statusLabels[app.status] }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between text-xs text-slate-500">
+                <span>{{ app.user.name }}</span>
+                <i class="fas fa-chevron-right text-slate-300"></i>
               </div>
             </div>
-            <div class="flex flex-wrap justify-end gap-3">
-              <button class="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600" @click="closeDetails">
-                Kapat
-              </button>
-              <button
-                v-if="selectedApplication?.status === 'pending'"
-                class="rounded-2xl bg-orange-100 px-4 py-2 text-sm font-semibold text-orange-700"
-                @click="handleDecision('reject')"
-              >
-                Reddet
-              </button>
-              <button
-                v-if="selectedApplication?.status === 'pending'"
-                class="rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white"
-                @click="handleDecision('approve')"
-              >
-                Onayla
-              </button>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-    </transition>
+
+      <!-- Right Panel: Details & AI -->
+      <div class="lg:col-span-8 xl:col-span-9">
+        <div v-if="selectedApplication" class="grid gap-6 xl:grid-cols-3">
+          <!-- Main Details -->
+          <div class="space-y-6 xl:col-span-2">
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div class="border-b border-slate-100 px-6 py-4">
+                <h2 class="text-lg font-semibold text-slate-900">Başvuru Detayları</h2>
+              </div>
+              <div class="p-6">
+                <div class="grid gap-6 sm:grid-cols-2">
+                  <div class="space-y-1">
+                    <label class="text-xs font-medium text-slate-500">Mağaza Adı</label>
+                    <p class="text-sm font-medium text-slate-900">{{ selectedApplication.store_name }}</p>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-xs font-medium text-slate-500">Yetkili Kişi</label>
+                    <p class="text-sm font-medium text-slate-900">{{ selectedApplication.user.name }}</p>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-xs font-medium text-slate-500">E-posta</label>
+                    <p class="text-sm font-medium text-slate-900">{{ selectedApplication.user.email }}</p>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-xs font-medium text-slate-500">Telefon</label>
+                    <p class="text-sm font-medium text-slate-900">{{ selectedApplication.user.phone || '+90 555 123 45 67' }}</p>
+                  </div>
+                  <div class="space-y-1 sm:col-span-2">
+                    <label class="text-xs font-medium text-slate-500">Şirket Adresi</label>
+                    <p class="text-sm font-medium text-slate-900">{{ selectedApplication.address || 'Örnek Mahallesi, Teknoloji Caddesi No:1, İstanbul' }}</p>
+                  </div>
+                </div>
+
+                <div class="mt-8">
+                  <h3 class="mb-4 text-sm font-semibold text-slate-900">Yüklenen Belgeler</h3>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="flex items-center gap-3 rounded-lg border border-slate-200 p-3 transition hover:bg-slate-50">
+                      <div class="rounded bg-red-50 p-2 text-red-500">
+                        <i class="fas fa-file-pdf"></i>
+                      </div>
+                      <div class="flex-1 overflow-hidden">
+                        <p class="truncate text-sm font-medium text-slate-900">Vergi_Levhasi.pdf</p>
+                        <p class="text-xs text-slate-500">2.4 MB • 12.05.2024</p>
+                      </div>
+                      <button class="text-slate-400 hover:text-indigo-600">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                    <div class="flex items-center gap-3 rounded-lg border border-slate-200 p-3 transition hover:bg-slate-50">
+                      <div class="rounded bg-blue-50 p-2 text-blue-500">
+                        <i class="fas fa-file-image"></i>
+                      </div>
+                      <div class="flex-1 overflow-hidden">
+                        <p class="truncate text-sm font-medium text-slate-900">Imza_Sirkuleri.jpg</p>
+                        <p class="text-xs text-slate-500">1.1 MB • 12.05.2024</p>
+                      </div>
+                      <button class="text-slate-400 hover:text-indigo-600">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline / History -->
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div class="border-b border-slate-100 px-6 py-4">
+                <h2 class="text-lg font-semibold text-slate-900">İşlem Geçmişi</h2>
+              </div>
+              <div class="p-6">
+                <div class="relative space-y-6 border-l-2 border-slate-100 pl-6">
+                  <div class="relative">
+                    <div class="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-white bg-indigo-500 shadow-sm"></div>
+                    <p class="text-sm font-medium text-slate-900">Başvuru İnceleniyor</p>
+                    <p class="text-xs text-slate-500">Bugün, 14:30 • Sistem tarafından atandı</p>
+                  </div>
+                  <div class="relative">
+                    <div class="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 border-white bg-slate-300"></div>
+                    <p class="text-sm font-medium text-slate-900">Başvuru Alındı</p>
+                    <p class="text-xs text-slate-500">{{ selectedApplication.created_at_formatted }} • Web Form</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Sidebar -->
+          <div class="xl:col-span-1">
+            <SellerApplicationAI 
+              :application="selectedApplication" 
+              @action="handleAIAction"
+            />
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="flex h-[600px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center">
+          <div class="mb-4 rounded-full bg-white p-4 shadow-sm">
+            <i class="fas fa-store text-3xl text-slate-300"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900">Başvuru Seçin</h3>
+          <p class="max-w-xs text-sm text-slate-500">Detayları ve yapay zeka analizini görmek için soldaki listeden bir başvuru seçin.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import api from '@/services/api'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert } from '@/components/ui/alert'
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
+import SellerApplicationAI from '@/components/admin/seller-apps/SellerApplicationAI.vue';
 
-type ApplicationStatus = 'pending' | 'approved' | 'rejected'
+const applications = ref([]);
+const loading = ref(false);
 
-interface SellerUser {
-  name: string
-  email: string
-  company_role?: string
-}
+const metrics = ref([
+  { label: 'Bekleyen', value: '0', trend: '0', trendUp: true, icon: 'fa-clock', bgClass: 'bg-amber-100', textClass: 'text-amber-600' },
+  { label: 'Onaylanan', value: '0', trend: '0', trendUp: true, icon: 'fa-check-circle', bgClass: 'bg-emerald-100', textClass: 'text-emerald-600' },
+  { label: 'Reddedilen', value: '0', trend: '0', trendUp: false, icon: 'fa-ban', bgClass: 'bg-red-100', textClass: 'text-red-600' },
+  { label: 'Ort. Süre', value: '-', trend: '-', trendUp: true, icon: 'fa-stopwatch', bgClass: 'bg-blue-100', textClass: 'text-blue-600' },
+]);
 
-interface SellerApplication {
-  id: number
-  user: SellerUser
-  name?: string
-  store_name?: string
-  business_description?: string
-  phone?: string
-  tax_number?: string
-  address?: string
-  bank_account?: string
-  status: ApplicationStatus
-  status_tr?: string
-  created_at: string
-}
+const tabs = ref([
+  { id: 'all', label: 'Tümü', count: 0 },
+  { id: 'pending', label: 'Bekleyen', count: 0 },
+  { id: 'approved', label: 'Onaylı', count: 0 },
+  { id: 'rejected', label: 'Red', count: 0 },
+]);
 
-const applications = ref<SellerApplication[]>([])
-const loading = ref(true)
-const selectedApplication = ref<SellerApplication | null>(null)
-const selectedStatus = ref<'all' | ApplicationStatus>('all')
+const statusClasses = {
+  pending: 'bg-amber-100 text-amber-700',
+  approved: 'bg-emerald-100 text-emerald-700',
+  rejected: 'bg-red-100 text-red-700'
+};
 
-const statusSummary = computed(() => {
-  return applications.value.reduce(
-    (acc, application) => {
-      acc[application.status] += 1
-      return acc
-    },
-    { pending: 0, approved: 0, rejected: 0 }
-  )
-})
+const statusLabels = {
+  pending: 'Bekliyor',
+  approved: 'Onaylandı',
+  rejected: 'Reddedildi'
+};
 
-const statusFilters = computed(() => [
-  { id: 'all' as const, label: 'Tümü', count: applications.value.length },
-  { id: 'pending' as const, label: 'Bekleyen', count: statusSummary.value.pending },
-  { id: 'approved' as const, label: 'Onaylanan', count: statusSummary.value.approved },
-  { id: 'rejected' as const, label: 'Reddedilen', count: statusSummary.value.rejected }
-])
+// State
+const searchQuery = ref('');
+const activeTab = ref('pending');
+const selectedApplication = ref(null);
 
-const summaryMetrics = computed(() => [
-  {
-    id: 'pending',
-    label: 'Bekleyen Başvuru',
-    value: formatNumber(statusSummary.value.pending),
-    hint: 'Manuel inceleme bekleyen talep'
-  },
-  {
-    id: 'approved',
-    label: 'Son 7 Gün Çıkan',
-    value: formatNumber(statusSummary.value.approved),
-    hint: 'Otomatik onaylanan satıcı'
-  },
-  {
-    id: 'sla',
-    label: 'Ortalama SLA',
-    value: approvalSla,
-    hint: 'Başvurudan karara kadarki süre'
-  }
-])
-
+// Computed
 const filteredApplications = computed(() => {
-  if (selectedStatus.value === 'all') {
-    return applications.value
-  }
-  return applications.value.filter(application => application.status === selectedStatus.value)
-})
+  return applications.value.filter(app => {
+    const matchesSearch = (app.store_name?.toLowerCase() || '').includes(searchQuery.value.toLowerCase()) || 
+                          (app.user?.email?.toLowerCase() || '').includes(searchQuery.value.toLowerCase());
+    const matchesTab = activeTab.value === 'all' || app.status === activeTab.value;
+    return matchesSearch && matchesTab;
+  });
+});
 
-const reviewAlerts = computed(() => {
-  const pending = statusSummary.value.pending
-  const approved = statusSummary.value.approved
-  return [
-    {
-      id: 'pending',
-      title: `${pending} bekleyen başvuru`,
-      description: pending
-        ? 'Operasyon kuyruğunu boşaltmak için manuel inceleme bekliyor.'
-        : 'Bekleyen başvuru yok. Otomasyon çalışıyor.',
-      variant: pending > 0 ? 'orange' : 'emerald'
-    },
-    {
-      id: 'automation',
-      title: 'Otomatik onay motoru',
-      description: approved
-        ? `${approved} başvuru otomatik olarak onaylandı.`
-        : 'Son 24 saatte otomatik onaylanan başvuru bulunmuyor.',
-      variant: approved > 0 ? 'emerald' : 'default'
-    }
-  ]
-})
-
-const detailFields = [
-  { id: 'user.name', label: 'Satıcı Adı' },
-  { id: 'user.email', label: 'E-posta' },
-  { id: 'name', label: 'Mağaza' },
-  { id: 'business_description', label: 'İş Açıklaması' },
-  { id: 'phone', label: 'Telefon' },
-  { id: 'tax_number', label: 'Vergi No' },
-  { id: 'address', label: 'Adres' },
-  { id: 'bank_account', label: 'Banka Hesabı' }
-]
-
-const approvalSla = computed(() => {
-  if (!applications.value.length) return '—'
-  const now = Date.now()
-  const totalMinutes = applications.value.reduce((acc, application) => {
-    const created = new Date(application.created_at).getTime()
-    return acc + Math.max(0, (now - created) / (1000 * 60))
-  }, 0)
-  const avg = totalMinutes / applications.value.length
-  return `${Math.max(1, Math.round(avg))} dk`
-})
-
-function statusBadge(status: ApplicationStatus) {
-  const map: Record<ApplicationStatus, string> = {
-    pending: 'rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800',
-    approved: 'rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700',
-    rejected: 'rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700'
-  }
-  return map[status]
-}
-
-function statusText(status: ApplicationStatus) {
-  const map: Record<ApplicationStatus, string> = {
-    pending: 'Beklemede',
-    approved: 'Onaylandı',
-    rejected: 'Reddedildi'
-  }
-  return map[status]
-}
-
-function detailValue(fieldId: string) {
-  if (!selectedApplication.value) return '—'
-  const segments = fieldId.split('.')
-  let value = segments.reduce<unknown>((acc, segment) => (acc as Record<string, unknown>)?.[segment], selectedApplication.value)
-  if ((!value || value === '') && fieldId === 'name') {
-    value = selectedApplication.value.store_name
-  }
-  return (value as string) ?? '—'
-}
-
-function formatNumber(value: number | undefined) {
-  return new Intl.NumberFormat('tr-TR').format(value ?? 0)
-}
-
-function formatDate(date: string) {
-  if (!date) return '—'
-  return new Date(date).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-}
+onMounted(async () => {
+    await fetchApplications();
+    await fetchStats();
+});
 
 async function fetchApplications() {
-  loading.value = true
-  try {
-    const { data } = await api.get<SellerApplication[]>('/admin/seller-applications')
-    applications.value = data
-    if (selectedApplication.value) {
-      selectedApplication.value = data.find(app => app.id === selectedApplication.value?.id) || null
+    loading.value = true;
+    try {
+        const response = await axios.get('/api/admin/seller-applications');
+        applications.value = response.data.data || response.data;
+        
+        // Update tab counts
+        tabs.value[0].count = applications.value.length;
+        tabs.value[1].count = applications.value.filter(a => a.status === 'pending').length;
+        tabs.value[2].count = applications.value.filter(a => a.status === 'approved').length;
+        tabs.value[3].count = applications.value.filter(a => a.status === 'rejected').length;
+
+        if (applications.value.length > 0 && !selectedApplication.value) {
+            selectedApplication.value = applications.value[0];
+        }
+    } catch (error) {
+        console.error('Failed to fetch seller applications:', error);
+    } finally {
+        loading.value = false;
     }
-  } catch (error) {
-    console.error('Başvurular yüklenemedi:', error)
-  } finally {
-    loading.value = false
-  }
 }
 
-function viewDetails(application: SellerApplication) {
-  selectedApplication.value = application
+async function fetchStats() {
+    try {
+        const response = await axios.get('/api/admin/seller-applications/stats');
+        // Assuming API returns stats matching our metrics structure
+        // For now, we'll just update counts from the applications list if API doesn't return full stats
+        metrics.value[0].value = applications.value.filter(a => a.status === 'pending').length.toString();
+        metrics.value[1].value = applications.value.filter(a => a.status === 'approved').length.toString();
+        metrics.value[2].value = applications.value.filter(a => a.status === 'rejected').length.toString();
+    } catch (error) {
+        console.error('Failed to fetch stats:', error);
+    }
 }
 
-function closeDetails() {
-  selectedApplication.value = null
-}
-
-async function approve(id: number) {
-  if (!confirm('Bu başvuruyu onaylamak istediğinizden emin misiniz?')) return
+// Methods
+const handleAIAction = async (action) => {
+  if (!selectedApplication.value) return;
+  
   try {
-    await api.patch(`/admin/vendors/${id}/status`, { status: 'approved' })
-    await fetchApplications()
+      if (action === 'approve') {
+        await axios.post(`/api/admin/seller-applications/${selectedApplication.value.id}/approve`);
+        selectedApplication.value.status = 'approved';
+        // Refresh list to update counts
+        await fetchApplications();
+      } else if (action === 'reject') {
+        await axios.post(`/api/admin/seller-applications/${selectedApplication.value.id}/reject`);
+        selectedApplication.value.status = 'rejected';
+        await fetchApplications();
+      }
   } catch (error) {
-    console.error('Onaylama işlemi başarısız:', error)
-    alert('Onay işlemi sırasında bir hata oluştu.')
+      console.error('Action failed:', error);
   }
-}
-
-async function reject(id: number) {
-  if (!confirm('Bu başvuruyu reddetmek istediğinizden emin misiniz?')) return
-  try {
-    await api.patch(`/admin/vendors/${id}/status`, { status: 'rejected' })
-    await fetchApplications()
-  } catch (error) {
-    console.error('Reddetme işlemi başarısız:', error)
-    alert('Red işlemi sırasında bir hata oluştu.')
-  }
-}
-
-async function handleDecision(type: 'approve' | 'reject') {
-  if (!selectedApplication.value) return
-  if (type === 'approve') {
-    await approve(selectedApplication.value.id)
-  } else {
-    await reject(selectedApplication.value.id)
-  }
-  closeDetails()
-}
-
-onMounted(fetchApplications)
+};
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

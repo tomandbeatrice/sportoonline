@@ -1,0 +1,55 @@
+{
+  "common": {
+    "viewAll": "Tümünü Gör",
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu"
+  },
+  "product": {
+    "bundleOffers": "Paket Teklifleri",
+    "bundle": {
+      "addToCart": "Paketi Sepete Ekle",
+      "savings": "Kazancınız",
+      "includes": "Paket İçeriği"
+    },
+    "addBundle": "Paketi Ekle",
+    "discount": "İndirim",
+    "addToCart": "Sepete Ekle",
+    "buyNow": "Hemen Al",
+    "outOfStock": "Stokta Yok",
+    "inStock": "Stokta Var"
+  },
+  "bundle": {
+    "saveMoreTogether": "Birlikte alın, daha çok kazanın!",
+    "noBundles": "Şu anda aktif paket teklifi bulunmuyor."
+  },
+  "cta": {
+    "specialOffers": "Özel Teklifler",
+    "specialOffersDesc": "Size özel indirimli ürünleri kaçırmayın!",
+    "viewOffers": "Teklifleri Gör",
+    "viewBundles": "Paketleri Gör",
+    "browseProducts": "Ürünlere Göz At",
+    "shopNow": "Alışverişe Başla",
+    "learnMore": "Daha Fazla Bilgi"
+  },
+  "campaign": {
+    "live": "Canlı",
+    "shopNow": "Hemen Alışveriş Yap"
+  },
+  "order": {
+    "activeOrders": "Aktif Siparişler",
+    "track": "Takip Et",
+    "delivery": "Teslimat",
+    "status": {
+      "pending": "Beklemede",
+      "confirmed": "Onaylandı",
+      "processing": "Hazırlanıyor",
+      "shipped": "Kargoya Verildi",
+      "delivered": "Teslim Edildi"
+    }
+  },
+  "search": {
+    "placeholder": "Ürün, kategori veya marka ara..."
+  }
+}

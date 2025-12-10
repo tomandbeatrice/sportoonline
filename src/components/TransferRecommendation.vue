@@ -211,11 +211,12 @@ const handleAddToCart = async () => {
     const transferProduct = {
       id: `transfer-${selectedTransfer?.id || 1}`,
       name: `Transfer Hizmeti - ${props.hotelBooking?.hotelName || 'Otel'}`,
-      type: 'transfer',
+      type: 'service',
       serviceType: 'airport_transfer',
       price: startingPrice.value,
       quantity: 1,
       image: '/images/services/transfer-default.jpg', // Placeholder image
+      duration: typeof estimatedDuration.value === 'number' ? estimatedDuration.value : undefined,
       details: {
         destination: props.hotelBooking?.destinationAddress,
         checkInDate: props.hotelBooking?.checkInDate,
@@ -227,6 +228,7 @@ const handleAddToCart = async () => {
     }
     
     // Add to cart using cart store
+    // @ts-ignore - allowing extra properties
     cartStore.addToCart(transferProduct)
     
     // Show success message

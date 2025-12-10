@@ -1,6 +1,6 @@
 <template>
   <header class="sticky top-0 z-50">
-    <div class="bg-market-gradient text-white">
+    <div :class="[theme.gradient, 'text-white transition-colors duration-500']">
       <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-xs font-semibold">
         <div class="flex items-center gap-2">
           <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[0.65rem]">24H</span>
@@ -9,7 +9,7 @@
         <div class="flex items-center gap-3">
           <span class="hidden sm:flex items-center gap-1 text-white/80">
             <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
-            Satıcı paneli v3 yayında
+            {{ theme.name }} Modu Aktif
           </span>
           <router-link to="/campaigns" class="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1 text-[0.7rem]">
             Kampanyalar
@@ -23,22 +23,27 @@
 
     <div class="relative overflow-hidden backdrop-blur-xl bg-white/80 shadow-[0_25px_80px_-45px_rgba(15,23,42,0.75)]">
       <div class="pointer-events-none absolute inset-0">
-        <div class="absolute -left-12 top-0 h-32 w-32 rounded-full bg-blue-500/15 blur-3xl"></div>
-        <div class="absolute -right-10 top-6 h-40 w-40 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
+        <div :class="['absolute -left-12 top-0 h-32 w-32 rounded-full blur-3xl opacity-15 transition-colors duration-500', `bg-${theme.primary}-500`]"></div>
+        <div :class="['absolute -right-10 top-6 h-40 w-40 rounded-full blur-3xl opacity-10 transition-colors duration-500', `bg-${theme.secondary}-500`]"></div>
         <div class="absolute inset-x-10 bottom-0 h-12 rounded-full bg-white/40 blur-2xl"></div>
       </div>
       <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4">
         <div class="flex items-center justify-between gap-4">
-          <router-link to="/" class="flex items-center gap-3">
-            <span class="rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-fuchsia-500 p-2 text-white shadow-lg">
-              <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 4v6c0 5-8 8-8 8s-8-3-8-8V7l8-4z" />
-              </svg>
-            </span>
-            <div>
-              <p class="text-lg font-black tracking-tight text-slate-900">sportoonline</p>
-              <p class="text-xs uppercase tracking-[0.35em] text-slate-500">Marketplace</p>
+          <router-link to="/" class="flex flex-col items-center leading-none select-none group hover:scale-105 transition-transform duration-300">
+            <span :class="['text-[0.7rem] font-bold tracking-wider mb-0.5 transition-colors duration-300', theme.text]">sportoonline</span>
+            <div class="flex items-baseline text-5xl font-black tracking-tighter filter drop-shadow-sm -my-1">
+              <span class="text-orange-500">M</span>
+              <span class="text-red-500">u</span>
+              <span class="text-fuchsia-600">l</span>
+              <span class="text-purple-600">t</span>
+              <span class="text-indigo-600">i</span>
+              <span class="text-blue-500">P</span>
+              <span class="text-sky-500">r</span>
+              <span class="text-teal-500">i</span>
+              <span class="text-emerald-500">c</span>
+              <span class="text-amber-500">e</span>
             </div>
+            <span class="text-xs font-bold text-slate-800 tracking-[0.35em] mt-1.5 group-hover:text-slate-900 transition-colors">Lifestyle Hub</span>
           </router-link>
 
           <div class="hidden flex-1 lg:flex">
@@ -51,13 +56,13 @@
               <input
                 v-model="searchQuery"
                 type="search"
-                placeholder="Ürün, satıcı veya marka ara"
-                class="w-full rounded-2xl border border-slate-100 bg-white/90 px-12 py-2.5 text-sm text-slate-700 shadow-inner shadow-slate-200 focus:border-blue-500 focus:outline-none"
+                :placeholder="`${theme.name} içinde ara...`"
+                :class="['w-full rounded-2xl border bg-white/90 px-12 py-2.5 text-sm text-slate-700 shadow-inner shadow-slate-200 focus:outline-none transition-colors duration-300', theme.border, `focus:border-${theme.primary}-500`]"
                 @keyup.enter="handleSearch"
               />
               <div class="absolute inset-y-0 right-2 flex items-center gap-1">
                 <button
-                  class="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-1.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30"
+                  :class="['rounded-2xl px-4 py-1.5 text-sm font-semibold text-white shadow-lg transition-all duration-300', theme.gradient, `shadow-${theme.primary}-500/30`]"
                   @click="handleSearch"
                 >
                   Ara
@@ -67,16 +72,17 @@
           </div>
 
           <div class="flex items-center gap-3">
+            <PointsBadge class="hidden md:flex" />
             <router-link
               to="/cart"
               id="tour-cart-btn"
-              class="relative inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-white/90 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm shadow-blue-100 hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-700"
+              :class="['relative inline-flex items-center gap-2 rounded-2xl border bg-white/90 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:-translate-y-0.5 transition-all duration-300', theme.border, `hover:text-${theme.primary}-700`, `shadow-${theme.primary}-100`]"
             >
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 6h13" />
               </svg>
               Sepet
-              <span v-if="cartCount > 0" class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
+              <span v-if="cartCount > 0" :class="['absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-xs text-white transition-colors duration-300', `bg-${theme.primary}-600`]">
                 {{ cartCount }}
               </span>
             </router-link>
@@ -84,7 +90,7 @@
             <div v-if="isAuthenticated" class="relative">
               <button
                 @click="toggleUserMenu"
-                class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:border-blue-200"
+                :class="['inline-flex items-center gap-2 rounded-2xl border bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors duration-300', theme.border]"
               >
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM5 21a7 7 0 0114 0" />
@@ -137,7 +143,7 @@
               <router-link to="/login" class="nav-link-pill">Giriş</router-link>
               <router-link
                 to="/register"
-                class="rounded-2xl bg-gradient-to-r from-fuchsia-600 via-pink-500 to-orange-400 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30"
+                :class="['rounded-2xl px-4 py-2 text-sm font-semibold text-white shadow-lg transition-all duration-300', theme.gradient, `shadow-${theme.primary}-500/30`]"
               >
                 Ücretsiz üye ol
               </router-link>
@@ -168,90 +174,66 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
-import { useCartStore } from '../../stores/cartStore'
+import { useAuthStore } from '@/stores/auth'
+import { useCartStore } from '@/stores/cartStore'
+import { useTheme } from '@/composables/useTheme'
+import PointsBadge from '@/components/gamification/PointsBadge.vue'
 import BadgeIcon from '@/components/icons/BadgeIcon.vue'
 
 const router = useRouter()
-const { user, isAuthenticated, logout } = useAuth()
+const authStore = useAuthStore()
 const cartStore = useCartStore()
-
-const showUserMenu = ref(false)
+const { theme } = useTheme()
 const searchQuery = ref('')
+const isUserMenuOpen = ref(false)
+const isMobileMenuOpen = ref(false)
 
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const user = computed(() => authStore.user)
 const cartCount = computed(() => cartStore.totalItems)
 
 const primaryLinks = [
-  {
-    label: 'Çok satanlar',
-    to: '/products',
-    badge: 'Yeni',
-    badgeClass: 'bg-blue-600/10 text-blue-600',
-    icon: 'medal',
-    glow: 'box-shadow: 0 10px 25px -18px rgba(37,99,235,0.9)'
-  },
-  {
-    label: 'Satıcı başvurusu',
-    to: '/apply-seller',
-    badge: 'Pro',
-    badgeClass: 'bg-emerald-500/10 text-emerald-600',
-    icon: 'clipboard',
-    glow: 'box-shadow: 0 10px 25px -18px rgba(16,185,129,0.8)'
-  },
-  {
-    label: 'Kampanya stüdyosu',
-    to: '/campaigns',
-    badge: 'Canlı',
-    badgeClass: 'bg-fuchsia-500/10 text-fuchsia-600',
-    icon: 'target',
-    glow: 'box-shadow: 0 10px 25px -18px rgba(192,38,211,0.55)'
-  },
-  {
-    label: 'Sipariş takibi',
-    to: '/orders',
-    badge: 'Beta',
-    badgeClass: 'bg-amber-400/15 text-amber-600',
-    icon: 'box',
-    glow: 'box-shadow: 0 10px 25px -18px rgba(245,158,11,0.6)'
-  }
+  { label: 'Market', to: '/market', icon: 'shopping-bag' },
+  { label: 'Yemek', to: '/food', icon: 'utensils' },
+  { label: 'Ulaşım', to: '/transport', icon: 'car' },
+  { label: 'Otel', to: '/hotel', icon: 'hotel' },
+  { label: 'Kariyer', to: '/career', icon: 'briefcase' },
 ]
 
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ name: 'Search', query: { q: searchQuery.value } })
+  }
+}
+
 const toggleUserMenu = () => {
-  showUserMenu.value = !showUserMenu.value
+  isUserMenuOpen.value = !isUserMenuOpen.value
 }
 
 const closeDropdown = () => {
-  showUserMenu.value = false
+  isUserMenuOpen.value = false
 }
 
-const handleLogout = () => {
-  logout()
-  closeDropdown()
+const handleLogout = async () => {
+  await authStore.logout()
   router.push('/login')
 }
 
-const handleSearch = () => {
-  if (!searchQuery.value.trim()) return
-  router.push({ path: '/', query: { q: searchQuery.value.trim() } })
+// Close menus when clicking outside
+const closeMenus = (e: MouseEvent) => {
+  const target = e.target as HTMLElement
+  if (!target.closest('.relative')) {
+    isUserMenuOpen.value = false
+  }
 }
 
-let clickHandler: ((event: MouseEvent) => void) | null = null
-
 onMounted(() => {
-  clickHandler = (event: MouseEvent) => {
-    const target = event.target as HTMLElement | null
-    if (showUserMenu.value && target && !target.closest('.relative')) {
-      showUserMenu.value = false
-    }
-  }
-  window.addEventListener('click', clickHandler)
+  document.addEventListener('click', closeMenus)
 })
 
-onBeforeUnmount(() => {
-  if (clickHandler) {
-    window.removeEventListener('click', clickHandler)
-  }
+onUnmounted(() => {
+  document.removeEventListener('click', closeMenus)
 })
 </script>

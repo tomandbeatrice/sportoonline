@@ -13,53 +13,71 @@
       </div>
 
       <div v-else class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
-        <!-- Cart Items -->
-        <div class="lg:col-span-8">
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <!-- Cart Items Grouped -->
+        <div class="lg:col-span-8 space-y-6">
+          
+          <!-- Instant Delivery Group -->
+          <div v-if="groupedItems.instant.length > 0" class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+            <div class="bg-orange-50 px-6 py-3 border-b border-orange-100 flex items-center gap-2">
+              <span class="text-xl">🛵</span>
+              <h3 class="font-bold text-orange-800">Hemen Teslimat (30-45 dk)</h3>
+            </div>
             <ul role="list" class="divide-y divide-slate-100">
-              <li v-for="item in cartStore.items" :key="item.id" class="flex p-6">
-                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-slate-200">
-                  <img :src="item.image_url || item.image" :alt="item.name" class="h-full w-full object-cover object-center" />
-                </div>
-
-                <div class="ml-4 flex flex-1 flex-col">
-                  <div>
-                    <div class="flex justify-between text-base font-medium text-slate-900">
-                      <h3>
-                        <router-link :to="`/products/${item.id}`" class="hover:text-blue-600">{{ item.name }}</router-link>
-                      </h3>
-                      <p class="ml-4">{{ formatPrice(item.price * item.quantity) }} ₺</p>
-                    </div>
-                    <p class="mt-1 text-sm text-slate-500">{{ item.category?.name || 'Genel' }}</p>
-                  </div>
-                  <div class="flex flex-1 items-end justify-between text-sm">
-                    <div class="flex items-center border border-slate-200 rounded-lg">
-                      <button @click="cartStore.updateQuantity(item.id, item.quantity - 1)" class="px-3 py-1 hover:bg-slate-50 text-slate-600">-</button>
-                      <span class="px-2 py-1 font-medium text-slate-900">{{ item.quantity }}</span>
-                      <button @click="cartStore.updateQuantity(item.id, item.quantity + 1)" class="px-3 py-1 hover:bg-slate-50 text-slate-600">+</button>
-                    </div>
-
-                    <button type="button" @click="cartStore.removeFromCart(item.id)" class="font-medium text-red-600 hover:text-red-500 flex items-center gap-1">
-                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      Sil
-                    </button>
-                  </div>
-                </div>
+              <li v-for="item in groupedItems.instant" :key="item.id" class="flex p-6">
+                <CartItem :item="item" />
               </li>
             </ul>
           </div>
+
+          <!-- Cargo Delivery Group -->
+          <div v-if="groupedItems.cargo.length > 0" class="bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden">
+            <div class="bg-blue-50 px-6 py-3 border-b border-blue-100 flex items-center gap-2">
+              <span class="text-xl">📦</span>
+              <h3 class="font-bold text-blue-800">Kargo ile Teslimat (1-3 Gün)</h3>
+            </div>
+            <ul role="list" class="divide-y divide-slate-100">
+              <li v-for="item in groupedItems.cargo" :key="item.id" class="flex p-6">
+                <CartItem :item="item" />
+              </li>
+            </ul>
+          </div>
+
+          <!-- Digital/Service Group -->
+          <div v-if="groupedItems.digital.length > 0" class="bg-white rounded-2xl shadow-sm border border-purple-100 overflow-hidden">
+            <div class="bg-purple-50 px-6 py-3 border-b border-purple-100 flex items-center gap-2">
+              <span class="text-xl">🎫</span>
+              <h3 class="font-bold text-purple-800">Dijital & Rezervasyon</h3>
+            </div>
+            <ul role="list" class="divide-y divide-slate-100">
+              <li v-for="item in groupedItems.digital" :key="item.id" class="flex p-6">
+                <CartItem :item="item" />
+              </li>
+            </ul>
+          </div>
+
         </div>
 
         <!-- Order Summary -->
-        <div class="mt-16 rounded-2xl bg-white p-6 shadow-sm border border-slate-100 lg:col-span-4 lg:mt-0 lg:p-8">
+        <div class="mt-16 rounded-2xl bg-white p-6 shadow-sm border border-slate-100 lg:col-span-4 lg:mt-0 lg:p-8 sticky top-24">
           <h2 class="text-lg font-bold text-slate-900">Sipariş Özeti</h2>
 
           <div class="mt-6 space-y-4">
-            <div class="flex items-center justify-between border-t border-slate-100 pt-4">
-              <div class="text-base font-medium text-slate-900">Ara Toplam</div>
-              <div class="text-base font-medium text-slate-900">{{ formatPrice(cartStore.subtotal) }} ₺</div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-600">Ara Toplam</span>
+              <span class="font-medium text-slate-900">{{ formatPrice(cartStore.subtotal) }} ₺</span>
             </div>
-            <p class="text-xs text-slate-500 mt-1">Kargo ücreti ödeme adımında hesaplanacaktır.</p>
+            <div v-if="groupedItems.instant.length > 0" class="flex items-center justify-between text-sm">
+              <span class="text-slate-600">Kurye Ücreti</span>
+              <span class="font-medium text-slate-900">29,90 ₺</span>
+            </div>
+            <div v-if="groupedItems.cargo.length > 0" class="flex items-center justify-between text-sm">
+              <span class="text-slate-600">Kargo Ücreti</span>
+              <span class="font-medium text-slate-900">49,90 ₺</span>
+            </div>
+            <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+              <div class="text-lg font-bold text-slate-900">Toplam</div>
+              <div class="text-lg font-bold text-blue-600">{{ formatPrice(totalPrice) }} ₺</div>
+            </div>
           </div>
 
           <div class="mt-6">
@@ -86,11 +104,22 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useCartStore } from '../../stores/cartStore'
+import CartItem from '@/components/cart/CartItem.vue'
 
 const cartStore = useCartStore()
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(price)
 }
+
+const groupedItems = computed(() => cartStore.groupedItems)
+
+const totalPrice = computed(() => {
+  let total = cartStore.subtotal
+  if (groupedItems.value.instant.length > 0) total += 29.90
+  if (groupedItems.value.cargo.length > 0) total += 49.90
+  return total
+})
 </script>

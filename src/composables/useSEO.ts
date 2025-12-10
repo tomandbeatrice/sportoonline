@@ -12,6 +12,7 @@ interface SEOConfig {
   author?: string
   siteName?: string
   locale?: string
+  jsonLd?: Record<string, any> | Record<string, any>[]
 }
 
 export function useSEO(config: SEOConfig = {}) {
@@ -31,6 +32,13 @@ export function useSEO(config: SEOConfig = {}) {
   }
 
   watch(seoConfig, (newConfig) => {
+    const script = newConfig.jsonLd ? [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify(newConfig.jsonLd)
+      }
+    ] : []
+
     useHead({
       title: newConfig.title,
       meta: [
@@ -65,6 +73,7 @@ export function useSEO(config: SEOConfig = {}) {
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
+      script: script
     })
   }, { immediate: true })
 
@@ -75,17 +84,21 @@ export function useSEO(config: SEOConfig = {}) {
 }
 
 // Structured Data helpers
-export function generateProductSchema(product: any) {
-  return {
+export function generateProductSchema(product: any, reviews: any[] = []) {
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.image_url,
+    image: product.image_url || product.image,
     description: product.description,
     sku: product.id,
+    brand: {
+      '@type': 'Brand',
+      name: product.brand || 'SportoOnline'
+    },
     offers: {
       '@type': 'Offer',
-      url: `${window.location.origin}/products/${product.id}`,
+      url: typeof window !== 'undefined' ? `${window.location.origin}/products/${product.id}` : '',
       priceCurrency: 'TRY',
       price: product.price,
       availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -95,6 +108,19 @@ export function generateProductSchema(product: any) {
       },
     },
   }
+
+  if (reviews.length > 0) {
+    const ratingSum = reviews.reduce((acc, r) => acc + r.rating, 0)
+    const avgRating = (ratingSum / reviews.length).toFixed(1)
+    
+    schema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: avgRating,
+      reviewCount: reviews.length
+    }
+  }
+
+  return schema
 }
 
 export function generateBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
