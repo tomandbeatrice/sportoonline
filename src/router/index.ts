@@ -304,6 +304,8 @@ const routes: RouteRecordRaw[] = [
       { path: 'settings', name: 'AdminSettings', component: AdminSettings, meta: { title: 'Ayarlar' } },
       { path: 'pages', name: 'AdminPages', component: AdminPages, meta: { title: 'Sayfalar' } },
       { path: 'blog', name: 'AdminBlog', component: () => import('@/views/admin/BlogManagement.vue'), meta: { title: 'Blog' } },
+      { path: 'blog-categories', name: 'AdminBlogCategories', component: () => import('@/views/admin/BlogCategoryManagement.vue'), meta: { title: 'Blog Kategorileri' } },
+      { path: 'coupons', name: 'AdminCoupons', component: () => import('@/views/admin/CouponManagement.vue'), meta: { title: 'Kuponlar' } },
       { path: 'themes', name: 'AdminThemes', component: AdminThemes, meta: { title: 'Temalar' } },
       { path: 'notifications', name: 'AdminNotifications', component: AdminNotifications, meta: { title: 'Bildirimler' } },
       { path: 'users', name: 'AdminUsers', component: () => import('@/views/admin/AdminUserManagement.vue'), meta: { title: 'Kullanıcılar' } },
@@ -314,7 +316,9 @@ const routes: RouteRecordRaw[] = [
       { path: 'turbo', name: 'AdminTurbo', component: () => import('@/components/admin/TurboWinners.vue'), meta: { title: 'Turbo' } },
       { path: 'transport', name: 'AdminTransport', component: () => import('@/views/admin/TransportManagement.vue'), meta: { title: 'Ulaşım' } },
       { path: 'restaurants', name: 'AdminRestaurants', component: () => import('@/views/admin/RestaurantManagement.vue'), meta: { title: 'Restoranlar' } },
+      { path: 'food-orders', name: 'AdminFoodOrders', component: () => import('@/views/admin/FoodOrderManagement.vue'), meta: { title: 'Yemek Siparişleri' } },
       { path: 'hotels', name: 'AdminHotels', component: () => import('@/views/admin/HotelManagement.vue'), meta: { title: 'Oteller' } },
+      { path: 'reservations', name: 'AdminReservations', component: () => import('@/views/admin/ReservationManagement.vue'), meta: { title: 'Rezervasyonlar' } },
       { path: 'marketplace', name: 'MarketplaceDashboard', component: () => import('@/views/admin/MarketplaceDashboard.vue'), meta: { title: 'Marketplace' } },
     ]
   },

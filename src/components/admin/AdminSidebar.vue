@@ -138,24 +138,170 @@
           </div>
         </div>
 
-        <!-- Content -->
+        <!-- E-Commerce Operations -->
         <div class="menu-group">
           <button 
-            @click="toggleGroup('content')"
+            @click="toggleGroup('commerce')"
             class="flex items-center justify-between w-full px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200 transition-colors"
           >
             <div class="flex items-center gap-2">
-              <FileText class="w-3 h-3" />
-              <span>İçerik</span>
+              <ShoppingCart class="w-3 h-3" />
+              <span>E-Ticaret</span>
             </div>
             <ChevronDown 
               class="w-3 h-3 transition-transform duration-200" 
-              :class="{ 'rotate-180': expandedGroups.content }"
+              :class="{ 'rotate-180': expandedGroups.commerce }"
             />
           </button>
-          <div v-show="expandedGroups.content" class="space-y-1 mt-1">
+          <div v-show="expandedGroups.commerce" class="space-y-1 mt-1">
             <router-link 
-              v-for="item in contentMenu"
+              v-for="item in commerceMenu"
+              :key="item.path"
+              :to="item.path"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
+              :class="isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'"
+            >
+              <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
+              <span class="flex-1 font-medium">{{ item.name }}</span>
+              <span v-if="item.badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm" :class="item.badgeClass">{{ item.badge }}</span>
+              <button 
+                @click.prevent.stop="toggleFavorite(item)"
+                class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
+                :class="{ 'opacity-100 text-yellow-400': isFavorite(item) }"
+              >
+                <Star class="w-4 h-4" :class="{ 'fill-current': isFavorite(item) }" />
+              </button>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="menu-group">
+          <button 
+            @click="toggleGroup('users')"
+            class="flex items-center justify-between w-full px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <Users class="w-3 h-3" />
+              <span>Kullanıcılar</span>
+            </div>
+            <ChevronDown 
+              class="w-3 h-3 transition-transform duration-200" 
+              :class="{ 'rotate-180': expandedGroups.users }"
+            />
+          </button>
+          <div v-show="expandedGroups.users" class="space-y-1 mt-1">
+            <router-link 
+              v-for="item in userManagementMenu"
+              :key="item.path"
+              :to="item.path"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
+              :class="isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'"
+            >
+              <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
+              <span class="flex-1 font-medium">{{ item.name }}</span>
+              <span v-if="item.badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm" :class="item.badgeClass">{{ item.badge }}</span>
+              <button 
+                @click.prevent.stop="toggleFavorite(item)"
+                class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
+                :class="{ 'opacity-100 text-yellow-400': isFavorite(item) }"
+              >
+                <Star class="w-4 h-4" :class="{ 'fill-current': isFavorite(item) }" />
+              </button>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div class="menu-group">
+          <button 
+            @click="toggleGroup('services')"
+            class="flex items-center justify-between w-full px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <Briefcase class="w-3 h-3" />
+              <span>Hizmetler</span>
+            </div>
+            <ChevronDown 
+              class="w-3 h-3 transition-transform duration-200" 
+              :class="{ 'rotate-180': expandedGroups.services }"
+            />
+          </button>
+          <div v-show="expandedGroups.services" class="space-y-1 mt-1">
+            <router-link 
+              v-for="item in serviceMenu"
+              :key="item.path"
+              :to="item.path"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
+              :class="isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'"
+            >
+              <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
+              <span class="flex-1 font-medium">{{ item.name }}</span>
+              <button 
+                @click.prevent.stop="toggleFavorite(item)"
+                class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
+                :class="{ 'opacity-100 text-yellow-400': isFavorite(item) }"
+              >
+                <Star class="w-4 h-4" :class="{ 'fill-current': isFavorite(item) }" />
+              </button>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- Marketing & Content -->
+        <div class="menu-group">
+          <button 
+            @click="toggleGroup('marketing')"
+            class="flex items-center justify-between w-full px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <Target class="w-3 h-3" />
+              <span>Pazarlama</span>
+            </div>
+            <ChevronDown 
+              class="w-3 h-3 transition-transform duration-200" 
+              :class="{ 'rotate-180': expandedGroups.marketing }"
+            />
+          </button>
+          <div v-show="expandedGroups.marketing" class="space-y-1 mt-1">
+            <router-link 
+              v-for="item in marketingMenu"
+              :key="item.path"
+              :to="item.path"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
+              :class="isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'"
+            >
+              <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
+              <span class="flex-1 font-medium">{{ item.name }}</span>
+              <button 
+                @click.prevent.stop="toggleFavorite(item)"
+                class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
+                :class="{ 'opacity-100 text-yellow-400': isFavorite(item) }"
+              >
+                <Star class="w-4 h-4" :class="{ 'fill-current': isFavorite(item) }" />
+              </button>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- Finance & Reporting -->
+        <div class="menu-group">
+          <button 
+            @click="toggleGroup('finance')"
+            class="flex items-center justify-between w-full px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <DollarSign class="w-3 h-3" />
+              <span>Finans & Raporlar</span>
+            </div>
+            <ChevronDown 
+              class="w-3 h-3 transition-transform duration-200" 
+              :class="{ 'rotate-180': expandedGroups.finance }"
+            />
+          </button>
+          <div v-show="expandedGroups.finance" class="space-y-1 mt-1">
+            <router-link 
+              v-for="item in financeMenu"
               :key="item.path"
               :to="item.path"
               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
@@ -267,7 +413,10 @@ import {
   Hotel,
   Bus,
   RotateCcw,
-  TrendingUp
+  TrendingUp,
+  Ticket,
+  DollarSign,
+  Target
 } from 'lucide-vue-next'
 
 interface MenuItem {
@@ -292,8 +441,11 @@ const favorites = ref<MenuItem[]>([])
 
 const expandedGroups = reactive({
   main: true,
+  commerce: true,
+  users: false,
   services: false,
-  content: false,
+  marketing: false,
+  finance: false,
   system: false
 })
 
@@ -310,44 +462,72 @@ const toggleGroup = (group: keyof typeof expandedGroups) => {
   expandedGroups[group] = !expandedGroups[group]
 }
 
+// Ana Dashboard ve Genel Yönetim
 const mainMenu: MenuItem[] = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard, category: 'Ana Menü' },
+  { name: 'Gelişmiş Dashboard', path: '/admin/improved', icon: TrendingUp, category: 'Ana Menü' },
   { name: 'Pazaryeri', path: '/admin/marketplace', icon: Globe, category: 'Ana Menü' },
-  { name: 'Siparişler', path: '/admin/orders', icon: ShoppingCart, badge: '12', badgeClass: 'bg-orange-500 text-white', category: 'Ana Menü' },
-  { name: 'Ürünler', path: '/admin/products', icon: Package, category: 'Ana Menü' },
-  { name: 'Satıcılar', path: '/admin/sellers', icon: Store, category: 'Ana Menü' },
-  { name: 'Başvurular', path: '/admin/seller-applications', icon: FileText, badge: '3', badgeClass: 'bg-blue-500 text-white', category: 'Ana Menü' },
-  { name: 'Müşteriler', path: '/admin/customers', icon: Users, category: 'Ana Menü' },
-  { name: 'Finans', path: '/admin/finance', icon: Wallet, category: 'Ana Menü' },
-  { name: 'Komisyonlar', path: '/admin/commissions', icon: TrendingUp, category: 'Ana Menü' },
 ]
 
+// E-Ticaret Operasyonları
+const commerceMenu: MenuItem[] = [
+  { name: 'Siparişler', path: '/admin/orders', icon: ShoppingCart, badge: '12', badgeClass: 'bg-orange-500 text-white', category: 'E-Ticaret' },
+  { name: 'Ürünler', path: '/admin/products', icon: Package, category: 'E-Ticaret' },
+  { name: 'Kategoriler', path: '/admin/categories', icon: List, category: 'E-Ticaret' },
+  { name: 'İadeler', path: '/admin/returns', icon: RotateCcw, category: 'E-Ticaret' },
+]
+
+// Satıcı ve Müşteri Yönetimi
+const userManagementMenu: MenuItem[] = [
+  { name: 'Satıcılar', path: '/admin/sellers', icon: Store, category: 'Kullanıcılar' },
+  { name: 'Satıcı Başvuruları', path: '/admin/seller-applications', icon: FileText, badge: '3', badgeClass: 'bg-blue-500 text-white', category: 'Kullanıcılar' },
+  { name: 'Müşteriler', path: '/admin/customers', icon: Users, category: 'Kullanıcılar' },
+  { name: 'Admin Kullanıcıları', path: '/admin/users', icon: UserCog, category: 'Kullanıcılar' },
+]
+
+// Hizmet Modülleri
 const serviceMenu: MenuItem[] = [
   { name: 'Restoranlar', path: '/admin/restaurants', icon: Utensils, category: 'Hizmetler' },
+  { name: 'Yemek Siparişleri', path: '/admin/food-orders', icon: Utensils, category: 'Hizmetler' },
   { name: 'Oteller', path: '/admin/hotels', icon: Hotel, category: 'Hizmetler' },
+  { name: 'Rezervasyonlar', path: '/admin/reservations', icon: Hotel, category: 'Hizmetler' },
   { name: 'Ulaşım', path: '/admin/transport', icon: Bus, category: 'Hizmetler' },
 ]
 
-const contentMenu: MenuItem[] = [
-  { name: 'Kampanyalar', path: '/admin/campaigns', icon: Megaphone, category: 'İçerik' },
-  { name: 'Blog', path: '/admin/blog', icon: FileEdit, category: 'İçerik' },
-  { name: 'Kategoriler', path: '/admin/categories', icon: List, category: 'İçerik' },
-  { name: 'Bannerlar', path: '/admin/banners', icon: Image, category: 'İçerik' },
-  { name: 'Sayfalar', path: '/admin/pages', icon: Layout, category: 'İçerik' },
+// Pazarlama ve İçerik
+const marketingMenu: MenuItem[] = [
+  { name: 'Kampanyalar', path: '/admin/campaigns', icon: Megaphone, category: 'Pazarlama' },
+  { name: 'Kuponlar', path: '/admin/coupons', icon: Ticket, category: 'Pazarlama' },
+  { name: 'Bannerlar', path: '/admin/banners', icon: Image, category: 'Pazarlama' },
+  { name: 'Blog', path: '/admin/blog', icon: FileEdit, category: 'Pazarlama' },
+  { name: 'Blog Kategorileri', path: '/admin/blog-categories', icon: List, category: 'Pazarlama' },
+  { name: 'Sayfalar', path: '/admin/pages', icon: Layout, category: 'Pazarlama' },
+  { name: 'Temalar', path: '/admin/themes', icon: Layout, category: 'Pazarlama' },
 ]
 
+// Finans ve Raporlama
+const financeMenu: MenuItem[] = [
+  { name: 'Finans Özeti', path: '/admin/finance', icon: Wallet, category: 'Finans' },
+  { name: 'Komisyonlar', path: '/admin/commissions', icon: TrendingUp, category: 'Finans' },
+  { name: 'Raporlar', path: '/admin/reports', icon: BarChart, category: 'Finans' },
+  { name: 'Segment Export', path: '/admin/segment-export', icon: FileText, category: 'Finans' },
+  { name: 'Export Dosyaları', path: '/admin/export-files', icon: FileText, category: 'Finans' },
+]
+
+// Sistem ve Ayarlar
 const systemMenu: MenuItem[] = [
-  { name: 'Ayarlar', path: '/admin/settings', icon: Settings, category: 'Sistem' },
-  { name: 'Kullanıcılar', path: '/admin/users', icon: UserCog, category: 'Sistem' },
-  { name: 'İadeler', path: '/admin/returns', icon: RotateCcw, category: 'Sistem' },
-  { name: 'Raporlar', path: '/admin/reports', icon: BarChart, category: 'Sistem' },
+  { name: 'Sistem Ayarları', path: '/admin/settings', icon: Settings, category: 'Sistem' },
   { name: 'Bildirimler', path: '/admin/notifications', icon: Bell, category: 'Sistem' },
+  { name: 'Turbo Yarışması', path: '/admin/turbo', icon: TrendingUp, category: 'Sistem' },
 ]
 
 const allMenuItems = computed(() => [
   ...mainMenu,
+  ...commerceMenu,
+  ...userManagementMenu,
   ...serviceMenu,
-  ...contentMenu,
+  ...marketingMenu,
+  ...financeMenu,
   ...systemMenu
 ])
 
