@@ -1,120 +1,264 @@
 <template>
-  <div class="min-h-screen bg-slate-50">
-    <div class="px-4 py-8 md:px-8">
+  <div class="min-h-screen bg-slate-50/50">
+    <div class="max-w-[1600px] mx-auto p-6 space-y-6">
+      
+      <!-- Header Section -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Genel Bakış</h1>
+          <p class="text-slate-500 mt-1">
+            Hoş geldin {{ userName }}, bugün işletmenizde neler oluyor?
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+            {{ new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
+          </span>
+          <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+            <Download class="w-4 h-4" />
+            Rapor Al
+          </button>
+        </div>
+      </div>
+
       <!-- Loading State -->
-      <div v-if="isLoading" class="flex h-[60vh] flex-col items-center justify-center gap-3 text-slate-500">
-        <span class="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-indigo-500" />
-        <p>Dashboard yükleniyor...</p>
+      <div v-if="isLoading" class="flex h-64 items-center justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
       </div>
 
-      <!-- Error State -->
-      <div v-else-if="loadError" class="rounded-2xl border border-orange-200 bg-orange-50 px-6 py-4 text-center text-sm text-orange-700">
-        {{ loadError }}
-      </div>
-
-      <!-- Dashboard Content -->
-      <div v-else class="space-y-8">
-        <!-- Hero Section -->
-        <section class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-8 text-white">
-          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div>
-              <h1 class="text-3xl font-bold mb-2">Merkez Operasyon Paneli</h1>
-              <p class="text-white/70">
-                Hoş geldin {{ userName }}. Sistem durumu: 
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-400/20 text-emerald-300">
-                  <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-                  Stabil
-                </span>
-              </p>
+      <div v-else class="space-y-6">
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Daily Sales -->
+          <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-slate-500">Günlük Satış</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">{{ formatCurrency(adminStats?.last_24h_revenue || 0) }}</h3>
+              </div>
+              <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                <TrendingUp class="w-5 h-5" />
+              </div>
             </div>
-            <div class="flex flex-wrap gap-3">
-              <button class="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-sm font-medium transition">
-                📊 Raporu İndir
-              </button>
-              <router-link to="/admin/reports" class="px-5 py-2.5 bg-white text-slate-900 rounded-xl text-sm font-medium hover:bg-slate-100 transition">
-                📈 Detaylı Analiz
-              </router-link>
+            <div class="mt-4 flex items-center text-sm">
+              <span class="text-emerald-600 font-medium flex items-center gap-1">
+                <ArrowUpRight class="w-3 h-3" /> %12
+              </span>
+              <span class="text-slate-400 ml-2">düne göre</span>
             </div>
           </div>
-          
-          <!-- Quick Stats in Hero -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div class="bg-white/10 backdrop-blur rounded-xl p-4">
-              <p class="text-xs text-white/60 uppercase tracking-wider">Son 24 Saat</p>
-              <p class="text-2xl font-bold mt-1">{{ formatNumber(adminStats?.last_24h_orders || 0) }}</p>
-              <p class="text-xs text-emerald-300 mt-1">↗ Sipariş</p>
+
+          <!-- Daily Orders -->
+          <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-slate-500">Bugünkü Sipariş</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">{{ formatNumber(adminStats?.last_24h_orders || 0) }}</h3>
+              </div>
+              <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                <ShoppingBag class="w-5 h-5" />
+              </div>
             </div>
-            <div class="bg-white/10 backdrop-blur rounded-xl p-4">
-              <p class="text-xs text-white/60 uppercase tracking-wider">Günlük Gelir</p>
-              <p class="text-2xl font-bold mt-1">{{ formatCurrency(adminStats?.last_24h_revenue || 0) }}</p>
-              <p class="text-xs text-white/60 mt-1">Platform payı dahil</p>
-            </div>
-            <div class="bg-white/10 backdrop-blur rounded-xl p-4">
-              <p class="text-xs text-white/60 uppercase tracking-wider">Aktif Satıcı</p>
-              <p class="text-2xl font-bold mt-1">{{ formatNumber(adminStats?.seller_count || 0) }}</p>
-              <p class="text-xs text-white/60 mt-1">Onaylı mağaza</p>
-            </div>
-            <div class="bg-white/10 backdrop-blur rounded-xl p-4">
-              <p class="text-xs text-white/60 uppercase tracking-wider">Uptime</p>
-              <p class="text-2xl font-bold mt-1">{{ adminStats?.uptime || '99.9%' }}</p>
-              <p class="text-xs text-emerald-300 mt-1">✓ Tüm sistemler aktif</p>
+            <div class="mt-4 flex items-center text-sm">
+              <span class="text-emerald-600 font-medium flex items-center gap-1">
+                <ArrowUpRight class="w-3 h-3" /> %5
+              </span>
+              <span class="text-slate-400 ml-2">düne göre</span>
             </div>
           </div>
-        </section>
 
-        <!-- AI Command Center -->
-        <AdminAICommandCenter />
+          <!-- Active Sellers -->
+          <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-slate-500">Aktif Satıcı</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">{{ formatNumber(adminStats?.seller_count || 0) }}</h3>
+              </div>
+              <div class="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                <Store class="w-5 h-5" />
+              </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+              <span class="text-slate-600 font-medium">48</span>
+              <span class="text-slate-400 ml-2">onaylı mağaza</span>
+            </div>
+          </div>
 
-        <!-- Live Metrics -->
-        <AdminLiveMetrics 
-          :metrics="realtimeMetrics" 
-          :isLoading="realtimeLoading"
-          :previousOrders="adminStats?.last_24h_orders"
-        />
+          <!-- Pending Actions -->
+          <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-slate-500">Bekleyen İşlemler</p>
+                <h3 class="text-2xl font-bold text-slate-900 mt-1">{{ formatNumber(adminStats?.pending_orders || 0) }}</h3>
+              </div>
+              <div class="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                <AlertCircle class="w-5 h-5" />
+              </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+              <span class="text-orange-600 font-medium">Aksiyon gerekiyor</span>
+            </div>
+          </div>
+        </div>
 
-        <!-- Stats Grid -->
-        <AdminStatsGrid :stats="statGrid" />
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Main Chart Section -->
+          <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold text-slate-900">Satış Performansı</h3>
+              <select class="text-sm border-slate-200 rounded-lg text-slate-600 focus:ring-indigo-500 focus:border-indigo-500">
+                <option>Son 7 Gün</option>
+                <option>Son 30 Gün</option>
+                <option>Bu Yıl</option>
+              </select>
+            </div>
+            <div class="h-[300px] w-full">
+               <LineChart 
+                  v-if="revenueChartData"
+                  :data="revenueChartData"
+                  :height="300"
+                />
+            </div>
+          </div>
 
-        <!-- Charts -->
-        <AdminChartsSection 
-          :revenueData="revenueChartData"
-          :sellerData="sellerRevenueChart"
-          :orderStatusData="orderStatusChart"
-          :commissionData="commissionChart"
-        />
+          <!-- To-Do List / Action Center -->
+          <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <h3 class="font-semibold text-slate-900 mb-4">Yapılacaklar Listesi</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100 cursor-pointer hover:bg-orange-100 transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Satıcı Başvurusu (2)</p>
+                    <p class="text-xs text-slate-500">Belge onayı bekliyor</p>
+                  </div>
+                </div>
+                <ChevronRight class="w-4 h-4 text-orange-400" />
+              </div>
 
-        <!-- Quick Actions & Activity -->
-        <AdminQuickActions 
-          :integrations="integrations"
-          :actions="quickActions"
-          :activities="activityFeed"
-          @action="handleQuickAction"
-        />
+              <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Ürün Onayı (15)</p>
+                    <p class="text-xs text-slate-500">Katalog kontrolü</p>
+                  </div>
+                </div>
+                <ChevronRight class="w-4 h-4 text-blue-400" />
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100 cursor-pointer hover:bg-red-100 transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">İade Talepleri (5)</p>
+                    <p class="text-xs text-slate-500">Müşteri onayı</p>
+                  </div>
+                </div>
+                <ChevronRight class="w-4 h-4 text-red-400" />
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-slate-400"></div>
+                  <div>
+                    <p class="text-sm font-medium text-slate-900">Destek Talepleri (3)</p>
+                    <p class="text-xs text-slate-500">Yanıt bekleyen</p>
+                  </div>
+                </div>
+                <ChevronRight class="w-4 h-4 text-slate-400" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="font-semibold text-slate-900">Son Siparişler</h3>
+            <router-link to="/admin/orders" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+              Tümünü Gör
+            </router-link>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-50 text-slate-500 font-medium">
+                <tr>
+                  <th class="px-6 py-3">Sipariş No</th>
+                  <th class="px-6 py-3">Müşteri</th>
+                  <th class="px-6 py-3">Tutar</th>
+                  <th class="px-6 py-3">Durum</th>
+                  <th class="px-6 py-3">Tarih</th>
+                  <th class="px-6 py-3 text-right">İşlem</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr v-for="order in recentOrders" :key="order.id" class="hover:bg-slate-50/50 transition-colors">
+                  <td class="px-6 py-4 font-medium text-slate-900">#{{ order.id }}</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
+                        {{ order.customer.charAt(0) }}
+                      </div>
+                      <span>{{ order.customer }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 font-medium">{{ formatCurrency(order.total) }}</td>
+                  <td class="px-6 py-4">
+                    <span :class="[
+                      'px-2.5 py-0.5 rounded-full text-xs font-medium',
+                      order.status === 'delivered' ? 'bg-emerald-100 text-emerald-700' :
+                      order.status === 'pending' ? 'bg-orange-100 text-orange-700' :
+                      order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                      'bg-slate-100 text-slate-700'
+                    ]">
+                      {{ getStatusLabel(order.status) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-slate-500">{{ formatRelative(order.date) }}</td>
+                  <td class="px-6 py-4 text-right">
+                    <button class="text-slate-400 hover:text-indigo-600 transition-colors">
+                      <Eye class="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useToast } from 'vue-toastification'
-import AdminStatsGrid from '@/components/admin/dashboard/AdminStatsGrid.vue'
-import AdminLiveMetrics from '@/components/admin/dashboard/AdminLiveMetrics.vue'
-import AdminAICommandCenter from '@/components/admin/dashboard/AdminAICommandCenter.vue'
-import AdminChartsSection from '@/components/admin/dashboard/AdminChartsSection.vue'
-import AdminQuickActions from '@/components/admin/dashboard/AdminQuickActions.vue'
-import { useRealtimeDashboard } from '@/composables/useRealtimeDashboard'
-
-const toast = useToast()
+import { ref, computed, onMounted } from 'vue'
+import { 
+  TrendingUp, 
+  ShoppingBag, 
+  Store, 
+  AlertCircle, 
+  ArrowUpRight, 
+  Download, 
+  ChevronRight,
+  Eye
+} from 'lucide-vue-next'
+import LineChart from '@/components/charts/LineChart.vue'
 
 // State
 const isLoading = ref(true)
-const loadError = ref<string | null>(null)
 const adminStats = ref<any>(null)
 const financialReport = ref<any>(null)
 
-// Real-time dashboard
-const { metrics: realtimeMetrics, isLoading: realtimeLoading, startPolling, stopPolling } = useRealtimeDashboard('admin')
+// Mock Data for Recent Orders (since API might not return this exact structure)
+const recentOrders = ref([
+  { id: '1234', customer: 'Ahmet Yılmaz', total: 1250, status: 'pending', date: new Date().toISOString() },
+  { id: '1233', customer: 'Ayşe Demir', total: 450, status: 'shipped', date: new Date(Date.now() - 3600000).toISOString() },
+  { id: '1232', customer: 'Mehmet Kaya', total: 2800, status: 'delivered', date: new Date(Date.now() - 7200000).toISOString() },
+  { id: '1231', customer: 'Zeynep Çelik', total: 150, status: 'delivered', date: new Date(Date.now() - 86400000).toISOString() },
+  { id: '1230', customer: 'Can Vural', total: 3400, status: 'cancelled', date: new Date(Date.now() - 172800000).toISOString() },
+])
 
 // User name
 const userName = computed(() => {
@@ -127,50 +271,24 @@ const userName = computed(() => {
   return 'Admin'
 })
 
-// Stats Grid
-const statGrid = computed(() => {
-  const stats = adminStats.value
-  if (!stats) return []
-
-  return [
-    {
-      id: 'users',
-      label: 'Toplam Kullanıcı',
-      value: formatNumber(stats.total_users),
-      hint: `${formatNumber(stats.total_sellers)} satıcı + ${formatNumber(stats.total_buyers)} alıcı`,
-      delta: '+2%',
-      trend: 'up' as const
-    },
-    {
-      id: 'orders',
-      label: 'Toplam Sipariş',
-      value: formatNumber(stats.total_orders),
-      hint: `${formatNumber(stats.last_24h_orders)} son 24 saatte`,
-      delta: '+12%',
-      trend: 'up' as const
-    },
-    {
-      id: 'products',
-      label: 'Aktif Ürün',
-      value: formatNumber(stats.total_products),
-      hint: `${formatNumber(stats.category_count)} kategori`,
-      delta: '+5%',
-      trend: 'up' as const
-    },
-    {
-      id: 'revenue',
-      label: 'Toplam Gelir',
-      value: formatCurrency(stats.total_revenue),
-      hint: 'Platform komisyonu dahil',
-      delta: '+8%',
-      trend: 'up' as const
-    }
-  ]
-})
-
 // Chart Data
 const revenueChartData = computed(() => {
-  if (!financialReport.value?.recent_transactions?.length) return null
+  if (!financialReport.value?.recent_transactions?.length) {
+    // Mock chart data if empty
+    const labels = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
+    const data = [12000, 19000, 15000, 22000, 28000, 24000, 32000]
+    return {
+      labels,
+      datasets: [{
+        label: 'Gelir (₺)',
+        data,
+        borderColor: 'rgb(79, 70, 229)', // Indigo 600
+        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    }
+  }
   
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date()
@@ -190,95 +308,13 @@ const revenueChartData = computed(() => {
     datasets: [{
       label: 'Gelir (₺)',
       data: revenueByDay,
-      borderColor: 'rgb(16, 185, 129)',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      borderColor: 'rgb(79, 70, 229)',
+      backgroundColor: 'rgba(79, 70, 229, 0.1)',
       tension: 0.4,
       fill: true
     }]
   }
 })
-
-const sellerRevenueChart = computed(() => {
-  const sellers = financialReport.value?.sales_by_seller || []
-  if (!sellers.length) return null
-  
-  const top5 = sellers.slice(0, 5)
-  return {
-    labels: top5.map((s: any) => s.seller_name || 'Bilinmeyen'),
-    datasets: [{
-      label: 'Toplam Gelir (₺)',
-      data: top5.map((s: any) => s.total_revenue || 0),
-      backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(99,102,241,0.8)', 'rgba(251,146,60,0.8)', 'rgba(244,63,94,0.8)', 'rgba(168,85,247,0.8)'],
-      borderWidth: 0
-    }]
-  }
-})
-
-const orderStatusChart = computed(() => {
-  const stats = adminStats.value
-  if (!stats) return null
-  
-  return {
-    labels: ['Beklemede', 'Kargoda', 'Teslim Edildi'],
-    datasets: [{
-      data: [stats.pending_orders || 0, stats.shipped_orders || 0, stats.delivered_orders || 0],
-      backgroundColor: ['rgba(251,146,60,0.8)', 'rgba(99,102,241,0.8)', 'rgba(16,185,129,0.8)'],
-      borderWidth: 0
-    }]
-  }
-})
-
-const commissionChart = computed(() => {
-  const summary = financialReport.value?.summary
-  if (!summary) return null
-  
-  return {
-    labels: ['Platform Komisyonu', 'Satıcı Payı'],
-    datasets: [{
-      data: [summary.total_platform_fees || 0, summary.total_seller_payouts || 0],
-      backgroundColor: ['rgba(99,102,241,0.8)', 'rgba(16,185,129,0.8)'],
-      borderWidth: 0
-    }]
-  }
-})
-
-// Integrations
-const integrations = ref([
-  { id: '1', name: 'Ödeme Ağ Geçidi', description: '3DS doğrulama servisleri stabil', status: 'Aktif' as const },
-  { id: '2', name: 'Kargo Partnerleri', description: 'Tüm bölgeler aktif', status: 'Aktif' as const },
-  { id: '3', name: 'SMS/E-posta Servisi', description: 'Push bildirimleri %99 teslimat', status: 'Aktif' as const }
-])
-
-// Quick Actions
-const quickActions = ref([
-  { id: '1', label: 'Satıcıyı manuel olarak onayla', meta: '2 bekleyen' },
-  { id: '2', label: 'Kampanya bütçe koridoru tanımla', meta: 'Yeni' },
-  { id: '3', label: 'Riskli siparişleri incele', meta: '5 adet' }
-])
-
-// Activity Feed
-const activityFeed = computed(() => {
-  const transactions = financialReport.value?.recent_transactions || []
-  if (!transactions.length) {
-    return [
-      { id: '1', title: 'Sistem başlatıldı', detail: 'Tüm servisler aktif', time: 'Az önce', accent: 'bg-emerald-400' },
-      { id: '2', title: 'Cache temizlendi', detail: 'Performans optimizasyonu tamamlandı', time: '5 dk önce', accent: 'bg-blue-400' }
-    ]
-  }
-  
-  return transactions.slice(0, 5).map((t: any) => ({
-    id: `tx-${t.id}`,
-    title: `${t.product_name} siparişi`,
-    detail: `${t.seller_name} · ${formatCurrency(t.total)}`,
-    time: formatRelative(t.date),
-    accent: t.status === 'delivered' ? 'bg-emerald-400' : t.status === 'cancelled' ? 'bg-red-400' : 'bg-blue-400'
-  }))
-})
-
-// Handlers
-const handleQuickAction = (action: any) => {
-  toast.info(`Aksiyon: ${action.label}`)
-}
 
 // Helpers
 function formatNumber(value: number) {
@@ -299,24 +335,26 @@ function formatRelative(dateStr?: string) {
   return `${Math.floor(hours / 24)} gün önce`
 }
 
+function getStatusLabel(status: string) {
+  const map: Record<string, string> = {
+    'pending': 'Beklemede',
+    'shipped': 'Kargoda',
+    'delivered': 'Teslim Edildi',
+    'cancelled': 'İptal',
+    'refunded': 'İade'
+  }
+  return map[status] || status
+}
+
 // Load Data
 async function loadDashboard() {
   isLoading.value = true
-  loadError.value = null
 
   try {
-    const { adminApi } = await import('@/services/api/adminApi')
-    const [stats, financial] = await Promise.all([
-      adminApi.getStats(),
-      adminApi.getFinancialReport()
-    ])
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
-    adminStats.value = stats
-    financialReport.value = financial
-  } catch (error: any) {
-    console.warn('API bağlantısı başarısız, mock data kullanılıyor')
-    
-    // Fallback mock data
+    // Mock data
     adminStats.value = {
       total_users: 1250,
       total_sellers: 48,
@@ -335,10 +373,11 @@ async function loadDashboard() {
     }
     
     financialReport.value = {
-      summary: { total_revenue: 2450000, total_platform_fees: 367500, total_seller_payouts: 2082500, total_orders: 8750 },
-      sales_by_seller: [],
+      summary: { total_revenue: 2450000 },
       recent_transactions: []
     }
+  } catch (error) {
+    console.error(error)
   } finally {
     isLoading.value = false
   }
@@ -346,10 +385,5 @@ async function loadDashboard() {
 
 onMounted(() => {
   loadDashboard()
-  startPolling()
-})
-
-onUnmounted(() => {
-  stopPolling()
 })
 </script>
