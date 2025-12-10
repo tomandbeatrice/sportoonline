@@ -78,18 +78,24 @@
                 @click="toggleLanguageMenu"
                 class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
               >
-                <span>{{ currentLang === 'tr' ? '🇹🇷' : '🇬🇧' }}</span>
-                <span class="hidden sm:inline">{{ currentLang === 'tr' ? 'TR' : 'EN' }}</span>
+                <span>{{ getLangFlag(currentLang) }}</span>
+                <span class="hidden sm:inline">{{ currentLang.toUpperCase() }}</span>
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div v-if="isLanguageMenuOpen" class="absolute right-0 mt-2 w-32 rounded-xl border border-slate-100 bg-white shadow-lg z-50">
+              <div v-if="isLanguageMenuOpen" class="absolute right-0 mt-2 w-40 rounded-xl border border-slate-100 bg-white shadow-lg z-50 max-h-64 overflow-y-auto">
                 <button @click="setLanguage('tr')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 rounded-t-xl" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'tr' }">
                   <span>🇹🇷</span> Türkçe
                 </button>
-                <button @click="setLanguage('en')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 rounded-b-xl" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'en' }">
+                <button @click="setLanguage('en')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'en' }">
                   <span>🇬🇧</span> English
+                </button>
+                <button @click="setLanguage('ru')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'ru' }">
+                  <span>🇷🇺</span> Русский
+                </button>
+                <button @click="setLanguage('ar')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 rounded-b-xl" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'ar' }">
+                  <span>🇸🇦</span> العربية
                 </button>
               </div>
             </div>
@@ -222,10 +228,26 @@ const toggleLanguageMenu = () => {
   isLanguageMenuOpen.value = !isLanguageMenuOpen.value
 }
 
+const getLangFlag = (lang: string) => {
+  const flags: Record<string, string> = {
+    'tr': '🇹🇷',
+    'en': '🇬🇧',
+    'ru': '🇷🇺',
+    'ar': '🇸🇦'
+  }
+  return flags[lang] || '🇬🇧'
+}
+
 const setLanguage = (lang: string) => {
   currentLang.value = lang
   localStorage.setItem('locale', lang)
   isLanguageMenuOpen.value = false
+  // Arapça için RTL layout ayarla
+  if (lang === 'ar') {
+    document.documentElement.setAttribute('dir', 'rtl')
+  } else {
+    document.documentElement.setAttribute('dir', 'ltr')
+  }
   // Sayfayı yeniden yükle ya da i18n'i güncelle
   window.location.reload()
 }
