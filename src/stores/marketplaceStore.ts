@@ -103,6 +103,12 @@ export const useMarketplaceStore = defineStore('marketplace', () => {
       }))
     } catch (error) {
       console.error('Error fetching campaigns:', error)
+      // Fallback mock data
+      campaigns.value = [
+        { id: 1, title: 'Kış İndirimleri', description: 'Sezon sonu fırsatları', date: '31 Ara Bitiş', status: 'Aktif', color: 'bg-blue-100 text-blue-700', icon: '❄️' },
+        { id: 2, title: 'Yılbaşı Kampanyası', description: 'Hediye fikirleri', date: '25 Ara Bitiş', status: 'Yakında', color: 'bg-green-100 text-green-700', icon: '🎄' },
+        { id: 3, title: 'Spor Ekipmanları', description: '%50 indirim', date: '15 Oca Bitiş', status: 'Aktif', color: 'bg-orange-100 text-orange-700', icon: '⚽' }
+      ]
     } finally {
       loadingCampaigns.value = false
     }

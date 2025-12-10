@@ -71,8 +71,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import mockAuth from '@/services/mockAuth.js'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 const error = ref('')
@@ -144,7 +146,11 @@ async function login() {
     
     console.log('✅ Login Success:', response.data)
     
-    // Token ve user bilgisini kaydet
+    // Token ve user bilgisini auth store'a kaydet
+    authStore.token = response.data.token
+    authStore.user = response.data.user
+    
+    // Token ve user bilgisini localStorage'a kaydet
     localStorage.setItem('token', response.data.token)
     localStorage.setItem('role', response.data.user.role)
     localStorage.setItem('user', JSON.stringify(response.data.user))

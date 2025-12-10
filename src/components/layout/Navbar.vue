@@ -72,6 +72,28 @@
           </div>
 
           <div class="flex items-center gap-3">
+            <!-- Dil Seçici -->
+            <div class="relative">
+              <button
+                @click="toggleLanguageMenu"
+                class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                <span>{{ currentLang === 'tr' ? '🇹🇷' : '🇬🇧' }}</span>
+                <span class="hidden sm:inline">{{ currentLang === 'tr' ? 'TR' : 'EN' }}</span>
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div v-if="isLanguageMenuOpen" class="absolute right-0 mt-2 w-32 rounded-xl border border-slate-100 bg-white shadow-lg z-50">
+                <button @click="setLanguage('tr')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 rounded-t-xl" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'tr' }">
+                  <span>🇹🇷</span> Türkçe
+                </button>
+                <button @click="setLanguage('en')" class="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 rounded-b-xl" :class="{ 'bg-indigo-50 text-indigo-600': currentLang === 'en' }">
+                  <span>🇬🇧</span> English
+                </button>
+              </div>
+            </div>
+            
             <PointsBadge class="hidden md:flex" />
             <router-link
               to="/cart"
@@ -102,7 +124,7 @@
               </button>
 
               <div
-                v-if="showUserMenu"
+                v-if="isUserMenuOpen"
                 class="absolute right-0 mt-3 w-56 rounded-2xl border border-slate-100 bg-white/95 p-3 shadow-2xl"
               >
                 <p class="mb-2 text-xs uppercase tracking-[0.35em] text-slate-400">Hesap</p>
@@ -189,10 +211,24 @@ const { theme } = useTheme()
 const searchQuery = ref('')
 const isUserMenuOpen = ref(false)
 const isMobileMenuOpen = ref(false)
+const isLanguageMenuOpen = ref(false)
+const currentLang = ref(localStorage.getItem('locale') || 'tr')
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const user = computed(() => authStore.user)
 const cartCount = computed(() => cartStore.totalItems)
+
+const toggleLanguageMenu = () => {
+  isLanguageMenuOpen.value = !isLanguageMenuOpen.value
+}
+
+const setLanguage = (lang: string) => {
+  currentLang.value = lang
+  localStorage.setItem('locale', lang)
+  isLanguageMenuOpen.value = false
+  // Sayfayı yeniden yükle ya da i18n'i güncelle
+  window.location.reload()
+}
 
 const primaryLinks = [
   { label: 'Market', to: '/market', icon: 'shopping-bag' },
@@ -226,6 +262,7 @@ const closeMenus = (e: MouseEvent) => {
   const target = e.target as HTMLElement
   if (!target.closest('.relative')) {
     isUserMenuOpen.value = false
+    isLanguageMenuOpen.value = false
   }
 }
 

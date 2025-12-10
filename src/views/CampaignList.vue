@@ -136,7 +136,7 @@ const removeCampaign = (id: number) => {
         <span class="text-5xl">⚠️</span>
       </template>
     </EmptyState>
-    <EmptyState v-else-if="!filteredCampaigns.value.length" :title="'Kampanya bulunamadı'" :description="'Kriterlere uygun kampanya yok.'">
+    <EmptyState v-else-if="filteredCampaigns.length === 0" :title="'Kampanya bulunamadı'" :description="'Kriterlere uygun kampanya yok.'">
       <template #icon>
         <span class="text-5xl">🗒️</span>
       </template>

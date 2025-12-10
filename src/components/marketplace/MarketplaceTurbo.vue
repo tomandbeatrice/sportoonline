@@ -137,6 +137,9 @@ const loadTurboCompetition = async () => {
       if (data.competition?.ends_at) {
         startTurboCountdown(data.competition.ends_at)
       }
+    } else {
+      // Fallback mock data
+      loadMockTurboData()
     }
     
     // Liderlik tablosunu yükle
@@ -147,7 +150,24 @@ const loadTurboCompetition = async () => {
     }
   } catch (error) {
     console.error('Turbo yarışması yüklenemedi:', error)
+    // Fallback mock data
+    loadMockTurboData()
   }
+}
+
+const loadMockTurboData = () => {
+  // Demo veriler
+  turboCompetition.value = {
+    id: 1,
+    name: 'Aralık 2025',
+    ends_at: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString() // 15 gün sonra
+  }
+  turboLeaders.value = [
+    { id: 1, name: 'Mehmet Y.', total: 12500 },
+    { id: 2, name: 'Ayşe K.', total: 9800 },
+    { id: 3, name: 'Ali R.', total: 7200 }
+  ]
+  startTurboCountdown(turboCompetition.value.ends_at)
 }
 
 const startTurboCountdown = (endDate: string) => {
