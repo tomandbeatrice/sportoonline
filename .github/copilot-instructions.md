@@ -6,8 +6,8 @@ sportoonline is a comprehensive multi-platform marketplace built with Laravel 11
 - **E-Commerce Platform** - Multi-vendor marketplace with seller/buyer dashboards
 - **Service Marketplace** - Professional service listings with admin approval workflow
 - **Ride-Sharing Platform** - P2P ride sharing with real-time notifications
-- **AI-Powered Features** - Voice search (multi-language) and visual search (Google Cloud Vision)
-- **Multi-Language Support** - Turkish, English, Arabic (RTL), German
+- **AI-Powered Features** - Voice search and visual search (Google Cloud Vision)
+- **Multi-Language Support** - Currently Turkish, with plans for English, Arabic (RTL), and German
 
 ## Technology Stack
 
@@ -50,7 +50,8 @@ app/Modules/
 src/
 ├── components/     # Reusable Vue components
 ├── views/          # Page-level components (admin/, seller/, buyer/, marketplace/)
-├── i18n/locales/   # Translation files (tr/, en/, ar/, de/)
+├── locales/        # Translation files (currently tr.json, planned: en, ar, de)
+├── i18n/           # i18n configuration
 ├── services/       # API client and business logic
 └── stores/         # Pinia state management
 ```
@@ -123,9 +124,12 @@ npm run lint
 
 ### Multi-Language Support
 - **ALWAYS** use `{{ t('key.path') }}` for user-facing text
-- Support all 4 languages: Turkish (tr), English (en), Arabic (ar), German (de)
-- Consider RTL layout for Arabic
-- Translation files located in `src/i18n/locales/`
+- Currently implemented: Turkish (tr) in `src/locales/tr.json`
+- Planned languages: English (en), Arabic (ar - RTL), German (de)
+- When adding new languages:
+  - Create corresponding JSON file in `src/locales/`
+  - Update `src/i18n/index.ts` configuration
+  - Consider RTL layout for Arabic
 
 ### API Communication
 - Use the centralized API client in `src/services/api.ts`
@@ -190,7 +194,7 @@ npm run lint
 5. Create form request for validation
 6. Add routes
 7. Create Vue components/views
-8. Add translations for all 4 languages
+8. Add translations (currently Turkish required, other languages planned)
 9. Write tests
 10. Update documentation
 
@@ -204,8 +208,8 @@ const { t, locale } = useI18n();
 // Use in template
 {{ t('nav.home') }}
 
-// Change language
-locale.value = 'ar'; // Switches to Arabic with RTL
+// Change language (when other languages are implemented)
+locale.value = 'en'; // Will switch to English
 ```
 
 ### Creating a Service
@@ -255,7 +259,7 @@ public function store(StoreProductRequest $request)
 2. **Make minimal changes** - Only modify what's necessary
 3. **Follow existing patterns** - Match the style of surrounding code
 4. **Test your changes** - Run relevant tests before committing
-5. **Update translations** - If adding user-facing text, add to all 4 languages
+5. **Update translations** - If adding user-facing text, add to Turkish (tr.json), other languages to be added later
 6. **Document significant changes** - Update relevant documentation
 7. **Security first** - Consider security implications of all changes
 
