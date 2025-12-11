@@ -68,22 +68,11 @@ coverage/
 # Compiled files
 *.map
 
-# Build artifacts
-/dist/
-
 # Vendor backup
 /vendor_backup/
 
 # Test files that shouldn't be in production
 /test_system.php
-
-# IDE
-.idea/
-.vscode/
-
-# OS files
-.DS_Store
-Thumbs.db
 
 # Duplicate/template subdirectory
 /sportoonline/
