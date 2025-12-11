@@ -1,11 +1,23 @@
+<?php
+
 namespace App\Jobs;
 
 use App\Models\Product;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class CampaignRollbackJob extends Job
+class CampaignRollbackJob implements ShouldQueue
 {
-    public function handle()
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
     {
         $expired = Product::whereNotNull('campaign_end')
             ->where('campaign_end', '<', now())
