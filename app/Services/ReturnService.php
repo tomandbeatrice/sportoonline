@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 
 class ReturnService
@@ -370,7 +371,7 @@ class ReturnService
         $request->setPaymentTransactionId($payment->transaction_id);
         $request->setPrice($amount);
         $request->setCurrency(\Iyzipay\Model\Currency::TL);
-        $request->setIp($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+        $request->setIp(request()->ip());
 
         $refund = \Iyzipay\Model\Refund::create($request, $options);
 
@@ -518,7 +519,7 @@ class ReturnService
             $shippingCarrier = $returnRequest->shipping_carrier ?? config('shipping.default_carrier', 'aras');
             
             // Create PDF using dompdf
-            $pdf = \PDF::loadView('pdfs.shipping-label', [
+            $pdf = Pdf::loadView('pdfs.shipping-label', [
                 'returnRequest' => $returnRequest,
                 'order' => $returnRequest->order,
                 'user' => $returnRequest->user,

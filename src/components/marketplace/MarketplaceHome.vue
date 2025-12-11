@@ -491,8 +491,11 @@ const changeLanguage = (code: string) => {
   showLanguageMenu.value = false
   
   // Update vue-i18n locale
-  const i18n = useI18n()
-  i18n.locale.value = code
+  if (t) {
+    // i18n is available
+    const i18nInstance = useI18n()
+    i18nInstance.locale.value = code
+  }
   
   // Store preference
   localStorage.setItem('preferred_language', code)
