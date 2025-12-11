@@ -161,7 +161,7 @@ const imageState = computed(() => {
 })
 
 const imageSrcSet = computed(() => {
-  const src = imageSrc && (imageSrc as any).value ? (imageSrc as any).value : ''
+  const src = imageSrc.value
   if (!src) return ''
 
   const makeWebpPath = (p: string) => {
