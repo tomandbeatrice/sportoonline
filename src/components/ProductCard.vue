@@ -57,8 +57,8 @@
         />
         <!-- Hover Image Swap -->
         <img
-          v-if="product.hover_image || product.images?.[1]"
-          :src="product.hover_image || product.images[1]"
+          v-if="product.hover_image || (product.images && product.images[1])"
+          :src="product.hover_image || (product.images && product.images[1])"
           :alt="product.name"
           class="hover-image"
           loading="lazy"
