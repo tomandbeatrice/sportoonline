@@ -105,9 +105,24 @@ class AdminOrderController extends Controller
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
         ]);
 
+        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
-        // TODO: Send email notification to customer
+        // Send email notification to customer
+        try {
+            if ($order->user && $order->user->email) {
+                \Mail::to($order->user->email)->send(
+                    new \App\Mail\OrderStatusNotification($order, $oldStatus, $request->status)
+                );
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send order status notification: ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'old_status' => $oldStatus,
+                'new_status' => $request->status
+            ]);
+            // Continue even if email fails
+        }
 
         return response()->json([
             'message' => 'Sipariş durumu güncellendi',

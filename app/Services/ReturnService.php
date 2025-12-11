@@ -313,9 +313,137 @@ class ReturnService
         }
         
         // Ödeme servisini kullanarak iade yap
-        // TODO: Payment gateway'e göre refund işlemi
+        $paymentGateway = $payment->payment_method ?? 'iyzico'; // default to iyzico
         
-        $this->completeRefund($returnRequest);
+        try {
+            switch ($paymentGateway) {
+                case 'iyzico':
+                    $this->refundViaIyzico($payment, $returnRequest->refund_amount);
+                    break;
+                case 'paytr':
+                    $this->refundViaPayTR($payment, $returnRequest->refund_amount);
+                    break;
+                case 'stripe':
+                    $this->refundViaStripe($payment, $returnRequest->refund_amount);
+                    break;
+                default:
+                    throw new Exception('Desteklenmeyen ödeme yöntemi: ' . $paymentGateway);
+            }
+            
+            // Log the refund
+            Log::info('Refund processed successfully', [
+                'return_id' => $returnRequest->id,
+                'payment_id' => $payment->id,
+                'amount' => $returnRequest->refund_amount,
+                'gateway' => $paymentGateway
+            ]);
+            
+            $this->completeRefund($returnRequest);
+            
+        } catch (Exception $e) {
+            Log::error('Refund failed', [
+                'return_id' => $returnRequest->id,
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+    
+    /**
+     * İyzico ile iade işlemi
+     */
+    protected function refundViaIyzico($payment, float $amount): void
+    {
+        if (!class_exists(\Iyzipay\Options::class)) {
+            throw new Exception('Iyzico SDK yüklü değil.');
+        }
+        
+        $options = new \Iyzipay\Options();
+        $options->setApiKey(config('services.iyzico.api_key'));
+        $options->setSecretKey(config('services.iyzico.secret_key'));
+        $options->setBaseUrl(config('services.iyzico.base_url', 'https://api.iyzipay.com'));
+
+        $request = new \Iyzipay\Request\CreateRefundRequest();
+        $request->setLocale(\Iyzipay\Model\Locale::TR);
+        $request->setConversationId($payment->transaction_id);
+        $request->setPaymentTransactionId($payment->transaction_id);
+        $request->setPrice($amount);
+        $request->setCurrency(\Iyzipay\Model\Currency::TL);
+        $request->setIp($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+
+        $refund = \Iyzipay\Model\Refund::create($request, $options);
+
+        if ($refund->getStatus() !== 'success') {
+            throw new Exception('Iyzico iade başarısız: ' . $refund->getErrorMessage());
+        }
+    }
+    
+    /**
+     * PayTR ile iade işlemi
+     */
+    protected function refundViaPayTR($payment, float $amount): void
+    {
+        $merchantId = config('services.paytr.merchant_id');
+        $merchantKey = config('services.paytr.merchant_key');
+        $merchantSalt = config('services.paytr.merchant_salt');
+        
+        if (!$merchantId || !$merchantKey || !$merchantSalt) {
+            throw new Exception('PayTR yapılandırması eksik.');
+        }
+        
+        $referenceNo = $payment->transaction_id;
+        $amountInKurus = (int)($amount * 100); // Convert to kuruş
+        
+        // Generate hash
+        $hashStr = $merchantId . $referenceNo . $amountInKurus . $merchantSalt;
+        $token = base64_encode(hash_hmac('sha256', $hashStr, $merchantKey, true));
+        
+        $postData = [
+            'merchant_id' => $merchantId,
+            'reference_no' => $referenceNo,
+            'amount' => $amountInKurus,
+            'token' => $token
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://www.paytr.com/odeme/iade');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        $result = json_decode($response, true);
+        
+        if (!isset($result['status']) || $result['status'] !== 'success') {
+            $errorMessage = $result['reason'] ?? 'Bilinmeyen hata';
+            throw new Exception('PayTR iade başarısız: ' . $errorMessage);
+        }
+    }
+    
+    /**
+     * Stripe ile iade işlemi
+     */
+    protected function refundViaStripe($payment, float $amount): void
+    {
+        if (!class_exists(\Stripe\Stripe::class)) {
+            throw new Exception('Stripe SDK yüklü değil.');
+        }
+        
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+        
+        try {
+            \Stripe\Refund::create([
+                'payment_intent' => $payment->transaction_id,
+                'amount' => (int)($amount * 100), // Convert to cents
+            ]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            throw new Exception('Stripe iade başarısız: ' . $e->getMessage());
+        }
     }
     
     /**

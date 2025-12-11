@@ -76,7 +76,14 @@ class InvitationController extends Controller
             'expires_at' => now()->addDays(7)
         ]);
 
-        // TODO: Send invitation email
+        // Send invitation email
+        try {
+            $inviterName = Auth::user()->name;
+            \Mail::to($validated['email'])->send(new \App\Mail\InvitationEmail($invitation, $inviterName));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send invitation email: ' . $e->getMessage());
+            // Continue even if email fails - invitation is still created
+        }
 
         return response()->json([
             'message' => 'Davet gönderildi',
