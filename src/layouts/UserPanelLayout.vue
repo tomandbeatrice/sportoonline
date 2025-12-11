@@ -245,7 +245,10 @@ const userInitials = computed(() => {
 })
 
 const pointsProgress = computed(() => {
-  return Math.min((userPoints.value / (userPoints.value + pointsToNextLevel.value)) * 100, 100)
+  // Calculate progress as percentage toward next level
+  // If user has 850 points and needs 150 more, they're at 85% progress
+  const totalPointsForNextLevel = 1000 // Current milestone
+  return Math.min((userPoints.value / totalPointsForNextLevel) * 100, 100)
 })
 
 const currentRouteName = computed(() => {
