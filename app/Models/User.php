@@ -95,6 +95,11 @@ class User extends Authenticatable
         return $this->hasOne(\App\Modules\Wallet\Models\Wallet::class);
     }
 
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
+
     protected function casts(): array
     {
         return [
