@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-slate-50 font-sans">
     <!-- Sidebar -->
     <aside 
-      class="fixed left-0 top-0 z-40 h-screen w-64 bg-gradient-to-b from-blue-600 via-blue-700 to-purple-700 text-white transition-transform lg:translate-x-0"
+      class="fixed left-0 top-0 z-40 h-screen w-64 bg-gradient-to-b from-blue-600 via-blue-700 to-purple-700 text-white transition-transform lg:translate-x-0 flex flex-col"
       :class="{ '-translate-x-full': !isSidebarOpen }"
     >
       <!-- User Profile Section -->
@@ -61,7 +61,7 @@
       </div>
 
       <!-- Navigation -->
-      <nav class="px-4 py-4 space-y-1 overflow-y-auto h-[calc(100vh-400px)] custom-scrollbar">
+      <nav class="px-4 py-4 space-y-1 flex-1 overflow-y-auto custom-scrollbar">
         <router-link 
           v-for="item in menuItems"
           :key="item.path"
@@ -261,7 +261,7 @@ const currentRouteName = computed(() => {
   return nameMap[route.name as string] || 'Hesabım'
 })
 
-const menuItems = [
+const menuItems = computed(() => [
   { name: 'Profilim', path: '/user', icon: User },
   { name: 'Siparişlerim', path: '/user/orders', icon: Package, badge: activeOrderCount.value > 0 ? activeOrderCount.value : null },
   { name: 'Favorilerim', path: '/user/favorites', icon: Heart },
@@ -269,7 +269,7 @@ const menuItems = [
   { name: 'Cüzdanım', path: '/user/wallet', icon: CreditCard },
   { name: 'Ödüllerim', path: '/user/rewards', icon: Gift },
   { name: 'Ayarlar', path: '/user/settings', icon: Settings },
-]
+])
 
 const notifications = ref([
   { id: 1, title: 'Siparişiniz kargoya verildi', time: '10 dakika önce' },
@@ -300,7 +300,7 @@ const markAllRead = () => {
 }
 
 const handleLogout = () => {
-  console.log('Logging out...')
+  // TODO: Implement proper logout logic with auth store
   router.push('/login')
 }
 </script>

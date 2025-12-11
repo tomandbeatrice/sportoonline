@@ -169,7 +169,7 @@ const markAllRead = () => {
 }
 
 const handleLogout = () => {
-  console.log('Logging out...')
+  // TODO: Implement proper logout logic with auth store
   router.push('/login')
 }
 </script>
