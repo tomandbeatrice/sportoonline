@@ -1,27 +1,33 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import axios from 'axios'
 
 export const useProductStore = defineStore('product', () => {
-  const products = ref<any[]>([
-    { 
-      id: 1, 
-      name: 'Nike Air Zoom', 
-      price: 3299.90, 
-      stock: 15, 
-      image_url: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/ca79d356-4213-44a7-be92-ae850d668242/air-zoom-pegasus-39-road-running-shoes-d4dvtm.png',
-      description: 'Yüksek performanslı koşu ayakkabısı.',
-      category: { id: 1, name: 'Ayakkabı' }
-    },
-    { 
-      id: 2, 
-      name: 'Adidas T-Shirt', 
-      price: 899.50, 
-      stock: 42, 
-      image_url: 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/c35214f6104c4a288bfed097586310d2_9366/Own_the_Run_Tee_Blue_H58593_21_model.jpg',
-      description: 'Nefes alabilen kumaş teknolojisi.',
-      category: { id: 2, name: 'Giyim' }
+  const products = ref<any[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  async function fetchProducts(params?: {
+    category_id?: number | string
+    page?: number
+    per_page?: number
+    sort_by?: string
+  }) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await axios.get('/api/v1/products', { params })
+      products.value = response.data.data || response.data.products || []
+      return products.value
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Ürünler yüklenirken bir hata oluştu.'
+      console.error('Error fetching products:', err)
+      return []
+    } finally {
+      loading.value = false
     }
-  ])
+  }
 
   function addProduct(product: any) {
     products.value.push({
@@ -43,6 +49,9 @@ export const useProductStore = defineStore('product', () => {
 
   return {
     products,
+    loading,
+    error,
+    fetchProducts,
     addProduct,
     updateProduct,
     deleteProduct

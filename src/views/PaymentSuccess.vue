@@ -66,6 +66,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 import CrossSellCard from '@/components/marketplace/CrossSellCard.vue'
 
 const route = useRoute()
@@ -108,22 +109,33 @@ const formatMoney = (amount) => {
 
 const handleAddTransfer = async (option) => {
   try {
-    // TODO: Add transfer to order via API
-    console.log('Adding transfer to order:', orderId.value, option)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // Navigate to rides/transfer page with pre-filled data
-    router.push({
-      path: '/rides',
-      query: {
-        from: 'airport',
-        to: hotelLocation.value,
-        booking_ref: orderId.value,
-        service_type: option?.id || 1
+    // Add transfer to order via API
+    const response = await axios.post('/api/v1/orders/add-transfer', {
+      order_id: orderId.value,
+      transfer_type: option?.id || 1,
+      pickup_location: 'airport',
+      dropoff_location: hotelLocation.value
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
+
+    if (response.data.success) {
+      // Navigate to rides/transfer page with confirmation
+      router.push({
+        path: '/rides',
+        query: {
+          from: 'airport',
+          to: hotelLocation.value,
+          booking_ref: orderId.value,
+          service_type: option?.id || 1,
+          confirmed: 'true'
+        }
+      })
+    } else {
+      throw new Error(response.data.message || 'Transfer eklenemedi')
+    }
   } catch (error) {
     console.error('Failed to add transfer:', error)
     alert('Transfer eklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.')

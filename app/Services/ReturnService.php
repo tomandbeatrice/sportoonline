@@ -513,12 +513,69 @@ class ReturnService
      */
     protected function generateShippingLabel(ReturnRequest $returnRequest): void
     {
-        // ShippingService kullanarak kargo etiketi oluştur
-        // TODO: Implement shipping label generation
-        
-        // Örnek URL
-        $labelUrl = '/storage/return-labels/' . $returnRequest->return_number . '.pdf';
-        $returnRequest->update(['shipping_label_url' => $labelUrl]);
+        try {
+            // Get shipping service configuration
+            $shippingCarrier = $returnRequest->shipping_carrier ?? config('shipping.default_carrier', 'aras');
+            
+            // Create PDF using dompdf
+            $pdf = \PDF::loadView('pdfs.shipping-label', [
+                'returnRequest' => $returnRequest,
+                'order' => $returnRequest->order,
+                'user' => $returnRequest->user,
+                'vendor' => $returnRequest->vendor,
+                'barcode' => $this->generateBarcode($returnRequest->return_number),
+                'qrCode' => $this->generateQRCode($returnRequest->return_number),
+            ]);
+            
+            // Ensure storage directory exists
+            $labelDir = storage_path('app/public/return-labels');
+            if (!file_exists($labelDir)) {
+                mkdir($labelDir, 0755, true);
+            }
+            
+            // Save PDF
+            $filename = 'return-label-' . $returnRequest->return_number . '.pdf';
+            $filepath = $labelDir . '/' . $filename;
+            $pdf->save($filepath);
+            
+            // Update return request with label URL
+            $labelUrl = '/storage/return-labels/' . $filename;
+            $returnRequest->update(['shipping_label_url' => $labelUrl]);
+            
+            Log::info('Shipping label generated', [
+                'return_id' => $returnRequest->id,
+                'label_url' => $labelUrl
+            ]);
+            
+        } catch (Exception $e) {
+            Log::error('Failed to generate shipping label: ' . $e->getMessage(), [
+                'return_id' => $returnRequest->id
+            ]);
+            // Don't throw - label generation is not critical
+        }
+    }
+    
+    /**
+     * Generate barcode for return number
+     */
+    protected function generateBarcode(string $returnNumber): string
+    {
+        // Simple barcode representation (you can use a library like picqer/php-barcode-generator for real barcodes)
+        return 'data:image/svg+xml;base64,' . base64_encode('
+            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="60">
+                <rect width="200" height="60" fill="white"/>
+                <text x="100" y="40" font-family="monospace" font-size="14" text-anchor="middle">' . $returnNumber . '</text>
+            </svg>
+        ');
+    }
+    
+    /**
+     * Generate QR code for return number
+     */
+    protected function generateQRCode(string $returnNumber): string
+    {
+        // Simple QR code representation using external service
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($returnNumber);
     }
     
     /**

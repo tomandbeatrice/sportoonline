@@ -421,6 +421,14 @@ Route::prefix('seller/turbo-coupons')->middleware('auth:sanctum')->group(functio
     Route::post('/validate', [TurboCouponController::class, 'validateCoupon']);
 });
 
+// Admin Turbo Winners Management
+Route::prefix('admin/turbo-winners')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'index']);
+    Route::get('/statistics', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'statistics']);
+    Route::put('/{id}', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'update']);
+    Route::post('/bulk-update', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'bulkUpdate']);
+});
+
 // Vendors / Satıcılar
 Route::prefix('vendors')->group(function () {
     Route::get('/', [\App\Http\Controllers\VendorController::class, 'index']);

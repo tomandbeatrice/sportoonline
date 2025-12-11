@@ -429,15 +429,76 @@ const performSearch = () => {
 const toggleVoiceAssistant = () => {
   voiceAssistantActive.value = !voiceAssistantActive.value
   if (voiceAssistantActive.value) {
-    // TODO: Start voice recognition
-    console.log('Voice assistant activated')
+    startVoiceRecognition()
+  } else {
+    stopVoiceRecognition()
+  }
+}
+
+// Voice recognition instance
+let recognition: any = null
+
+const startVoiceRecognition = () => {
+  // Check if Web Speech API is supported
+  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+  
+  if (!SpeechRecognition) {
+    console.warn('Web Speech API not supported in this browser')
+    alert('Tarayıcınız sesli arama özelliğini desteklemiyor.')
+    voiceAssistantActive.value = false
+    return
+  }
+
+  recognition = new SpeechRecognition()
+  recognition.lang = currentLanguage.value === 'tr' ? 'tr-TR' : 'en-US'
+  recognition.continuous = false
+  recognition.interimResults = false
+
+  recognition.onresult = (event: any) => {
+    const transcript = event.results[0][0].transcript
+    console.log('Voice search:', transcript)
+    searchQuery.value = transcript
+    performSearch()
+    voiceAssistantActive.value = false
+  }
+
+  recognition.onerror = (event: any) => {
+    console.error('Voice recognition error:', event.error)
+    voiceAssistantActive.value = false
+  }
+
+  recognition.onend = () => {
+    voiceAssistantActive.value = false
+  }
+
+  try {
+    recognition.start()
+  } catch (error) {
+    console.error('Failed to start voice recognition:', error)
+    voiceAssistantActive.value = false
+  }
+}
+
+const stopVoiceRecognition = () => {
+  if (recognition) {
+    recognition.stop()
+    recognition = null
   }
 }
 
 const changeLanguage = (code: string) => {
   currentLanguage.value = code
   showLanguageMenu.value = false
-  // TODO: Update i18n locale
+  
+  // Update vue-i18n locale
+  const i18n = useI18n()
+  i18n.locale.value = code
+  
+  // Store preference
+  localStorage.setItem('preferred_language', code)
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = code
 }
 
 const selectService = (serviceId: string) => {

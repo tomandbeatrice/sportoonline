@@ -328,20 +328,18 @@ export default {
 
     const updateReward = async (winner) => {
       try {
-        // This would be an API call to update rewards
-        // For now, just log the change
-        console.log('Updating reward for winner:', winner.id, {
+        // API call to update rewards
+        await axios.put(`/api/admin/turbo-winners/${winner.id}`, {
           reward_money: winner.reward_money,
           reward_points: winner.reward_points
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         
-        // TODO: Implement API endpoint to update winner rewards
-        // await axios.put(`/api/admin/turbo-winners/${winner.id}`, {
-        //   reward_money: winner.reward_money,
-        //   reward_points: winner.reward_points
-        // });
+        console.log('Ödül başarıyla güncellendi:', winner.id);
       } catch (error) {
         console.error('Ödül güncellenemedi:', error);
+        alert('Ödül güncellenirken bir hata oluştu.');
       }
     };
 

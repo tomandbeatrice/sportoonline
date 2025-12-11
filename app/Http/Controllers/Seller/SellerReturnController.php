@@ -120,7 +120,23 @@ class SellerReturnController extends Controller
             'notes' => "Kargo kodu gönderildi: {$validated['return_shipping_code']} ({$validated['return_shipping_carrier']})",
         ]);
 
-        // TODO: Müşteriye bildirim gönder (e-posta, SMS)
+        // Müşteriye bildirim gönder (e-posta)
+        try {
+            if ($return->user && $return->user->email) {
+                \Mail::to($return->user->email)->send(
+                    new \App\Mail\ReturnShippingCodeNotification(
+                        $return,
+                        $validated['return_shipping_code'],
+                        $validated['return_shipping_carrier']
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send return shipping code notification: ' . $e->getMessage(), [
+                'return_id' => $return->id
+            ]);
+            // Continue even if email fails
+        }
 
         return response()->json([
             'message' => 'Kargo kodu müşteriye gönderildi.',
