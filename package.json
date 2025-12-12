@@ -61,6 +61,7 @@
     "html2pdf.js": "^0.10.3",
     "laravel-echo": "^2.2.6",
     "lodash": "^4.17.21",
+    "lucide-vue-next": "^0.560.0",
     "marked": "^17.0.0",
     "pinia": "^3.0.3",
     "pusher-js": "^8.4.0",

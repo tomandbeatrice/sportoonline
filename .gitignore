@@ -67,3 +67,12 @@ coverage/
 
 # Compiled files
 *.map
+
+# Vendor backup
+/vendor_backup/
+
+# Test files that shouldn't be in production
+/test_system.php
+
+# Duplicate/template subdirectory
+/sportoonline/
