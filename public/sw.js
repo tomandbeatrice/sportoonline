@@ -37,7 +37,7 @@ self.addEventListener('fetch', (event) => {
   const { request } = event
 
   // Skip cross-origin requests
-  if (!request.url.startsWith(self.location.origin)) {
+  if (!request.url.startsWith(globalThis.location.origin)) {
     return
   }
 
@@ -80,6 +80,9 @@ self.addEventListener('fetch', (event) => {
         })
 
         return response
+      }).catch((error) => {
+        console.error('Fetch error:', error)
+        return new Response('Network error occurred', { status: 503 })
       })
     })
   )
@@ -101,7 +104,8 @@ async function syncOrders() {
     })
     return response.ok
   } catch (error) {
-    throw new Error('Sync failed')
+    console.error('Sync error:', error)
+    throw error
   }
 }
 
@@ -118,7 +122,7 @@ self.addEventListener('push', (event) => {
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'SportoOnline', options)
+    globalThis.registration.showNotification(data.title || 'SportoOnline', options)
   )
 })
 

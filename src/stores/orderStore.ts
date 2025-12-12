@@ -113,7 +113,7 @@ export const useOrderStore = defineStore('order', () => {
     const authStore = useAuthStore()
     const index = favorites.value.findIndex(p => p.id === product.id)
     
-    if (index !== -1) {
+    if (index >= 0) {
       // Remove from favorites
       favorites.value.splice(index, 1)
       toast.info('Favorilerden kaldırıldı')

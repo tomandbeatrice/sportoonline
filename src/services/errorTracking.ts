@@ -26,31 +26,31 @@ export interface ErrorReport {
 
 class ErrorTrackingService {
   private errors: ErrorReport[] = []
-  private maxErrors = 100
-  private reportEndpoint = '/api/errors'
+  private readonly maxErrors = 100
+  private readonly reportEndpoint = '/api/errors'
 
   /**
    * Initialize error tracking
    */
   init() {
     // Global error handler
-    window.addEventListener('error', (event) => {
+    globalThis.addEventListener('error', (event) => {
       this.captureError(event.error || new Error(event.message), {
         severity: 'high',
         context: {
-          url: window.location.href
+          url: globalThis.location.href
         }
       })
     })
 
     // Unhandled promise rejection
-    window.addEventListener('unhandledrejection', (event) => {
+    globalThis.addEventListener('unhandledrejection', (event) => {
       this.captureError(
         new Error(event.reason?.message || 'Unhandled Promise Rejection'),
         {
           severity: 'high',
           context: {
-            url: window.location.href,
+            url: globalThis.location.href,
             extra: { reason: event.reason }
           }
         }
@@ -58,15 +58,16 @@ class ErrorTrackingService {
     })
 
     // Vue error handler (if using Vue 3)
-    if (window.__VUE_APP__) {
-      const app = window.__VUE_APP__
+    const globalWithVue = globalThis as any
+    if (globalWithVue.__VUE_APP__) {
+      const app = globalWithVue.__VUE_APP__
       app.config.errorHandler = (err: any, instance: any, info: string) => {
         this.captureError(err, {
           severity: 'high',
           context: {
             component: instance?.$options?.name || 'Unknown',
             action: info,
-            url: window.location.href
+            url: globalThis.location.href
           }
         })
       }
@@ -95,7 +96,7 @@ class ErrorTrackingService {
       severity: options.severity || 'medium',
       context: this.enrichContext(options.context || {}),
       userAgent: navigator.userAgent,
-      url: window.location.href
+      url: globalThis.location.href
     }
 
     // Add to local queue
@@ -190,7 +191,7 @@ class ErrorTrackingService {
       ...context,
       userId: context.userId || user?.id,
       userEmail: context.userEmail || user?.email,
-      url: context.url || window.location.href,
+      url: context.url || globalThis.location.href,
       extra: {
         ...context.extra,
         timestamp: new Date().toISOString(),
@@ -217,7 +218,7 @@ class ErrorTrackingService {
   private getSessionId(): string {
     let sessionId = sessionStorage.getItem('sessionId')
     if (!sessionId) {
-      sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
       sessionStorage.setItem('sessionId', sessionId)
     }
     return sessionId

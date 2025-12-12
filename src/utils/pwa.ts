@@ -16,7 +16,7 @@ export function registerServiceWorker() {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   // New content is available
                   if (confirm('Yeni versiyon mevcut! Sayfayı yenilemek ister misiniz?')) {
-                    window.location.reload()
+                    globalThis.location.reload()
                   }
                 }
               })
@@ -46,7 +46,7 @@ export function unregisterServiceWorker() {
 let deferredPrompt: any = null
 
 export function setupInstallPrompt() {
-  window.addEventListener('beforeinstallprompt', (e) => {
+  globalThis.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault()
     deferredPrompt = e
   })
@@ -70,8 +70,8 @@ export function isInstallable(): boolean {
 
 // Check if running as PWA
 export function isPWA(): boolean {
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         (window.navigator as any).standalone === true
+  return globalThis.matchMedia('(display-mode: standalone)').matches ||
+         (globalThis.navigator as any).standalone === true
 }
 
 // Network status

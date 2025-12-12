@@ -189,19 +189,22 @@ const orders = ref([
 
 const filteredOrders = computed(() => {
   let result = [...orders.value]
-  
-  if (statusFilter.value) {
-    result = result.filter(o => o.status === statusFilter.value)
+
+  // safe defaults
+  const status = statusFilter.value || ''
+  const query = (searchQuery.value || '').toLowerCase()
+
+  if (status) {
+    result = result.filter(o => o.status === status)
   }
-  
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(o => 
+
+  if (query) {
+    result = result.filter(o =>
       o.id.toString().includes(query) ||
       o.items.some(item => item.name.toLowerCase().includes(query))
     )
   }
-  
+
   return result
 })
 

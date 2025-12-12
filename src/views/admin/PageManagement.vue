@@ -50,13 +50,24 @@ const loadPages = async () => {
   loading.value = true
   try {
     const response = await axios.get('/api/admin/pages')
-    pages.value = response.data.data || response.data
+    
+    // Safely handle response data structure
+    const responseData = response.data
+    if (responseData && Array.isArray(responseData.data)) {
+      pages.value = responseData.data
+    } else if (Array.isArray(responseData)) {
+      pages.value = responseData
+    } else {
+      console.error('Invalid pages data format:', responseData)
+      pages.value = []
+    }
     
     // Fetch stats
     try {
         const statsResponse = await axios.get('/api/admin/pages/stats')
         stats.value = statsResponse.data
     } catch (e) {
+        console.error('Stats yüklenemedi:', e)
         // Fallback stats
         stats.value.total = pages.value.length
         stats.value.published = pages.value.filter(p => p.status === 'published').length

@@ -86,9 +86,14 @@ const currentRouteName = computed(() => {
   return nameMap[route.name as string] || route.name || 'Sayfa'
 })
 
-const handleLogout = () => {
-  console.log('Logging out...')
-  router.push('/seller/login')
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout failed', error)
+    router.push('/login')
+  }
 }
 </script>
 

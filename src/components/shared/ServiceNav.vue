@@ -39,18 +39,6 @@
           <span>Otel</span>
         </router-link>
 
-        <!-- Ulaşım -->
-        <router-link 
-          to="/rides"
-          class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-          :class="isActive('/rides') 
-            ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-200' 
-            : 'bg-white text-slate-700 border-slate-200 hover:border-green-300 hover:bg-green-50'"
-        >
-          <span class="text-xl">🚗</span>
-          <span>Ulaşım</span>
-        </router-link>
-
         <!-- Hizmet -->
         <router-link 
           to="/services"
@@ -61,18 +49,6 @@
         >
           <span class="text-xl">🔧</span>
           <span>Hizmet</span>
-        </router-link>
-
-        <!-- Kariyer -->
-        <router-link 
-          to="/career"
-          class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-          :class="isActive('/career') 
-            ? 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-200' 
-            : 'bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:bg-amber-50'"
-        >
-          <span class="text-xl">💼</span>
-          <span>Kariyer</span>
         </router-link>
       </div>
     </div>

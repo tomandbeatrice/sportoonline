@@ -2,18 +2,16 @@
   MarketplaceHome.vue - Ana Marketplace Sayfası
   Hiyerarşi:
   1. Header (Logo, Auth, Dil, Sesli Asistan)
-  2. Hizmet Sekmeleri (Yemek, Otel, Rides, Hizmet, Kariyer)
-  3. Özel Hizmetler (Sporcu Mutfağı, Sanal Deneme Kabini)
-  4. Kampanya Slider
-  5. Aktif Siparişler
-  6. Bundle Teklifleri
-  7. Rating & Yorumlar
+  2. Hizmet Sekmeleri (Mağaza, Yemek, Otel, Hizmet, Turbo)
+  3. Kampanya Slider
+  4. Aktif Siparişler
+  5. Bundle Teklifleri
 -->
 <template>
   <div class="marketplace-home min-h-screen bg-slate-50">
     
     <!-- ═══════════════════════════════════════════════════════════════════
-         🔗 HİZMET SEKMELERİ - Yemek, Otel, Rides, Hizmet, Kariyer
+         🔗 HİZMET SEKMELERİ - Mağaza, Yemek, Otel, Hizmet, Turbo
          ═══════════════════════════════════════════════════════════════════ -->
     <MarketplaceNavigation />
 
@@ -23,7 +21,7 @@
     <MarketplaceHero />
 
     <!-- ═══════════════════════════════════════════════════════════════════
-         🎯 MODÜL GRİD - 6 Ana Hizmet
+         🎯 MODÜL GRİD - Aktif Hizmetler
          ═══════════════════════════════════════════════════════════════════ -->
     <MarketplaceServices @toggle-group-order="toggleGroupOrder" />
 
@@ -45,46 +43,72 @@
       <!-- ═══════════════════════════════════════════════════════════════════
            2. 📦 AKTİF SİPARİŞLER - Kritik Bilgi
            ═══════════════════════════════════════════════════════════════════ -->
-      <MarketplaceActiveOrders />
+        <LazySection v-if="flags['homepage.activeOrders'] !== false">
+          <MarketplaceActiveOrders />
+        </LazySection>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            3. 🎯 ÖZEL TEKLİFLER - Tablı Yapı
            ═══════════════════════════════════════════════════════════════════ -->
-      <MarketplaceOffers />
+      <LazySection v-if="flags['homepage.offers'] !== false">
+        <MarketplaceOffers />
+      </LazySection>
 
-      <MarketplaceBrands />
+      <LazySection v-if="flags['homepage.brands'] !== false">
+        <MarketplaceBrands />
+      </LazySection>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            🥗 SAĞLIKLI YAŞAM & SPORCU MUTFAĞI - Yeni Özellik
            ═══════════════════════════════════════════════════════════════════ -->
-      <MarketplaceHealthy />
+      <LazySection v-if="flags['homepage.healthy'] !== false">
+        <MarketplaceHealthy />
+      </LazySection>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            ✅ GÜNLÜK GÖREVLER - Lifestyle Hub
            ═══════════════════════════════════════════════════════════════════ -->
-      <MarketplaceTasks />
+      <LazySection v-if="flags['homepage.tasks'] !== false">
+        <MarketplaceTasks />
+      </LazySection>
 
-      <MarketplaceBundles />
+      <LazySection v-if="flags['homepage.bundles'] !== false">
+        <MarketplaceBundles />
+      </LazySection>
 
-      <MarketplaceRecentlyViewed />
+      <LazySection v-if="flags['homepage.recentlyViewed'] !== false">
+        <MarketplaceRecentlyViewed />
+      </LazySection>
 
-      <MarketplaceTrending />
+      <LazySection v-if="flags['homepage.trending'] !== false">
+        <MarketplaceTrending />
+      </LazySection>
 
-      <MarketplaceFlashSales />
+      <LazySection v-if="flags['homepage.flashSales'] !== false">
+        <MarketplaceFlashSales />
+      </LazySection>
 
-      <MarketplaceCollections />
+      <LazySection v-if="flags['homepage.collections'] !== false">
+        <MarketplaceCollections />
+      </LazySection>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            📅 ALIŞVERİŞ ETKİNLİKLERİ - Yeni Özellik
            ═══════════════════════════════════════════════════════════════════ -->
-      <MarketplaceEvents />
+      <LazySection v-if="flags['homepage.events'] !== false">
+        <MarketplaceEvents />
+      </LazySection>
 
       <!-- ═══════════════════════════════════════════════════════════════════
            💎 AYRICALIKLI HİZMETLER - Premium Features
            ═══════════════════════════════════════════════════════════════════ -->
-      <MarketplacePremium />
+      <LazySection v-if="flags['homepage.premium'] !== false">
+        <MarketplacePremium />
+      </LazySection>
 
-      <MarketplaceBlog />
+      <LazySection v-if="flags['homepage.blog'] !== false">
+        <MarketplaceBlog />
+      </LazySection>
 
     </main>
 
@@ -264,11 +288,14 @@ import FoodGroupOrder from './FoodGroupOrder.vue'
 import { useTracking } from '@/composables/useTracking'
 import { useFeatureFlags } from '@/services/featureFlags'
 import { useI18n } from 'vue-i18n'
+import LazySection from '@/components/common/LazySection.vue'
+import { useCurrencyStore } from '@/stores/currency'
 
 // Tracking system
 const { getTrendingProducts: fetchTrendingFromAI, getPopularSearches } = useTracking()
 const { flags } = useFeatureFlags()
 const { t } = useI18n()
+const currencyStore = useCurrencyStore()
 
 // Simple i18n helpers
 const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
@@ -329,9 +356,8 @@ const fetchServices = async () => {
       { id: 'marketplace', name: 'Mağaza', icon: '🛒', badge: null, badgeClass: '' },
       { id: 'food', name: 'Yemek', icon: '🍔', badge: 'Yeni', badgeClass: 'bg-green-100 text-green-600' },
       { id: 'hotel', name: 'Otel', icon: '🏨', badge: null, badgeClass: '' },
-      { id: 'rides', name: 'Ulaşım', icon: '🚗', badge: null, badgeClass: '' },
       { id: 'services', name: 'Hizmet', icon: '🔧', badge: null, badgeClass: '' },
-      { id: 'career', name: 'Kariyer', icon: '💼', badge: '12', badgeClass: 'bg-blue-100 text-blue-600' }
+      { id: 'turbo', name: 'Turbo', icon: '🚀', badge: 'CANLI', badgeClass: 'bg-violet-100 text-violet-600' }
     ]
   }
 }
@@ -520,7 +546,8 @@ onMounted(async () => {
   // Load all data in parallel
   await Promise.all([
     fetchServices(),
-    fetchPopularSearches()
+    fetchPopularSearches(),
+    currencyStore.fetchExchangeRates(currencyStore.selectedCurrency)
   ])
   
 

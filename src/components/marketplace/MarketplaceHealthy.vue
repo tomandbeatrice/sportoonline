@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useMarketplaceStore } from '@/stores/marketplaceStore'
 
 const marketplaceStore = useMarketplaceStore()

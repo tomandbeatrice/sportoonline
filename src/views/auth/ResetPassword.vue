@@ -2,27 +2,67 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter, useRoute } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
+const toast = useToast()
 
 const password = ref('')
 const passwordConfirmation = ref('')
 const success = ref(false)
+const errors = ref<Record<string, string>>({})
 
 const token = route.query.token as string
 
+const validatePassword = () => {
+  errors.value = {}
+  let isValid = true
+
+  if (!password.value || password.value.length === 0) {
+    errors.value.password = 'Şifre zorunludur'
+    isValid = false
+  } else if (password.value.length < 8) {
+    errors.value.password = 'Şifre en az 8 karakter olmalıdır'
+    isValid = false
+  } else if (!/[A-Z]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir büyük harf içermelidir'
+    isValid = false
+  } else if (!/[a-z]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir küçük harf içermelidir'
+    isValid = false
+  } else if (!/[0-9]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir rakam içermelidir'
+    isValid = false
+  } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir özel karakter içermelidir'
+    isValid = false
+  }
+
+  if (!passwordConfirmation.value) {
+    errors.value.passwordConfirmation = 'Şifre tekrarı zorunludur'
+    isValid = false
+  } else if (password.value !== passwordConfirmation.value) {
+    errors.value.passwordConfirmation = 'Şifreler eşleşmiyor'
+    isValid = false
+  }
+
+  return isValid
+}
+
 const handleSubmit = async () => {
-  if (password.value !== passwordConfirmation.value) {
-    authStore.error = 'Şifreler eşleşmiyor.'
+  if (!validatePassword()) {
     return
   }
 
   const result = await authStore.resetPassword(token, password.value, passwordConfirmation.value)
   if (result) {
     success.value = true
+    toast.success('Şifreniz başarıyla güncellendi!')
     setTimeout(() => router.push('/login'), 3000)
+  } else {
+    toast.error(authStore.error || 'Şifre sıfırlama başarısız.')
   }
 }
 </script>
@@ -80,10 +120,17 @@ const handleSubmit = async () => {
                 v-model="password"
                 type="password" 
                 required
-                minlength="6"
                 class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                placeholder="En az 6 karakter"
+                :class="{ 'border-red-500': errors.password }"
+                placeholder="En az 8 karakter"
               />
+              <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+              <div class="mt-2 text-xs text-slate-500 space-y-1">
+                <p>✓ En az 8 karakter</p>
+                <p>✓ Büyük ve küçük harf</p>
+                <p>✓ En az bir rakam</p>
+                <p>✓ En az bir özel karakter (!@#$%)</p>
+              </div>
             </div>
 
             <div>
@@ -92,10 +139,11 @@ const handleSubmit = async () => {
                 v-model="passwordConfirmation"
                 type="password" 
                 required
-                minlength="6"
                 class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                :class="{ 'border-red-500': errors.passwordConfirmation }"
                 placeholder="Şifrenizi tekrar girin"
               />
+              <p v-if="errors.passwordConfirmation" class="text-red-500 text-sm mt-1">{{ errors.passwordConfirmation }}</p>
             </div>
 
             <div v-if="authStore.error" class="p-4 bg-red-50 text-red-700 rounded-xl text-sm">

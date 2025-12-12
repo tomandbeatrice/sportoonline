@@ -1,18 +1,24 @@
 <template>
-  <aside class="fixed left-0 top-0 z-40 h-screen w-64 bg-slate-900 text-white transition-transform lg:translate-x-0" :class="{ '-translate-x-full': !isOpen }">
+  <aside 
+    class="fixed left-0 top-0 z-40 h-screen bg-slate-900 text-white transition-all duration-300"
+    :class="[
+      isCollapsed ? 'w-16' : 'w-64',
+      isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+    ]"
+  >
     <!-- Logo -->
-    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700">
-      <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg shadow-indigo-500/20">
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-700" :class="{ 'justify-center px-2': isCollapsed }">
+      <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg shadow-indigo-500/20 flex-shrink-0">
         S
       </div>
-      <div>
+      <div v-if="!isCollapsed">
         <p class="font-bold text-lg tracking-tight">SportoOnline</p>
         <p class="text-xs text-slate-400 font-medium">Admin Panel</p>
       </div>
     </div>
 
     <!-- Search -->
-    <div class="px-4 py-3 border-b border-slate-800">
+    <div v-if="!isCollapsed" class="px-4 py-3 border-b border-slate-800">
       <div class="relative group">
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-indigo-400 transition-colors" />
         <input 
@@ -24,11 +30,14 @@
         >
       </div>
     </div>
+    <div v-else class="px-2 py-3 border-b border-slate-800 flex justify-center">
+      <Search class="w-5 h-5 text-slate-400 cursor-pointer hover:text-indigo-400 transition-colors" @click="$emit('toggle-collapse')" />
+    </div>
 
     <!-- Navigation -->
-    <nav class="px-3 py-4 overflow-y-auto h-[calc(100vh-200px)] custom-scrollbar">
+    <nav class="px-2 py-4 overflow-y-auto h-[calc(100vh-200px)] custom-scrollbar" :class="{ 'px-1': isCollapsed }">
       <!-- Favorites -->
-      <div v-if="favorites.length" class="mb-6">
+      <div v-if="!searchQuery && favorites.length && !isCollapsed" class="mb-6">
         <div class="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
           <Star class="w-3 h-3" />
           <span>Favoriler</span>
@@ -46,7 +55,7 @@
       </div>
 
       <!-- Filtered Results -->
-      <div v-if="searchQuery" class="space-y-1">
+      <div v-if="searchQuery && !isCollapsed" class="space-y-1">
         <router-link 
           v-for="item in filteredItems"
           :key="item.path"
@@ -80,18 +89,38 @@
               :class="{ 'rotate-180': expandedGroups.main }"
             />
           </button>
-          <div v-show="expandedGroups.main" class="space-y-1 mt-1">
+          <div v-if="isCollapsed" class="h-px bg-slate-700 my-2 mx-2"></div>
+          
+          <div v-show="isCollapsed || expandedGroups.main" class="space-y-0.5 mt-1">
             <router-link 
               v-for="item in mainMenu"
               :key="item.path"
               :to="item.path"
-              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
-              :class="isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'"
+              :title="isCollapsed ? item.name : ''"
+              class="flex items-center gap-3 rounded-lg text-sm transition-all group relative"
+              :class="[
+                isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+                isCollapsed ? 'px-2 py-2.5 justify-center' : 'px-3 py-2'
+              ]"
             >
-              <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
-              <span class="flex-1 font-medium">{{ item.name }}</span>
-              <span v-if="item.badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm" :class="item.badgeClass">{{ item.badge }}</span>
+              <component :is="item.icon" class="w-5 h-5 flex-shrink-0" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
+              <span v-if="!isCollapsed" class="flex-1 font-medium">{{ item.name }}</span>
+              <span v-if="!isCollapsed && item.badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm flex-shrink-0" :class="item.badgeClass">{{ item.badge }}</span>
+              
+              <!-- Badge indicator for collapsed mode -->
+              <span v-if="isCollapsed && item.badge" class="absolute -top-1 -right-1 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-slate-900"></span>
+              
+              <!-- Tooltip -->
+              <div 
+                v-if="isCollapsed"
+                class="absolute left-full ml-2 px-3 py-2 bg-slate-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 shadow-lg"
+              >
+                {{ item.name }}
+                <span v-if="item.badge" class="ml-2 px-2 py-0.5 text-xs rounded-full" :class="item.badgeClass">{{ item.badge }}</span>
+              </div>
+              
               <button 
+                v-if="!isCollapsed"
                 @click.prevent.stop="toggleFavorite(item)"
                 class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
                 :class="{ 'opacity-100 text-yellow-400': isFavorite(item) }"
@@ -119,7 +148,7 @@
           </button>
           <div v-show="expandedGroups.services" class="space-y-1 mt-1">
             <router-link 
-              v-for="item in serviceMenu"
+              v-for="item in serviceMenu.filter(i => !i.flag || isFeatureEnabled(i.flag as any))"
               :key="item.path"
               :to="item.path"
               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
@@ -201,42 +230,6 @@
               <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
               <span class="flex-1 font-medium">{{ item.name }}</span>
               <span v-if="item.badge" class="px-1.5 py-0.5 text-[10px] font-bold rounded-full shadow-sm" :class="item.badgeClass">{{ item.badge }}</span>
-              <button 
-                @click.prevent.stop="toggleFavorite(item)"
-                class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
-                :class="{ 'opacity-100 text-yellow-400': isFavorite(item) }"
-              >
-                <Star class="w-4 h-4" :class="{ 'fill-current': isFavorite(item) }" />
-              </button>
-            </router-link>
-          </div>
-        </div>
-
-        <!-- Services -->
-        <div class="menu-group">
-          <button 
-            @click="toggleGroup('services')"
-            class="flex items-center justify-between w-full px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-200 transition-colors"
-          >
-            <div class="flex items-center gap-2">
-              <Briefcase class="w-3 h-3" />
-              <span>Hizmetler</span>
-            </div>
-            <ChevronDown 
-              class="w-3 h-3 transition-transform duration-200" 
-              :class="{ 'rotate-180': expandedGroups.services }"
-            />
-          </button>
-          <div v-show="expandedGroups.services" class="space-y-1 mt-1">
-            <router-link 
-              v-for="item in serviceMenu"
-              :key="item.path"
-              :to="item.path"
-              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group relative"
-              :class="isActive(item.path) ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'"
-            >
-              <component :is="item.icon" class="w-5 h-5" :class="isActive(item.path) ? 'text-white' : 'text-slate-400 group-hover:text-white'" />
-              <span class="flex-1 font-medium">{{ item.name }}</span>
               <button 
                 @click.prevent.stop="toggleFavorite(item)"
                 class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-yellow-400 transition-all absolute right-2"
@@ -416,8 +409,14 @@ import {
   TrendingUp,
   Ticket,
   DollarSign,
-  Target
+  Target,
+  Shield,
+  Boxes,
+  Tags,
+  MessageSquare,
+  FlaskConical
 } from 'lucide-vue-next'
+import { isFeatureEnabled } from '@/utils/featureToggle'
 
 interface MenuItem {
   name: string
@@ -429,11 +428,13 @@ interface MenuItem {
 }
 
 const props = defineProps<{
-  isOpen: boolean
+  isOpen?: boolean
+  isCollapsed: boolean
+  isMobileOpen: boolean
   userName?: string
 }>()
 
-defineEmits(['close', 'logout'])
+defineEmits(['close', 'logout', 'toggle-collapse'])
 
 const route = useRoute()
 const searchQuery = ref('')
@@ -465,7 +466,6 @@ const toggleGroup = (group: keyof typeof expandedGroups) => {
 // Ana Dashboard ve Genel Yönetim
 const mainMenu: MenuItem[] = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard, category: 'Ana Menü' },
-  { name: 'Gelişmiş Dashboard', path: '/admin/improved', icon: TrendingUp, category: 'Ana Menü' },
   { name: 'Pazaryeri', path: '/admin/marketplace', icon: Globe, category: 'Ana Menü' },
 ]
 
@@ -474,6 +474,7 @@ const commerceMenu: MenuItem[] = [
   { name: 'Siparişler', path: '/admin/orders', icon: ShoppingCart, badge: '12', badgeClass: 'bg-orange-500 text-white', category: 'E-Ticaret' },
   { name: 'Ürünler', path: '/admin/products', icon: Package, category: 'E-Ticaret' },
   { name: 'Kategoriler', path: '/admin/categories', icon: List, category: 'E-Ticaret' },
+  { name: 'Kategori & Özellikler', path: '/admin/category-attributes', icon: Boxes, badge: 'YENİ', badgeClass: 'bg-green-500 text-white', category: 'E-Ticaret' },
   { name: 'İadeler', path: '/admin/returns', icon: RotateCcw, category: 'E-Ticaret' },
 ]
 
@@ -485,18 +486,18 @@ const userManagementMenu: MenuItem[] = [
   { name: 'Admin Kullanıcıları', path: '/admin/users', icon: UserCog, category: 'Kullanıcılar' },
 ]
 
-// Hizmet Modülleri
-const serviceMenu: MenuItem[] = [
-  { name: 'Restoranlar', path: '/admin/restaurants', icon: Utensils, category: 'Hizmetler' },
-  { name: 'Yemek Siparişleri', path: '/admin/food-orders', icon: Utensils, category: 'Hizmetler' },
-  { name: 'Oteller', path: '/admin/hotels', icon: Hotel, category: 'Hizmetler' },
-  { name: 'Rezervasyonlar', path: '/admin/reservations', icon: Hotel, category: 'Hizmetler' },
-  { name: 'Ulaşım', path: '/admin/transport', icon: Bus, category: 'Hizmetler' },
+// Hizmet Modülleri (feature flag’lerle kontrol)
+const serviceMenu: Array<MenuItem & { flag?: string }> = [
+  { name: 'Restoranlar', path: '/admin/restaurants', icon: Utensils, category: 'Hizmetler', flag: 'admin.services.restaurants' },
+  { name: 'Yemek Siparişleri', path: '/admin/food-orders', icon: Utensils, category: 'Hizmetler', flag: 'admin.services.foodOrders' },
+  { name: 'Oteller', path: '/admin/hotels', icon: Hotel, category: 'Hizmetler', flag: 'admin.services.hotels' },
+  { name: 'Rezervasyonlar', path: '/admin/reservations', icon: Hotel, category: 'Hizmetler', flag: 'admin.services.reservations' },
 ]
 
 // Pazarlama ve İçerik
 const marketingMenu: MenuItem[] = [
   { name: 'Kampanyalar', path: '/admin/campaigns', icon: Megaphone, category: 'Pazarlama' },
+  { name: 'Kampanya & Kuponlar', path: '/admin/campaign-coupon', icon: Tags, badge: 'YENİ', badgeClass: 'bg-green-500 text-white', category: 'Pazarlama' },
   { name: 'Kuponlar', path: '/admin/coupons', icon: Ticket, category: 'Pazarlama' },
   { name: 'Bannerlar', path: '/admin/banners', icon: Image, category: 'Pazarlama' },
   { name: 'Blog', path: '/admin/blog', icon: FileEdit, category: 'Pazarlama' },
@@ -517,8 +518,10 @@ const financeMenu: MenuItem[] = [
 // Sistem ve Ayarlar
 const systemMenu: MenuItem[] = [
   { name: 'Sistem Ayarları', path: '/admin/settings', icon: Settings, category: 'Sistem' },
+  { name: 'Sistem Ayarları (Gelişmiş)', path: '/admin/system-settings-enhanced', icon: Settings, badge: 'YENİ', badgeClass: 'bg-green-500 text-white', category: 'Sistem' },
+  { name: 'Moderasyon Merkezi', path: '/admin/moderation', icon: MessageSquare, badge: '5', badgeClass: 'bg-red-500 text-white', category: 'Sistem' },
   { name: 'Bildirimler', path: '/admin/notifications', icon: Bell, category: 'Sistem' },
-  { name: 'Turbo Yarışması', path: '/admin/turbo', icon: TrendingUp, category: 'Sistem' },
+  { name: 'E2E Test Runner', path: '/test/e2e', icon: FlaskConical, badge: 'TEST', badgeClass: 'bg-purple-500 text-white', category: 'Sistem' },
 ]
 
 const allMenuItems = computed(() => [

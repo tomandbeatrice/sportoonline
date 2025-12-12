@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { LocationState, Business, GeoLocation } from '@/types/location'
+import type { LocationState, Business } from '@/types/location'
 
 export const useLocationStore = defineStore('location', {
   state: (): LocationState => ({
@@ -35,7 +35,8 @@ export const useLocationStore = defineStore('location', {
         await this.fetchNearbyBusinesses()
         
       } catch (err: any) {
-        this.error = 'Konum erişimi reddedildi veya alınamadı.'
+        console.error('Konum hatası:', err)
+        this.error = err.message || 'Konum erişimi reddedildi veya alınamadı.'
         this.permissionGranted = false
       } finally {
         this.loading = false

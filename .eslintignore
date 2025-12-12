@@ -1,0 +1,53 @@
+# .eslintignore
+# ESLint tarafından yok sayılacak dosyalar
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+coverage/
+.nuxt/
+.next/
+.cache/
+
+# Service Worker (manual JS)
+public/sw.js
+public/service-worker.js
+
+# Minified files
+*.min.js
+*.min.css
+*.bundle.js
+
+# Config files
+*.config.js
+*.config.ts
+vite.config.*.ts
+
+# Test files (opsiyonel - eğer test'lerde de lint istiyorsanız kaldırın)
+# **/*.test.ts
+# **/*.spec.ts
+
+# Generated files
+**/*.d.ts
+auto-imports.d.ts
+components.d.ts
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Database
+database/migrations/
+database/seeders/
+
+# Laravel
+storage/
+bootstrap/cache/

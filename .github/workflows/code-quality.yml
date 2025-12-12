@@ -1,0 +1,264 @@
+name: Code Quality Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # ============================================
+  # ESLint & Prettier Analysis
+  # ============================================
+  lint:
+    name: ESLint & Prettier
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: |
+          npm install -g eslint
+          npx eslint "src/**/*.{js,ts,vue}" --format json --output-file eslint-report.json || true
+          npx eslint "src/**/*.{js,ts,vue}" --format stylish
+        continue-on-error: true
+      
+      - name: Run Prettier Check
+        run: |
+          npx prettier --check "src/**/*.{js,ts,vue,css,scss,json}"
+        continue-on-error: true
+      
+      - name: Upload ESLint Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eslint-report
+          path: eslint-report.json
+          retention-days: 30
+
+  # ============================================
+  # TypeScript Type Checking
+  # ============================================
+  typescript:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: TypeScript Compilation Check
+        run: npx tsc --noEmit --skipLibCheck
+      
+      - name: Generate Type Coverage Report
+        run: |
+          npx type-coverage --detail --strict --ignore-files "**/*.spec.ts" --ignore-files "**/*.test.ts" || true
+        continue-on-error: true
+
+  # ============================================
+  # SonarCloud Analysis
+  # ============================================
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Tests with Coverage
+        run: npm run test:coverage || true
+        continue-on-error: true
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=sportoonline
+            -Dsonar.organization=sportoonline
+            -Dsonar.sources=src
+            -Dsonar.tests=tests
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.typescript.tsconfigPath=tsconfig.json
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/*.spec.ts,**/*.test.ts
+        continue-on-error: true
+
+  # ============================================
+  # CodeClimate Analysis
+  # ============================================
+  codeclimate:
+    name: CodeClimate Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Tests with Coverage
+        run: npm run test:coverage || true
+        continue-on-error: true
+      
+      - name: CodeClimate Coverage Report
+        uses: paambaati/codeclimate-action@v5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            ${{github.workspace}}/coverage/lcov.info:lcov
+        continue-on-error: true
+
+  # ============================================
+  # Security Scan
+  # ============================================
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Run npm audit
+        run: |
+          npm audit --json > npm-audit.json || true
+          npm audit
+        continue-on-error: true
+      
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'SportoOnline'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+        continue-on-error: true
+      
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            npm-audit.json
+            reports/
+          retention-days: 30
+
+  # ============================================
+  # Bundle Size Analysis
+  # ============================================
+  bundle-size:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Project
+        run: npm run build
+      
+      - name: Analyze Bundle Size
+        run: |
+          npm install -g source-map-explorer
+          source-map-explorer 'dist/assets/*.js' --html bundle-report.html || true
+        continue-on-error: true
+      
+      - name: Upload Bundle Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-analysis
+          path: bundle-report.html
+          retention-days: 30
+      
+      - name: Check Bundle Size
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  # ============================================
+  # Lighthouse CI
+  # ============================================
+  lighthouse:
+    name: Lighthouse Performance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Project
+        run: npm run build
+      
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun || true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        continue-on-error: true

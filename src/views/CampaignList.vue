@@ -4,10 +4,6 @@ import { ref, onMounted, computed } from 'vue'
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton.vue'
 import { useApi } from '@/composables/useApi'
 import { toast } from 'vue3-toastify'
-import CampaignCreate from './CampaignCreate.vue'
-import CampaignEdit from './CampaignEdit.vue'
-import CampaignDelete from './CampaignDelete.vue'
-import CampaignTabs from './CampaignTabs.vue'
 
 interface Campaign {
   id: number

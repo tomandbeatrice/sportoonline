@@ -1,6 +1,6 @@
 <template>
   <!-- ═══════════════════════════════════════════════════════════════════
-       🔗 HİZMET SEKMELERİ - Yemek, Otel, Rides, Hizmet, Kariyer
+       🔗 HİZMET SEKMELERİ - Mağaza, Yemek, Otel, Hizmet, Turbo
        ═══════════════════════════════════════════════════════════════════ -->
   <nav class="bg-white border-b border-slate-200 sticky top-[120px] sm:top-[140px] lg:top-[130px] z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -42,18 +42,6 @@
           <span>Otel</span>
         </router-link>
 
-        <!-- Yolculuk/Rides -->
-        <router-link 
-          to="/rides"
-          class="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-          :class="$route.path === '/rides' 
-            ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-200' 
-            : 'bg-white text-slate-700 border-slate-200 hover:border-green-300 hover:bg-green-50'"
-        >
-          <span class="text-xl">🚗</span>
-          <span>Ulaşım</span>
-        </router-link>
-
         <!-- Hizmet -->
         <router-link 
           to="/services"
@@ -64,19 +52,6 @@
         >
           <span class="text-xl">🔧</span>
           <span>Hizmet</span>
-        </router-link>
-
-        <!-- Kariyer -->
-        <router-link 
-          to="/career"
-          class="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border-2"
-          :class="$route.path === '/career' 
-            ? 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-200' 
-            : 'bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:bg-amber-50'"
-        >
-          <span class="text-xl">💼</span>
-          <span>Kariyer</span>
-          <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-600 font-bold">12</span>
         </router-link>
 
         <!-- Turbo Mod -->
@@ -94,10 +69,17 @@
       </div>
     </div>
   </nav>
+
+  <!-- Currency Selector -->
+  <div class="bg-slate-50 border-b border-slate-200 sticky top-[180px] sm:top-[200px] z-39">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2">
+      <CurrencySelector />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-// No script logic needed for now as it uses router-link directly
+import CurrencySelector from '@/components/common/CurrencySelector.vue'
 </script>
 
 <style scoped>

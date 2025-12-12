@@ -33,7 +33,7 @@ const searchQuery = ref('')
 const activeTab = ref('pending') // all, pending, approved, rejected
 
 const filteredReturns = computed(() => {
-  let result = returns.value
+  let result = Array.isArray(returns.value) ? returns.value : []
 
   // Tab Filter
   if (activeTab.value !== 'all') {

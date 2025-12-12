@@ -131,12 +131,24 @@ function validateForm() {
     isValid = false
   }
 
-  // Password validation
+  // Password validation - Güçlü parola kuralları
   if (!password.value || password.value.length === 0) {
     errors.value.password = 'Şifre zorunludur'
     isValid = false
   } else if (password.value.length < 8) {
     errors.value.password = 'Şifre en az 8 karakter olmalıdır'
+    isValid = false
+  } else if (!/[A-Z]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir büyük harf içermelidir'
+    isValid = false
+  } else if (!/[a-z]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir küçük harf içermelidir'
+    isValid = false
+  } else if (!/[0-9]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir rakam içermelidir'
+    isValid = false
+  } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) {
+    errors.value.password = 'Şifre en az bir özel karakter içermelidir'
     isValid = false
   }
 
@@ -182,7 +194,8 @@ async function register() {
           name: name.value,
           email: email.value,
           password: password.value,
-          password_confirmation: passwordConfirm.value
+          password_confirmation: passwordConfirm.value,
+          accept_terms: acceptTerms.value ? 1 : 0
         })
       } catch (apiError: any) {
         if (apiError.code === 'ERR_NETWORK' || apiError.message === 'Network Error') {
@@ -196,12 +209,31 @@ async function register() {
       }
     }
     
-    success.value = 'Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...'
-    
-    // 2 saniye bekleyip login sayfasına yönlendir
-    setTimeout(() => {
-      router.push('/login')
-    }, 2000)
+    // Başarılı kayıt sonrası otomatik giriş yap
+    if (response.data.token) {
+      // Token ve user bilgisini kaydet
+      localStorage.setItem('token', response.data.token)
+      localStorage.setItem('role', response.data.user.role)
+      localStorage.setItem('user', JSON.stringify(response.data.user))
+      
+      success.value = 'Kayıt başarılı! Hesabınıza yönlendiriliyorsunuz...'
+      
+      // Role göre yönlendir
+      setTimeout(() => {
+        if (response.data.user.role === 'admin') {
+          router.push('/admin/dashboard')
+        } else if (response.data.user.role === 'seller') {
+          router.push('/seller/dashboard')
+        } else {
+          router.push('/')
+        }
+      }, 1500)
+    } else {
+      success.value = 'Kayıt başarılı! Lütfen e-postanızı doğrulayın.'
+      setTimeout(() => {
+        router.push('/login')
+      }, 2000)
+    }
   } catch (e: any) {
     console.error('❌ Register error:', e)
     if (e.response?.data?.errors) {

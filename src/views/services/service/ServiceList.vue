@@ -58,7 +58,10 @@
                 <span class="text-slate-400 text-sm">({{ service.reviewCount }})</span>
               </div>
             </div>
-            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-colors">
+            <button 
+              @click="bookService(service)"
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-colors"
+            >
               Hizmet Al
             </button>
           </div>
@@ -70,10 +73,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import ServiceNav from '@/components/shared/ServiceNav.vue'
+import { useCartStore } from '@/stores/cartStore'
 
 const route = useRoute()
+const router = useRouter()
+const toast = useToast()
+const cartStore = useCartStore()
 const selectedCategory = ref<string | null>(null)
 
 onMounted(() => {
@@ -117,6 +125,22 @@ const filteredServices = computed(() => {
     )
   }
   
+
   return result
 })
+
+const bookService = (service: any) => {
+  cartStore.addToCart({
+    id: service.id,
+    name: service.name,
+    price: service.price,
+    quantity: 1,
+    type: 'service',
+    image: service.icon,
+    category: { name: service.category }
+  })
+  
+  toast.success(`${service.name} hizmeti sepete eklendi!`)
+  router.push('/cart')
+}
 </script>

@@ -26,8 +26,8 @@
         </div>
         <h3 class="font-semibold text-slate-900 mb-1 truncate">{{ item.title }}</h3>
         <div class="flex items-end gap-2 mb-3">
-          <span class="text-lg font-bold text-red-600">{{ formatCurrency(item.price) }}</span>
-          <span class="text-sm text-slate-400 line-through mb-0.5">{{ formatCurrency(item.oldPrice) }}</span>
+          <span class="text-lg font-bold text-red-600">{{ formatPrice(item.price) }}</span>
+          <span class="text-sm text-slate-400 line-through mb-0.5">{{ formatPrice(item.oldPrice) }}</span>
         </div>
         <div class="w-full bg-slate-100 rounded-full h-2 mb-1">
           <div class="bg-red-500 h-2 rounded-full" :style="{ width: (item.sold / item.total * 100) + '%' }"></div>
@@ -50,6 +50,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import { formatCurrencyWithConversion } from '@/utils/currencyConverter'
 
 const cartStore = useCartStore()
 
@@ -72,6 +73,6 @@ const addToCart = (item: any) => {
   }, 1)
 }
 
-// Helpers
-const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
+// Helpers - Gerçek zamanlı kur dönüşümü ile
+const formatPrice = (amount: number) => formatCurrencyWithConversion(amount, 'TRY', 2)
 </script>

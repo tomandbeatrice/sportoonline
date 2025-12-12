@@ -253,7 +253,8 @@ const selectedApplication = ref(null);
 
 // Computed
 const filteredApplications = computed(() => {
-  return applications.value.filter(app => {
+  const apps = Array.isArray(applications.value) ? applications.value : [];
+  return apps.filter(app => {
     const matchesSearch = (app.store_name?.toLowerCase() || '').includes(searchQuery.value.toLowerCase()) || 
                           (app.user?.email?.toLowerCase() || '').includes(searchQuery.value.toLowerCase());
     const matchesTab = activeTab.value === 'all' || app.status === activeTab.value;
@@ -273,13 +274,14 @@ async function fetchApplications() {
         applications.value = response.data.data || response.data;
         
         // Update tab counts
-        tabs.value[0].count = applications.value.length;
-        tabs.value[1].count = applications.value.filter(a => a.status === 'pending').length;
-        tabs.value[2].count = applications.value.filter(a => a.status === 'approved').length;
-        tabs.value[3].count = applications.value.filter(a => a.status === 'rejected').length;
+        const apps = Array.isArray(applications.value) ? applications.value : [];
+        tabs.value[0].count = apps.length;
+        tabs.value[1].count = apps.filter(a => a.status === 'pending').length;
+        tabs.value[2].count = apps.filter(a => a.status === 'approved').length;
+        tabs.value[3].count = apps.filter(a => a.status === 'rejected').length;
 
-        if (applications.value.length > 0 && !selectedApplication.value) {
-            selectedApplication.value = applications.value[0];
+        if (apps.length > 0 && !selectedApplication.value) {
+            selectedApplication.value = apps[0];
         }
     } catch (error) {
         console.error('Failed to fetch seller applications:', error);
@@ -293,9 +295,10 @@ async function fetchStats() {
         const response = await axios.get('/api/admin/seller-applications/stats');
         // Assuming API returns stats matching our metrics structure
         // For now, we'll just update counts from the applications list if API doesn't return full stats
-        metrics.value[0].value = applications.value.filter(a => a.status === 'pending').length.toString();
-        metrics.value[1].value = applications.value.filter(a => a.status === 'approved').length.toString();
-        metrics.value[2].value = applications.value.filter(a => a.status === 'rejected').length.toString();
+        const apps = Array.isArray(applications.value) ? applications.value : [];
+        metrics.value[0].value = apps.filter(a => a.status === 'pending').length.toString();
+        metrics.value[1].value = apps.filter(a => a.status === 'approved').length.toString();
+        metrics.value[2].value = apps.filter(a => a.status === 'rejected').length.toString();
     } catch (error) {
         console.error('Failed to fetch stats:', error);
     }

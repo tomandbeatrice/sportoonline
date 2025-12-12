@@ -8,6 +8,15 @@
 </p>
 
 <p align="center">
+  <a href="https://sonarcloud.io/dashboard?id=sportoonline"><img src="https://sonarcloud.io/api/project_badges/measure?project=sportoonline&metric=alert_status" alt="Quality Gate Status"></a>
+  <a href="https://sonarcloud.io/dashboard?id=sportoonline"><img src="https://sonarcloud.io/api/project_badges/measure?project=sportoonline&metric=coverage" alt="Coverage"></a>
+  <a href="https://sonarcloud.io/dashboard?id=sportoonline"><img src="https://sonarcloud.io/api/project_badges/measure?project=sportoonline&metric=bugs" alt="Bugs"></a>
+  <a href="https://sonarcloud.io/dashboard?id=sportoonline"><img src="https://sonarcloud.io/api/project_badges/measure?project=sportoonline&metric=vulnerabilities" alt="Vulnerabilities"></a>
+  <a href="https://sonarcloud.io/dashboard?id=sportoonline"><img src="https://sonarcloud.io/api/project_badges/measure?project=sportoonline&metric=code_smells" alt="Code Smells"></a>
+  <a href="https://sonarcloud.io/dashboard?id=sportoonline"><img src="https://sonarcloud.io/api/project_badges/measure?project=sportoonline&metric=duplicated_lines_density" alt="Duplicated Lines (%)"></a>
+</p>
+
+<p align="center">
   <strong>A comprehensive e-commerce, service marketplace, and ride-sharing platform with AI-powered search and multi-language support</strong>
 </p>
 
@@ -304,6 +313,10 @@ npm run test:e2e
 
 ## 📚 Documentation
 
+- **[CI/CD Pipeline](docs/CI_CD_DOCUMENTATION.md)** - Automated testing & deployment
+- **[GitHub Secrets Setup](docs/GITHUB_SECRETS_SETUP.md)** - Token configuration guide
+- **[SonarQube Setup](docs/SONARQUBE_SETUP.md)** - Code quality analysis
+- **[Code Improvements](docs/SONARQUBE_IMPROVEMENTS.md)** - Quality improvement guide
 - **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production setup
 - **[Test Results](TEST_RESULTS.md)** - Comprehensive testing
 - **[Code Cleanup](CODE_CLEANUP.md)** - Code quality recommendations

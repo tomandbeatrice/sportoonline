@@ -111,13 +111,22 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     try {
-      await axios.post('/api/v1/logout')
+      // Token'i backend'e göndererek revoke et
+      if (token.value) {
+        await axios.post('/api/v1/logout', {}, {
+          headers: { Authorization: `Bearer ${token.value}` }
+        })
+      }
     } catch (e) {
-      // ignore
+      console.error('Logout error:', e)
+      // Hata olsa bile devam et
     } finally {
+      // Lokal verileri temizle
       token.value = null
       user.value = null
       localStorage.removeItem('token')
+      localStorage.removeItem('role')
+      localStorage.removeItem('user')
       delete axios.defaults.headers.common['Authorization']
       router.push('/login')
     }

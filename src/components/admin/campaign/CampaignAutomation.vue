@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const steps = ['Hedef Seçimi', 'AI Analizi', 'Onay']
 const currentStep = ref(0)

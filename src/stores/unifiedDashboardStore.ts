@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 
 export const useUnifiedDashboardStore = defineStore('unifiedDashboard', () => {

@@ -187,9 +187,10 @@
           />
           <select 
             v-model="shippingForm.shipping_carrier"
+            required
             class="w-full px-4 py-2 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           >
-            <option value="">Kargo Firması Seçin</option>
+            <option disabled value="">Kargo Firması Seçin</option>
             <option value="yurtici">Yurtiçi Kargo</option>
             <option value="aras">Aras Kargo</option>
             <option value="mng">MNG Kargo</option>
@@ -198,7 +199,7 @@
           </select>
           <button 
             @click="submitShipping"
-            :disabled="!shippingForm.tracking_number || submitting"
+            :disabled="!shippingForm.tracking_number || !shippingForm.shipping_carrier || submitting"
             class="w-full py-2 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50"
           >
             {{ submitting ? 'Gönderiliyor...' : 'Kargo Bilgilerini Kaydet' }}
@@ -256,7 +257,7 @@ const returnData = ref<any>(null)
 
 const shippingForm = ref({
   tracking_number: '',
-  shipping_carrier: '',
+  shipping_carrier: 'yurtici',
 })
 
 const canCancel = computed(() => {
@@ -302,7 +303,10 @@ const fetchReturn = async () => {
 }
 
 const submitShipping = async () => {
-  if (!shippingForm.value.tracking_number) return
+  if (!shippingForm.value.tracking_number || !shippingForm.value.shipping_carrier) {
+    toast.warning('Lütfen takip numarası ve kargo firmasını seçin')
+    return
+  }
   
   submitting.value = true
   try {

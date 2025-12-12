@@ -42,30 +42,59 @@
             </div>
           </div>
 
-          <div class="grid md:grid-cols-3 gap-4">
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div 
               v-for="service in serviceTypes" 
               :key="service.id"
               @click="form.service_type = service.id"
               :class="[
-                'relative p-5 rounded-xl border-2 cursor-pointer transition-all',
+                'relative p-5 rounded-xl border-2 cursor-pointer transition-all group',
                 form.service_type === service.id 
-                  ? 'border-blue-500 bg-blue-50 shadow-lg' 
-                  : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
+                  ? 'border-blue-500 bg-blue-50 shadow-lg scale-[1.02]' 
+                  : 'border-slate-200 hover:border-blue-300 hover:shadow-md hover:scale-[1.01]'
               ]"
             >
               <div class="flex items-start justify-between mb-3">
-                <span class="text-3xl">{{ service.icon }}</span>
-                <div v-if="form.service_type === service.id" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                <span class="text-3xl group-hover:scale-110 transition-transform">{{ service.icon }}</span>
+                <div v-if="form.service_type === service.id" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center animate-bounce">
                   <span class="text-white text-sm">✓</span>
                 </div>
               </div>
               <h3 class="font-bold text-slate-900 mb-1">{{ service.name }}</h3>
-              <p class="text-sm text-slate-500">{{ service.description }}</p>
+              <p class="text-sm text-slate-500 leading-relaxed">{{ service.description }}</p>
               <div class="mt-3 flex flex-wrap gap-1">
-                <span v-for="tag in service.tags" :key="tag" class="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
+                <span 
+                  v-for="tag in service.tags" 
+                  :key="tag" 
+                  class="text-xs px-2 py-0.5 rounded transition-colors"
+                  :class="form.service_type === service.id ? 'bg-blue-200 text-blue-700' : 'bg-slate-100 text-slate-600'"
+                >
                   {{ tag }}
                 </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service Type Helper Info -->
+          <div v-if="form.service_type" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div class="flex items-start gap-3">
+              <span class="text-2xl">💡</span>
+              <div>
+                <h4 class="font-semibold text-blue-900 mb-1">{{ selectedServiceType?.name }} Hizmeti Hakkında</h4>
+                <p class="text-sm text-blue-700">
+                  <span v-if="form.service_type === 'food'">
+                    Restoran, kafe veya catering hizmeti veriyorsanız, müşterileriniz size online sipariş verebilir. Menü oluşturma, sipariş yönetimi ve ödeme tahsilatı sistemimiz üzerinden kolayca yapabilirsiniz.
+                  </span>
+                  <span v-else-if="form.service_type === 'hotel'">
+                    Otel, pansiyon, apart veya tatil köyü işletiyorsanız, misafirleriniz rezervasyon yapabilir. Oda yönetimi, fiyatlandırma ve takvim sistemimiz size kolaylık sağlar.
+                  </span>
+                  <span v-else-if="form.service_type === 'product'">
+                    Spor ekipmanı, giyim, aksesuar gibi ürünler satıyorsanız, stoklarınızı platformumuzda sergileyebilirsiniz. Envanter yönetimi, kargo entegrasyonu ve satış raporları dahildir.
+                  </span>
+                  <span v-else-if="form.service_type === 'services'">
+                    Antrenörlük, spor eğitimi, fizik tedavi gibi profesyonel hizmetler veriyorsanız, randevu sistemi ve ödeme tahsilatı ile müşterilerinize ulaşabilirsiniz.
+                  </span>
+                </p>
               </div>
             </div>
           </div>
@@ -83,18 +112,24 @@
 
           <div class="grid md:grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">Mağaza / İşletme Adı *</label>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                Mağaza / İşletme Adı *
+                <span class="text-xs text-slate-500 font-normal ml-1">(Müşterilerinizin göreceği isim)</span>
+              </label>
               <input 
                 v-model="form.store_name" 
                 type="text" 
                 required
                 class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="Örn: Spor Dünyası"
+                placeholder="Örn: Spor Dünyası, Fit Restoran"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">İşletme Türü *</label>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                İşletme Türü *
+                <span class="text-xs text-slate-500 font-normal ml-1">(Hukuki yapınız)</span>
+              </label>
               <select 
                 v-model="form.business_type" 
                 required
@@ -160,30 +195,17 @@
               </div>
             </div>
 
-            <div v-if="form.service_type === 'transport'">
-              <label class="block text-sm font-medium text-slate-700 mb-2">Araç Sayısı *</label>
-              <input 
-                v-model.number="form.vehicle_count" 
-                type="number" 
-                min="1"
-                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="Kaç aracınız var?"
-              />
-            </div>
-
-            <div v-if="form.service_type === 'transport'">
-              <label class="block text-sm font-medium text-slate-700 mb-2">Hizmet Bölgesi *</label>
+            <div v-if="form.service_type === 'hotel'">
+              <label class="block text-sm font-medium text-slate-700 mb-2">Yıldız Derecesi *</label>
               <select 
-                v-model="form.service_region" 
+                v-model="form.star_rating" 
                 class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
               >
                 <option value="">Seçiniz</option>
-                <option value="istanbul_europe">İstanbul Avrupa</option>
-                <option value="istanbul_asia">İstanbul Anadolu</option>
-                <option value="istanbul_all">İstanbul Geneli</option>
-                <option value="ankara">Ankara</option>
-                <option value="izmir">İzmir</option>
-                <option value="national">Türkiye Geneli</option>
+                <option value="3">3 Yıldız</option>
+                <option value="4">4 Yıldız</option>
+                <option value="5">5 Yıldız</option>
+                <option value="boutique">Butik Otel</option>
               </select>
             </div>
 
@@ -213,21 +235,10 @@
               </select>
             </div>
 
-            <!-- Career/Job Posting Fields -->
-            <div v-if="form.service_type === 'career'" class="md:col-span-2">
-              <label class="block text-sm font-medium text-slate-700 mb-2">Sektör *</label>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="sector in careerSectors"
-                  :key="sector"
-                  type="button"
-                  @click="toggleSector(sector)"
-                  :class="[
-                    'px-4 py-2 rounded-full text-sm font-medium border transition',
-                    form.sectors.includes(sector)
-                      ? 'border-amber-500 bg-amber-50 text-amber-700'
-                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
-                  ]"
+            <!-- Services specific fields could be added here -->
+
+          </div>
+        </div>
                 >
                   {{ sector }}
                 </button>
@@ -433,25 +444,11 @@ const serviceTypes = [
     tags: ['Otel', 'Pansiyon', 'Tatil Köyü']
   },
   { 
-    id: 'transport', 
-    name: 'Ulaşım Hizmeti', 
-    icon: '🚗',
-    description: 'Araç/Transfer hizmeti vermek istiyorum',
-    tags: ['VIP Transfer', 'Kiralama', 'Taksi']
-  },
-  { 
     id: 'services', 
     name: 'Profesyonel Hizmet', 
     icon: '🔧',
     description: 'Spor eğitimi, antrenörlük vb.',
     tags: ['Antrenör', 'Fizik Tedavi', 'Masaj']
-  },
-  { 
-    id: 'career', 
-    name: 'İş İlanı Veren', 
-    icon: '💼',
-    description: 'Personel arıyorum, iş ilanı vermek istiyorum',
-    tags: ['Tam Zamanlı', 'Yarı Zamanlı', 'Freelance']
   }
 ]
 
@@ -468,11 +465,11 @@ const productCategories = [
 
 const cuisineTypes = ['Türk Mutfağı', 'Fast Food', 'Dünya Mutfağı', 'Tatlı/Pasta', 'Kahvaltı', 'Vegan/Vejetaryen', 'Deniz Ürünleri', 'Pizza/İtalyan']
 
-const careerSectors = ['Spor Eğitimi', 'Fitness', 'Satış/Pazarlama', 'Müşteri Hizmetleri', 'Yazılım/IT', 'Lojistik', 'Yönetim', 'Sağlık/Beslenme']
-
 const cities = ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Gaziantep', 'Mersin', 'Diyarbakır', 'Kayseri', 'Eskişehir', 'Samsun', 'Denizli', 'Şanlıurfa', 'Trabzon', 'Malatya', 'Erzurum', 'Van', 'Batman']
 
 const commissionRate = 12
+
+const selectedServiceType = computed(() => serviceTypes.find(s => s.id === form.value.service_type))
 
 const form = ref({
   service_type: '',
@@ -481,9 +478,6 @@ const form = ref({
   business_description: '',
   categories: [] as string[],
   cuisines: [] as string[],
-  sectors: [] as string[],
-  vehicle_count: null as number | null,
-  service_region: '',
   room_count: null as number | null,
   star_rating: '',
   contact_name: '',
@@ -521,15 +515,6 @@ const toggleCuisine = (cuisine: string) => {
   }
 }
 
-const toggleSector = (sector: string) => {
-  const idx = form.value.sectors.indexOf(sector)
-  if (idx > -1) {
-    form.value.sectors.splice(idx, 1)
-  } else {
-    form.value.sectors.push(sector)
-  }
-}
-
 async function submitApplication() {
   if (!form.value.service_type) {
     error.value = 'Lütfen bir hizmet türü seçin'
@@ -550,11 +535,6 @@ async function submitApplication() {
     } else if (form.value.service_type === 'hotel') {
       serviceData.room_count = form.value.room_count
       serviceData.star_rating = form.value.star_rating
-    } else if (form.value.service_type === 'transport') {
-      serviceData.vehicle_count = form.value.vehicle_count
-      serviceData.service_region = form.value.service_region
-    } else if (form.value.service_type === 'career') {
-      serviceData.sectors = form.value.sectors
     }
 
     const payload = {

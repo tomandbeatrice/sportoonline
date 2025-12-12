@@ -26,7 +26,7 @@
           </div>
           <h3 class="font-semibold text-slate-900 mb-2 line-clamp-2">{{ product.title }}</h3>
           <div class="flex items-center justify-between">
-            <span class="text-lg font-bold text-indigo-600">{{ formatCurrency(product.price) }}</span>
+            <span class="text-lg font-bold text-indigo-600">{{ formatPrice(product.price) }}</span>
             <button class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors">
               +
             </button>
@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { formatCurrencyWithConversion } from '@/utils/currencyConverter'
 
 // State
 const trendingProducts = ref([
@@ -48,8 +49,8 @@ const trendingProducts = ref([
   { id: 4, title: 'Bluetooth Kulaklık', price: 1200, image: '🎧', rating: 4.5, reviews: 67, discount: 5 }
 ])
 
-// Helpers
-const formatCurrency = (amount: number) => `₺${amount.toFixed(2)}`
+// Helpers - Gerçek zamanlı kur dönüşümü ile
+const formatPrice = (amount: number) => formatCurrencyWithConversion(amount, 'TRY', 2)
 </script>
 
 <style scoped>

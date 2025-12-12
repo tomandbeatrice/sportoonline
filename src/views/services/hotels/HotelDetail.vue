@@ -127,7 +127,10 @@
               </div>
             </div>
 
-            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition">
+            <button 
+              @click="bookHotel"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition"
+            >
               Rezervasyon Yap
             </button>
 
@@ -142,10 +145,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import ServiceNav from '@/components/shared/ServiceNav.vue'
+import { useCartStore } from '@/stores/cartStore'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
+const cartStore = useCartStore()
 
 const hotel = ref({
   id: route.params.id,
@@ -196,5 +203,27 @@ const selectRoom = (room: { price: number }) => {
 
 const goBack = () => {
   router.back()
+}
+
+const bookHotel = () => {
+  if (!booking.checkIn || !booking.checkOut) {
+    toast.error('Lütfen giriş ve çıkış tarihlerini seçin')
+    return
+  }
+
+  cartStore.addToCart({
+    id: `hotel-${hotel.value.id}`,
+    name: hotel.value.name,
+    price: totalPrice.value,
+    quantity: 1,
+    type: 'booking',
+    image: hotel.value.icon,
+    startDate: booking.checkIn,
+    endDate: booking.checkOut,
+    guests: Number(booking.guests)
+  })
+
+  toast.success(`${hotel.value.name} sepete eklendi!`)
+  router.push('/cart')
 }
 </script>

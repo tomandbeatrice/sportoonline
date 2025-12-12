@@ -34,24 +34,49 @@
           <!-- Quick Info -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
             <div class="text-center p-4 bg-slate-50 rounded-xl">
-              <div class="text-2xl mb-1">📦</div>
-              <p class="text-xs text-slate-500">Ürün Sayısı</p>
+              <div class="text-2xl mb-1">{{ orderTypeIcon }}</div>
+              <p class="text-xs text-slate-500">{{ orderTypeLabel }}</p>
               <p class="font-bold text-slate-900">{{ order.order_details?.length || 0 }}</p>
             </div>
-            <div class="text-center p-4 bg-slate-50 rounded-xl">
+            <div v-if="isPhysicalProduct" class="text-center p-4 bg-slate-50 rounded-xl">
               <div class="text-2xl mb-1">🚚</div>
               <p class="text-xs text-slate-500">Kargo Durumu</p>
               <p class="font-bold text-slate-900">{{ order.tracking_code ? 'Kargoda' : 'Hazırlanıyor' }}</p>
             </div>
-            <div class="text-center p-4 bg-slate-50 rounded-xl">
+            <div v-else class="text-center p-4 bg-slate-50 rounded-xl">
+              <div class="text-2xl mb-1">{{ serviceStatusIcon }}</div>
+              <p class="text-xs text-slate-500">Durum</p>
+              <p class="font-bold text-slate-900">{{ serviceStatusLabel }}</p>
+            </div>
+            <div v-if="isPhysicalProduct" class="text-center p-4 bg-slate-50 rounded-xl">
               <div class="text-2xl mb-1">📍</div>
               <p class="text-xs text-slate-500">Kargo Takip</p>
               <p class="font-bold text-slate-900">{{ order.tracking_code || '-' }}</p>
             </div>
-            <div class="text-center p-4 bg-slate-50 rounded-xl">
+            <div v-else-if="isBooking" class="text-center p-4 bg-slate-50 rounded-xl">
+              <div class="text-2xl mb-1">📅</div>
+              <p class="text-xs text-slate-500">Başlangıç</p>
+              <p class="font-bold text-slate-900">{{ order.booking_start_date ? formatBookingDate(order.booking_start_date) : '-' }}</p>
+            </div>
+            <div v-else class="text-center p-4 bg-slate-50 rounded-xl">
+              <div class="text-2xl mb-1">⏱️</div>
+              <p class="text-xs text-slate-500">Süre</p>
+              <p class="font-bold text-slate-900">{{ order.service_duration ? order.service_duration + ' dk' : '-' }}</p>
+            </div>
+            <div v-if="isPhysicalProduct" class="text-center p-4 bg-slate-50 rounded-xl">
               <div class="text-2xl mb-1">🏠</div>
               <p class="text-xs text-slate-500">Teslimat</p>
               <p class="font-bold text-slate-900">{{ order.estimated_delivery || 'Hesaplanıyor' }}</p>
+            </div>
+            <div v-else-if="isBooking" class="text-center p-4 bg-slate-50 rounded-xl">
+              <div class="text-2xl mb-1">🏁</div>
+              <p class="text-xs text-slate-500">Bitiş</p>
+              <p class="font-bold text-slate-900">{{ order.booking_end_date ? formatBookingDate(order.booking_end_date) : '-' }}</p>
+            </div>
+            <div v-else class="text-center p-4 bg-slate-50 rounded-xl">
+              <div class="text-2xl mb-1">👤</div>
+              <p class="text-xs text-slate-500">Hizmet Veren</p>
+              <p class="font-bold text-slate-900">{{ order.service_provider || 'Atanıyor' }}</p>
             </div>
           </div>
         </div>
@@ -128,26 +153,51 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex gap-4">
-          <button 
-            v-if="order.tracking_code"
-            @click="trackShipment"
-            :disabled="trackingLoading"
-            class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            <span v-if="trackingLoading">⏳ Yükleniyor...</span>
-            <span v-else>📍 Kargoyu Takip Et</span>
-          </button>
-          <button 
-            v-if="order.status === 'delivered'"
-            @click="$router.push(`/returns/create?order=${order.id}`)"
-            class="flex-1 px-6 py-3 bg-orange-600 text-white rounded-xl font-medium hover:bg-orange-700 transition"
-          >
-            🔄 İade Talebi Oluştur
-          </button>
-          <button class="px-6 py-3 border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition">
-            📞 Destek
-          </button>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 p-6">
+          <h2 class="font-bold text-lg text-slate-900 mb-4">İşlemler</h2>
+          <div class="grid md:grid-cols-2 gap-3">
+            <button 
+              v-if="isPhysicalProduct && order.tracking_code"
+              @click="trackShipment"
+              :disabled="trackingLoading"
+              class="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <span v-if="trackingLoading">⏳ Yükleniyor...</span>
+              <span v-else>📍 Kargoyu Takip Et</span>
+            </button>
+            <button 
+              v-if="canReturn"
+              @click="initiateReturn"
+              class="px-6 py-3 bg-orange-600 text-white rounded-xl font-medium hover:bg-orange-700 transition flex items-center justify-center gap-2"
+            >
+              🔄 İade Başlat
+            </button>
+            <button 
+              @click="downloadInvoice"
+              class="px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition flex items-center justify-center gap-2"
+            >
+              📄 Fatura İndir
+            </button>
+            <button 
+              @click="contactSupport"
+              class="px-6 py-3 border-2 border-green-600 text-green-600 rounded-xl font-medium hover:bg-green-50 transition flex items-center justify-center gap-2"
+            >
+              💬 Destek Talebi
+            </button>
+            <button 
+              @click="reorder"
+              class="px-6 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition flex items-center justify-center gap-2"
+            >
+              🔁 Yeniden Satın Al
+            </button>
+            <button 
+              v-if="order.status === 'pending'"
+              @click="cancelOrder"
+              class="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition flex items-center justify-center gap-2"
+            >
+              ❌ Siparişi İptal Et
+            </button>
+          </div>
         </div>
 
         <!-- Tracking Modal -->
@@ -206,10 +256,13 @@
 
 <script setup lang="ts">
 import axios from 'axios'
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
 const route = useRoute()
+const router = useRouter()
+const toast = useToast()
 const order = ref<any>(null)
 const showTrackingModal = ref(false)
 const trackingLoading = ref(false)
@@ -242,6 +295,7 @@ const trackShipment = async () => {
       showTrackingModal.value = true
     }
   } catch (error) {
+    console.error('Tracking bilgisi alınamadı:', error)
     // Mock tracking info for demo
     trackingInfo.value = {
       provider: 'Yurtiçi Kargo',
@@ -264,6 +318,7 @@ onMounted(async () => {
     const res = await axios.get(`/api/orders/${route.params.id}`)
     order.value = res.data
   } catch (error) {
+    console.error('Sipariş bilgisi alınamadı:', error)
     // Mock data for testing
     order.value = {
       id: route.params.id,
@@ -295,6 +350,108 @@ const formatDate = (date: string) => {
     hour: '2-digit',
     minute: '2-digit'
   })
+}
+
+const formatBookingDate = (date: string) => {
+  return new Date(date).toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
+
+const orderType = computed(() => {
+  if (!order.value?.order_details?.[0]) return 'product'
+  return order.value.order_details[0].type || order.value.order_type || 'product'
+})
+
+const isPhysicalProduct = computed(() => orderType.value === 'product')
+const isService = computed(() => orderType.value === 'service')
+const isBooking = computed(() => orderType.value === 'booking')
+
+const orderTypeIcon = computed(() => {
+  if (isBooking.value) return '🏨'
+  if (isService.value) return '🔧'
+  return '📦'
+})
+
+const orderTypeLabel = computed(() => {
+  if (isBooking.value) return 'Rezervasyon'
+  if (isService.value) return 'Hizmet Sayısı'
+  return 'Ürün Sayısı'
+})
+
+const serviceStatusIcon = computed(() => {
+  if (!order.value) return '⏳'
+  if (order.value.status === 'completed') return '✅'
+  if (order.value.status === 'processing') return '⚙️'
+  return '⏳'
+})
+
+const serviceStatusLabel = computed(() => {
+  if (!order.value) return 'Bekliyor'
+  if (isBooking.value) {
+    if (order.value.status === 'completed') return 'Tamamlandı'
+    if (order.value.status === 'confirmed') return 'Onaylandı'
+    return 'Rezerve Edildi'
+  }
+  if (isService.value) {
+    if (order.value.status === 'completed') return 'Tamamlandı'
+    if (order.value.status === 'processing') return 'Devam Ediyor'
+    return 'Planlandı'
+  }
+  return 'Hazırlanıyor'
+})
+
+const canReturn = computed(() => {
+  if (!order.value) return false
+  const deliveryDate = order.value.delivered_at ? new Date(order.value.delivered_at) : null
+  if (!deliveryDate) return false
+  const daysSinceDelivery = (Date.now() - deliveryDate.getTime()) / (1000 * 60 * 60 * 24)
+  return order.value.status === 'delivered' && daysSinceDelivery <= 14
+})
+
+const initiateReturn = () => {
+  router.push(`/returns/new?order=${order.value.id}`)
+}
+
+const downloadInvoice = () => {
+  toast.info('Fatura indirme özelliği geliştiriliyor')
+  // TODO: API call to download invoice
+}
+
+const contactSupport = () => {
+  router.push(`/messages?subject=Sipariş #${order.value.id}`)
+}
+
+const reorder = async () => {
+  try {
+    // Add all order items to cart
+    for (const item of order.value.order_details) {
+      await axios.post('/api/cart/add', {
+        product_id: item.product_id,
+        quantity: item.quantity
+      })
+    }
+    toast.success('Ürünler sepete eklendi')
+    router.push('/cart')
+  } catch (error) {
+    console.error('Sepete ekleme hatası:', error)
+    toast.error('Sepete ekleme başarısız')
+  }
+}
+
+const cancelOrder = async () => {
+  if (!confirm('Siparişi iptal etmek istediğinize emin misiniz?')) return
+  
+  try {
+    await axios.post(`/api/orders/${order.value.id}/cancel`)
+    toast.success('Sipariş iptal edildi')
+    order.value.status = 'cancelled'
+  } catch (error) {
+    console.error('İptal işlemi hatası:', error)
+    toast.error('İptal işlemi başarısız')
+  }
 }
 
 const formatPrice = (value: number) => {

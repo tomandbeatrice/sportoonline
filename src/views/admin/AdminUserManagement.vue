@@ -255,7 +255,8 @@ const selectedUser = ref(users.value[0]);
 
 // Computed
 const filteredUsers = computed(() => {
-  return users.value.filter(user => {
+  const userList = Array.isArray(users.value) ? users.value : [];
+  return userList.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
                           user.email.toLowerCase().includes(searchQuery.value.toLowerCase());
     

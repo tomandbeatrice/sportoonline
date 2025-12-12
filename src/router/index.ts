@@ -9,9 +9,18 @@ const ComingSoon = () => import('@/pages/ComingSoon.vue')
 
 // Product & Shopping
 const ProductList = () => import('@/views/product/ProductList.vue')
+const ProductListEnhanced = () => import('@/views/product/ProductListEnhanced.vue')
 const ProductDetail = () => import('@/views/marketplace/ProductDetail.vue')
 const Cart = () => import('@/views/cart/Cart.vue')
+const CartEnhanced = () => import('@/views/cart/CartEnhanced.vue')
 const Checkout = () => import('@/views/cart/Checkout.vue')
+const CheckoutEnhanced = () => import('@/views/cart/CheckoutEnhanced.vue')
+
+// Seller Enhanced
+const SellerProductsEnhanced = () => import('@/views/seller/SellerProductsEnhanced.vue')
+const SellerCampaignEnhanced = () => import('@/views/seller/SellerCampaignEnhanced.vue')
+const SellerReviewsAndQuestions = () => import('@/views/seller/SellerReviewsAndQuestions.vue')
+const SellerReportsEnhanced = () => import('@/views/seller/SellerReportsEnhanced.vue')
 
 // Orders
 const OrderList = () => import('@/views/order/OrderList.vue')
@@ -42,6 +51,13 @@ const AdminSegmentExport = () => import('@/views/admin/SegmentExport.vue')
 const AdminExportFiles = () => import('@/views/admin/ExportFileList.vue')
 const AdminImproved = () => import('@/views/admin/ImprovedDashboard.vue')
 const AdminSellerApplications = () => import('@/views/admin/SellerApplications.vue')
+const CategoryAttributeManagement = () => import('@/views/admin/CategoryAttributeManagement.vue')
+const CampaignCouponManagement = () => import('@/views/admin/CampaignCouponManagement.vue')
+const SystemSettingsEnhanced = () => import('@/views/admin/SystemSettingsEnhanced.vue')
+const ModerationCenter = () => import('@/views/admin/ModerationCenter.vue')
+
+// Test
+const E2ETestRunner = () => import('@/views/test/E2ETestRunner.vue')
 
 // Campaigns
 const CampaignList = () => import('@/views/CampaignList.vue')
@@ -94,7 +110,6 @@ const NearbyView = () => import('@/views/location/NearbyView.vue')
 // ServiceHub Pages
 const FoodHome = () => import('@/views/services/FoodHome.vue')
 const HotelHome = () => import('@/views/services/HotelHome.vue')
-const RidesHome = () => import('@/views/services/RidesHome.vue')
 const ServicesHome = () => import('@/views/services/ServicesHome.vue')
 const AIRecommendations = () => import('@/views/services/AIRecommendations.vue')
 
@@ -106,16 +121,7 @@ const GroupOrder = () => import('@/views/services/food/GroupOrder.vue')
 const HotelList = () => import('@/views/services/hotels/HotelList.vue')
 const HotelDetailPage = () => import('@/views/services/hotels/HotelDetail.vue')
 const HotelSearch = () => import('@/views/services/hotels/HotelSearch.vue')
-const RidesSearch = () => import('@/views/services/rides/RidesSearch.vue')
 const ServiceList = () => import('@/views/services/service/ServiceList.vue')
-const TourList = () => import('@/views/services/tours/TourList.vue')
-const CarList = () => import('@/views/services/cars/CarList.vue')
-const InsuranceList = () => import('@/views/services/insurance/InsuranceList.vue')
-const ActivityList = () => import('@/views/services/activities/ActivityList.vue')
-const TourDetail = () => import('@/views/services/tours/TourDetail.vue')
-const CarDetail = () => import('@/views/services/cars/CarDetail.vue')
-const InsuranceDetail = () => import('@/views/services/insurance/InsuranceDetail.vue')
-const ActivityDetail = () => import('@/views/services/activities/ActivityDetail.vue')
 
 // Static Pages
 const AboutPage = () => import('@/views/pages/AboutPage.vue')
@@ -162,10 +168,10 @@ const routes: RouteRecordRaw[] = [
   { path: '/market', name: 'Marketplace', component: MarketplaceHome },
   
   // Products & Shopping
-  { path: '/products', name: 'Products', component: ProductList },
+  { path: '/products', name: 'Products', component: ProductListEnhanced },
   { path: '/products/:id', name: 'ProductDetail', component: ProductDetail },
-  { path: '/cart', name: 'Cart', component: Cart },
-  { path: '/checkout', name: 'Checkout', component: Checkout },
+  { path: '/cart', name: 'Cart', component: CartEnhanced },
+  { path: '/checkout', name: 'Checkout', component: CheckoutEnhanced },
   
   // Orders
   { path: '/orders', name: 'Orders', component: OrderList },
@@ -188,11 +194,13 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', redirect: '/seller/dashboard' },
       { path: 'dashboard', name: 'SellerDashboard', component: () => import('@/views/seller/SellerDashboard.vue'), meta: { title: 'Satıcı Paneli' } },
-      { path: 'products', name: 'SellerProducts', component: SellerProducts, meta: { title: 'Ürünlerim' } },
+      { path: 'products', name: 'SellerProducts', component: SellerProductsEnhanced, meta: { title: 'Ürünlerim' } },
       { path: 'orders', name: 'SellerOrders', component: () => import('@/views/seller/SellerOrders.vue'), meta: { title: 'Siparişler' } },
       { path: 'returns', name: 'SellerReturns', component: () => import('@/views/seller/SellerReturns.vue'), meta: { title: 'İadeler' } },
       { path: 'onboarding', name: 'SellerOnboarding', component: SellerOnboarding, meta: { title: 'Mağaza Ayarları' } },
-      { path: 'campaigns', name: 'SellerCampaigns', component: SellerCampaign, meta: { title: 'Kampanyalar' } },
+      { path: 'campaigns', name: 'SellerCampaigns', component: SellerCampaignEnhanced, meta: { title: 'Kampanyalar' } },
+      { path: 'reviews', name: 'SellerReviews', component: SellerReviewsAndQuestions, meta: { title: 'Yorumlar & Sorular' } },
+      { path: 'reports', name: 'SellerReports', component: SellerReportsEnhanced, meta: { title: 'Satış Raporları' } },
       { path: 'financial-report', name: 'SellerFinancialReport', component: SellerFinancialReport, meta: { title: 'Finansal Rapor' } },
     ]
   },
@@ -224,13 +232,29 @@ const routes: RouteRecordRaw[] = [
   { path: '/marketplace/c2c', name: 'C2CMarketplace', component: C2CMarketplace },
   { path: '/buyer/dashboard', name: 'BuyerDashboard', component: () => import('@/views/buyer/BuyerDashboardNew.vue') },
   { path: '/unified/dashboard', name: 'UnifiedDashboard', component: UnifiedDashboard },
-  { path: '/search', name: 'Search', component: Search },
+  { path: '/search', name: 'Search', component: Search, props: route => ({ sort: (route.query.sort as string) || 'relevance' }) },
   { path: '/category/:id', name: 'Category', component: Category },
   { path: '/storefront/product/:id', name: 'ProductPublic', component: ProductPublic },
 
   // User Profile
   { path: '/user/profile', name: 'UserProfile', component: UserProfile },
   { path: '/user/edit', name: 'UserEdit', component: UserEdit },
+  
+  // User Panel Routes
+  { 
+    path: '/user', 
+    component: () => import('@/layouts/UserPanelLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', redirect: '/buyer/dashboard' },
+      { path: 'orders', redirect: '/orders' },
+      { path: 'favorites', name: 'UserFavorites', component: () => import('@/views/user/Favorites.vue'), meta: { title: 'Favorilerim' } },
+      { path: 'coupons', name: 'UserCoupons', component: () => import('@/views/user/Coupons.vue'), meta: { title: 'Kuponlarım' } },
+      { path: 'following', name: 'UserFollowing', component: () => import('@/views/user/Following.vue'), meta: { title: 'Takip Ettiklerim' } },
+      { path: 'addresses', name: 'UserAddresses', component: () => import('@/views/user/Addresses.vue'), meta: { title: 'Adreslerim' } },
+      { path: 'settings', redirect: '/user/profile' },
+    ]
+  },
   
   // Notifications
   { path: '/notifications', name: 'Notifications', component: () => import('@/views/notifications/NotificationsPage.vue') },
@@ -255,18 +279,8 @@ const routes: RouteRecordRaw[] = [
   { path: '/hotels/search', name: 'HotelsSearch', component: HotelSearch },
   { path: '/hotels/:id', name: 'HotelDetail', component: HotelDetailPage },
   { path: '/hotels/booking-confirmation', name: 'HotelBookingConfirmation', component: HotelBookingConfirmation },
-  { path: '/rides', name: 'Rides', component: RidesHome },
-  { path: '/rides/search', name: 'RidesSearch', component: RidesSearch },
   { path: '/services', name: 'Services', component: ServicesHome },
   { path: '/services/all', name: 'ServicesAll', component: ServiceList },
-  { path: '/tours', name: 'Tours', component: TourList },
-  { path: '/cars', name: 'Cars', component: CarList },
-  { path: '/insurance', name: 'Insurance', component: InsuranceList },
-  { path: '/activities', name: 'Activities', component: ActivityList },
-  { path: '/tours/:id', name: 'TourDetail', component: TourDetail },
-  { path: '/cars/:id', name: 'CarDetail', component: CarDetail },
-  { path: '/insurance/:id', name: 'InsuranceDetail', component: InsuranceDetail },
-  { path: '/activities/:id', name: 'ActivityDetail', component: ActivityDetail },
   { path: '/ai-recommendations', name: 'AIRecommendations', component: AIRecommendations },
   { path: '/turbo', name: 'TurboMod', component: () => import('@/views/turbo/TurboMod.vue') },
 
@@ -294,6 +308,10 @@ const routes: RouteRecordRaw[] = [
       { path: 'sellers', name: 'AdminSellers', component: AdminSellers, meta: { title: 'Satıcılar' } },
       { path: 'seller-applications', name: 'AdminSellerApplications', component: AdminSellerApplications, meta: { title: 'Satıcı Başvuruları' } },
       { path: 'customers', name: 'AdminCustomers', component: AdminCustomers, meta: { title: 'Müşteriler' } },
+      { path: 'category-attributes', name: 'AdminCategoryAttributes', component: CategoryAttributeManagement, meta: { title: 'Kategori & Özellik Yönetimi' } },
+      { path: 'campaign-coupon', name: 'AdminCampaignCoupon', component: CampaignCouponManagement, meta: { title: 'Kampanya & Kupon Yönetimi' } },
+      { path: 'system-settings-enhanced', name: 'AdminSystemSettingsEnhanced', component: SystemSettingsEnhanced, meta: { title: 'Sistem Ayarları (Gelişmiş)' } },
+      { path: 'moderation', name: 'AdminModeration', component: ModerationCenter, meta: { title: 'Moderasyon Merkezi' } },
       { path: 'finance', name: 'AdminFinance', component: () => import('@/views/admin/FinanceManagement.vue'), meta: { title: 'Finans' } },
       { path: 'commissions', name: 'AdminCommissions', component: () => import('@/views/admin/CommissionManagement.vue'), meta: { title: 'Komisyonlar' } },
       { path: 'products', name: 'AdminProducts', component: () => import('@/views/admin/ProductManagement.vue'), meta: { title: 'Ürünler' } },
@@ -314,7 +332,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'improved', name: 'AdminImproved', component: AdminImproved, meta: { title: 'Gelişmiş Panel' } },
       { path: 'returns', name: 'AdminReturns', component: AdminReturnManagement, meta: { title: 'İadeler' } },
       { path: 'turbo', name: 'AdminTurbo', component: () => import('@/components/admin/TurboWinners.vue'), meta: { title: 'Turbo' } },
-      { path: 'transport', name: 'AdminTransport', component: () => import('@/views/admin/TransportManagement.vue'), meta: { title: 'Ulaşım' } },
       { path: 'restaurants', name: 'AdminRestaurants', component: () => import('@/views/admin/RestaurantManagement.vue'), meta: { title: 'Restoranlar' } },
       { path: 'food-orders', name: 'AdminFoodOrders', component: () => import('@/views/admin/FoodOrderManagement.vue'), meta: { title: 'Yemek Siparişleri' } },
       { path: 'hotels', name: 'AdminHotels', component: () => import('@/views/admin/HotelManagement.vue'), meta: { title: 'Oteller' } },
@@ -322,6 +339,9 @@ const routes: RouteRecordRaw[] = [
       { path: 'marketplace', name: 'MarketplaceDashboard', component: () => import('@/views/admin/MarketplaceDashboard.vue'), meta: { title: 'Marketplace' } },
     ]
   },
+
+  // Test & QA
+  { path: '/test/e2e', name: 'E2ETestRunner', component: E2ETestRunner, meta: { title: 'E2E Test Runner' } },
 
   // Utility Pages
   { path: '/payment/success', name: 'PaymentSuccess', component: PaymentSuccess },
@@ -344,7 +364,7 @@ const router = createRouter({
 // Navigation Guards
 router.beforeEach(async (to, from, next) => {
   // Update document title
-  document.title = to.meta?.title ? `${to.meta.title} | SportOnline` : 'SportOnline'
+  document.title = to.meta?.title ? `${String(to.meta.title)} | SportOnline` : 'SportOnline'
 
   // Check if route requires authentication
   const requiresAuth = to.matched.some(record => record.meta?.requiresAuth)

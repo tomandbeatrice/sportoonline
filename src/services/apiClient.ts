@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: '/api', // Vite proxy handles the target
@@ -33,7 +33,7 @@ apiClient.interceptors.response.use(
         case 401:
           // Unauthorized - clear token and redirect if needed
           // Avoid redirect loop if already on login
-          if (!window.location.pathname.includes('/login')) {
+          if (!globalThis.location.pathname.includes('/login')) {
              localStorage.removeItem('token')
              // Optional: window.location.href = '/login'
           }

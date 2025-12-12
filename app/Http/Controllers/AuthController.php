@@ -17,15 +17,32 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+        // Rate limiting kontrolü (IP bazlı)
+        $key = 'login_attempts_' . $request->ip();
+        $attempts = \Cache::get($key, 0);
+        
+        if ($attempts >= 5) {
+            return response()->json([
+                'message' => 'Çok fazla başarısız giriş denemesi. Lütfen 15 dakika sonra tekrar deneyin.'
+            ], 429);
+        }
+
         // Kullanıcıyı bul
         $user = User::where('email', $request->email)->first();
 
         // Şifre kontrolü
         if (!$user || !Hash::check($request->password, $user->password)) {
+            // Başarısız deneme sayısını artır
+            \Cache::put($key, $attempts + 1, now()->addMinutes(15));
+            
             return response()->json([
-                'message' => 'Email veya şifre hatalı'
+                'message' => 'Email veya şifre hatalı',
+                'remaining_attempts' => max(0, 5 - ($attempts + 1))
             ], 401);
         }
+        
+        // Başarılı giriş, önbelleği temizle
+        \Cache::forget($key);
 
         // Token oluştur
         $token = $user->createToken('auth-token')->plainTextToken;
@@ -44,9 +61,18 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:3|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/[a-z]/',      // En az bir küçük harf
+                'regex:/[A-Z]/',      // En az bir büyük harf
+                'regex:/[0-9]/',      // En az bir rakam
+                'regex:/[@$!%*#?&]/', // En az bir özel karakter
+            ],
+            'password_confirmation' => 'required|same:password',
+            'accept_terms' => 'accepted' // KVKK onayı
         ]);
 
         $user = User::create([

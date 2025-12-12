@@ -198,10 +198,13 @@
                     <!-- Type Specific Details -->
                     <div class="mt-1 text-sm text-slate-500">
                       <p v-if="item.type === 'product' && item.variant">{{ item.variant }}</p>
+                      <p v-if="item.type === 'product' && item.shippingClass">
+                        <span class="text-green-600">🚚 {{ item.shippingClass === 'instant' ? 'Aynı Gün Kargo' : 'Standart Kargo' }}</span>
+                      </p>
                       <p v-if="item.type === 'service' && item.duration">⏱️ {{ item.duration }} dk</p>
                       <div v-if="item.type === 'booking'">
-                        <p>📅 {{ formatDate(item.startDate) }} - {{ formatDate(item.endDate) }}</p>
-                        <p>👥 {{ item.guests }} Misafir</p>
+                        <p v-if="item.startDate">📅 {{ formatBookingDate(item.startDate) }} - {{ formatBookingDate(item.endDate) }}</p>
+                        <p v-if="item.guests">👥 {{ item.guests }} Misafir</p>
                       </div>
                       <p v-if="!item.type">{{ item.category?.name || 'Genel' }}</p>
                     </div>
@@ -288,6 +291,11 @@ const formatPrice = (price: number) => {
 const formatDate = (dateStr: string | undefined) => {
   if (!dateStr) return ''
   return new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })
+}
+
+const formatBookingDate = (dateStr: string | undefined) => {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 const validateStep1 = () => {

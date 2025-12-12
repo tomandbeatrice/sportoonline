@@ -50,15 +50,14 @@
             container-class="aspect-square rounded-3xl border border-slate-100 shadow-sm"
             image-class="hover:scale-105 transition-transform duration-500"
           />
-            <!-- Badges -->
-            <div class="absolute top-4 left-4 flex flex-col gap-2">
-              <span v-if="product.stock < 5 && product.stock > 0" class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">
-                Son {{ product.stock }} Ürün
-              </span>
-              <span v-if="product.discount_rate" class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
-                %{{ product.discount_rate }} İndirim
-              </span>
-            </div>
+          <!-- Badges -->
+          <div class="absolute top-4 left-4 flex flex-col gap-2">
+            <span v-if="product.stock < 5 && product.stock > 0" class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">
+              Son {{ product.stock }} Ürün
+            </span>
+            <span v-if="product.discount_rate" class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full shadow-lg">
+              %{{ product.discount_rate }} İndirim
+            </span>
           </div>
         </div>
 
@@ -82,7 +81,7 @@
 
           <div class="mt-6">
             <h2 class="sr-only">Ürün Bilgileri</h2>
-            <p class="text-4xl font-bold text-slate-900">{{ product.price }} <span class="text-2xl font-normal text-slate-500">TL</span></p>
+            <p class="text-4xl font-bold text-slate-900">{{ formatCurrencyWithConversion(parseFloat(product.price), 'TRY') }}</p>
           </div>
 
           <div class="mt-8">
@@ -397,6 +396,7 @@ import IconStar from '@/components/icons/IconStar.vue'
 import { useTracking } from '@/composables/useTracking'
 import SmartImage from '@/components/ui/SmartImage.vue'
 import { useSEO, generateProductSchema } from '@/composables/useSEO'
+import { formatCurrencyWithConversion } from '@/utils/currencyConverter'
 
 const route = useRoute()
 const router = useRouter()

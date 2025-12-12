@@ -1,0 +1,135 @@
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    # Her gece saat 02:00'de çalış
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  # ============================================
+  # Bundle Size Monitoring
+  # ============================================
+  bundle-monitor:
+    name: Bundle Size Trend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Track Bundle Size
+        uses: preactjs/compressed-size-action@v2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          pattern: "./dist/**/*.{js,css}"
+          exclude: "{**/*.map,**/node_modules/**}"
+          build-script: "build"
+          compression: "gzip"
+
+  # ============================================
+  # Lighthouse Performance
+  # ============================================
+  lighthouse-monitor:
+    name: Lighthouse Metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Run Lighthouse
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:4173
+            http://localhost:4173/products
+            http://localhost:4173/cart
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # ============================================
+  # Code Complexity Metrics
+  # ============================================
+  complexity-monitor:
+    name: Code Complexity
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install plato
+        run: npm install -g plato
+      
+      - name: Generate Complexity Report
+        run: |
+          plato -r -d complexity-report src
+        continue-on-error: true
+      
+      - name: Upload Complexity Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-report
+          path: complexity-report/
+          retention-days: 30
+
+  # ============================================
+  # Dependency Updates Check
+  # ============================================
+  dependency-updates:
+    name: Dependency Updates
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Check for outdated packages
+        run: |
+          npm outdated || true
+          npm outdated --json > outdated-packages.json || true
+      
+      - name: Upload Outdated Packages Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: outdated-packages
+          path: outdated-packages.json
+          retention-days: 7

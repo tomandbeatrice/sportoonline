@@ -18,7 +18,12 @@
       </div>
     </div>
     
-    <div v-if="error" class="bg-red-100 text-red-700 p-3 rounded mb-4">{{ error }}</div>
+    <div v-if="error" class="bg-red-100 text-red-700 p-3 rounded mb-4">
+      {{ error }}
+      <span v-if="remainingAttempts !== null && remainingAttempts < 5" class="block mt-1 text-sm">
+        Kalan deneme hakkı: {{ remainingAttempts }}
+      </span>
+    </div>
     <form @submit.prevent="login" class="space-y-4">
       <div>
         <input 
@@ -60,6 +65,7 @@
       </button>
     </form>
     <div class="mt-4 text-center text-sm text-slate-600">
+      <router-link to="/forgot-password" class="text-blue-600 hover:text-blue-700 font-medium block mb-2">Şifremi Unuttum</router-link>
       Hesabınız yok mu? 
       <router-link to="/register" class="text-blue-600 hover:text-blue-700 font-medium">Kayıt Ol</router-link>
     </div>
@@ -80,6 +86,7 @@ const password = ref('')
 const error = ref('')
 const loading = ref(false)
 const errors = ref<Record<string, string>>({})
+const remainingAttempts = ref<number | null>(null)
 
 // Auto-detect mock auth on component mount
 mockAuth.autoDetectMockAuth()
@@ -181,6 +188,11 @@ async function login() {
   } catch (e: any) {
     console.error('❌ Login error:', e)
     error.value = e.message || e.response?.data?.message || 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.'
+    
+    // Rate limit bilgisini göster
+    if (e.response?.data?.remaining_attempts !== undefined) {
+      remainingAttempts.value = e.response.data.remaining_attempts
+    }
   } finally {
     loading.value = false
   }

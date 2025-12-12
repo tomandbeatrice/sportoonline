@@ -255,7 +255,6 @@ const setLanguage = (lang: string) => {
 const primaryLinks = [
   { label: 'Market', to: '/market', icon: 'shopping-bag' },
   { label: 'Yemek', to: '/food', icon: 'utensils' },
-  { label: 'Ulaşım', to: '/transport', icon: 'car' },
   { label: 'Otel', to: '/hotel', icon: 'hotel' },
 ]
 

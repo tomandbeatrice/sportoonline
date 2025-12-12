@@ -1,14 +1,30 @@
 <?php
 
-// database/migrations/xxxx_create_variants_table.php
-public function up()
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Variant extends Model
 {
-    Schema::create('variants', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('product_id')->constrained()->onDelete('cascade');
-        $table->string('color')->nullable();
-        $table->string('size')->nullable();
-        $table->decimal('variant_price', 10, 2)->nullable();
-        $table->timestamps();
-    });
+    use HasFactory;
+
+    protected $fillable = [
+        'product_id',
+        'color',
+        'size',
+        'variant_price'
+    ];
+
+    protected $casts = [
+        'variant_price' => 'decimal:2'
+    ];
+
+    /**
+     * Get the product that owns the variant
+     */
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }
