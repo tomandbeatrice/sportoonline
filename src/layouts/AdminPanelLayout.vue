@@ -169,7 +169,6 @@ const markAllRead = () => {
 }
 
 const handleLogout = async () => {
-  const authStore = await import('@/stores/auth').then(m => m.useAuthStore())
   await authStore.logout()
 }
 </script>

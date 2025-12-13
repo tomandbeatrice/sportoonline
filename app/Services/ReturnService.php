@@ -313,8 +313,12 @@ class ReturnService
         }
         
         // Ödeme gateway'ine göre refund işlemi
-        $gateway = $payment->gateway ?? $order->payment_method ?? 'iyzico';
+        $gateway = $payment->gateway ?? $order->payment_method;
         $transactionId = $payment->transaction_id ?? $order->transaction_id;
+        
+        if (!$gateway) {
+            throw new Exception('Ödeme gateway bilgisi bulunamadı.');
+        }
         
         if (!$transactionId) {
             throw new Exception('İşlem ID\'si bulunamadı.');

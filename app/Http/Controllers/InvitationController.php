@@ -79,12 +79,25 @@ class InvitationController extends Controller
         ]);
 
         // Send invitation email
-        Mail::to($validated['email'])->send(new InvitationEmail($invitation));
-
-        return response()->json([
-            'message' => 'Davet gönderildi',
-            'invitation' => $invitation
-        ], 201);
+        try {
+            Mail::to($validated['email'])->send(new InvitationEmail($invitation));
+            
+            return response()->json([
+                'message' => 'Davet gönderildi',
+                'invitation' => $invitation
+            ], 201);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send invitation email', [
+                'invitation_id' => $invitation->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'message' => 'Davet oluşturuldu ancak e-posta gönderilemedi',
+                'invitation' => $invitation,
+                'warning' => 'E-posta gönderimi başarısız oldu'
+            ], 201);
+        }
     }
 
     /**

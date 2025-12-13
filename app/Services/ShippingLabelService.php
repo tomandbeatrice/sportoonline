@@ -25,7 +25,7 @@ class ShippingLabelService
                 'trackingNumber' => $returnRequest->tracking_number ?? 'N/A',
                 'carrier' => $returnRequest->shipping_carrier ?? 'Kargo Şirketi',
                 'customerName' => $returnRequest->user->name,
-                'customerAddress' => $returnRequest->order->shipping_address ?? $returnRequest->order->address,
+                'customerAddress' => $returnRequest->order->shipping_address ?? $returnRequest->order->address ?? 'Adres bilgisi eksik',
                 'vendorName' => $returnRequest->vendor->name ?? 'SportOnline',
                 'vendorAddress' => $returnRequest->vendor->address ?? 'SportOnline Merkez',
                 'createdAt' => $returnRequest->created_at->format('d.m.Y H:i'),

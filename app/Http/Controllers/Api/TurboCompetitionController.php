@@ -160,6 +160,14 @@ class TurboCompetitionController extends Controller
      */
     public function updateWinnerRewards(Request $request, $winnerId)
     {
+        // Check if user is admin
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Yetkisiz erişim.',
+            ], 403);
+        }
+
         try {
             $validated = $request->validate([
                 'reward_money' => 'nullable|numeric|min:0',
