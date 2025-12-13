@@ -241,41 +241,26 @@ export default {
       try {
         loading.value = true;
 
-        const response = await axios.get('/api/turbo/history', {
+        const month = `${selectedYear.value}-${String(selectedMonth.value).padStart(2, '0')}`;
+        
+        const response = await axios.get('/api/admin/turbo-winners/by-month', {
+          params: { month },
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
 
-        if (response.data.success) {
-          const history = response.data.data;
+        if (response.data) {
+          winners.customers = response.data.customers || [];
+          winners.sellers = response.data.sellers || [];
+        }
+
+        // Fetch overall stats
+        const historyResponse = await axios.get('/api/turbo/history', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        if (historyResponse.data.success) {
+          const history = historyResponse.data.data;
           
-          // Find competition for selected month
-          const competition = history.find(c => 
-            c.year === selectedYear.value && c.month === selectedMonth.value
-          );
-
-          if (competition) {
-            winners.customers = competition.winners
-              .filter(w => w.category === 'customer')
-              .sort((a, b) => a.rank - b.rank)
-              .map(w => ({
-                ...w,
-                user: w.user || {},
-                coupon: w.coupon || null
-              }));
-
-            winners.sellers = competition.winners
-              .filter(w => w.category === 'seller')
-              .sort((a, b) => a.rank - b.rank)
-              .map(w => ({
-                ...w,
-                user: w.user || {},
-                coupon: w.coupon || null
-              }));
-          } else {
-            winners.customers = [];
-            winners.sellers = [];
-          }
-
           // Calculate stats
           stats.totalCompetitions = history.length;
           stats.totalRewardsDistributed = history.reduce((sum, comp) => {
@@ -288,6 +273,8 @@ export default {
         }
       } catch (error) {
         console.error('Kazananlar yüklenemedi:', error);
+        winners.customers = [];
+        winners.sellers = [];
       } finally {
         loading.value = false;
       }
@@ -328,16 +315,20 @@ export default {
 
     const updateReward = async (winner) => {
       try {
-        // This would be an API call to update rewards
-        // For now, just log the change
-        console.log('Updating reward for winner:', winner.id, {
+        // API call to update winner rewards
+        await axios.put(`/api/admin/turbo-winners/${winner.id}`, {
           reward_money: winner.reward_money,
           reward_points: winner.reward_points
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         
-        // TODO: Implement API endpoint to update winner rewards
-        // await axios.put(`/api/admin/turbo-winners/${winner.id}`, {
-        //   reward_money: winner.reward_money,
+        console.log('Ödül güncellendi:', winner.id);
+      } catch (error) {
+        console.error('Ödül güncellenemedi:', error);
+        alert('Ödül güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      }
+    };
         //   reward_points: winner.reward_points
         // });
       } catch (error) {

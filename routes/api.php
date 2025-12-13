@@ -418,6 +418,16 @@ Route::prefix('seller/turbo-coupons')->middleware('auth:sanctum')->group(functio
     Route::get('/', [TurboCouponController::class, 'index']);
     Route::post('/{id}/toggle', [TurboCouponController::class, 'toggle']);
     Route::get('/{id}/usage', [TurboCouponController::class, 'usage']);
+});
+
+// Admin Turbo Winners Management
+Route::prefix('admin/turbo-winners')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'index']);
+    Route::get('/by-month', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'getByMonth']);
+    Route::get('/{turboWinner}', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'show']);
+    Route::put('/{turboWinner}', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'update']);
+    Route::post('/bulk-update', [\App\Http\Controllers\Admin\TurboWinnerController::class, 'bulkUpdate']);
+});
     Route::post('/validate', [TurboCouponController::class, 'validateCoupon']);
 });
 

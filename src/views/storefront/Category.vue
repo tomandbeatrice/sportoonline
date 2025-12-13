@@ -380,8 +380,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import axios from 'axios'
 
 const route = useRoute()
 const viewMode = ref<'grid' | 'list'>('grid')
@@ -389,10 +390,11 @@ const sortBy = ref('popularity')
 const loading = ref(true)
 const showMobileFilters = ref(false)
 const currentPage = ref(1)
-const totalPages = ref(10)
+const totalPages = ref(1)
+const perPage = ref(12)
 
-const categoryName = ref('Elektronik')
-const totalProducts = ref(156)
+const categoryName = ref('Kategori')
+const totalProducts = ref(0)
 
 const filters = ref({
   priceMin: null as number | null,
@@ -401,82 +403,8 @@ const filters = ref({
   minRating: null as number | null
 })
 
-const brands = ref([
-  { id: 1, name: 'Apple', count: 45 },
-  { id: 2, name: 'Samsung', count: 38 },
-  { id: 3, name: 'Xiaomi', count: 27 },
-  { id: 4, name: 'Huawei', count: 19 },
-  { id: 5, name: 'LG', count: 15 }
-])
-
-const products = ref([
-  { 
-    id: 1, 
-    name: 'iPhone 15 Pro Max 256GB', 
-    brand: 'Apple',
-    price: '54999.99', 
-    oldPrice: '59999.99',
-    discount: 8,
-    rating: 5, 
-    reviews: 234,
-    description: 'A17 Pro çip, Titanyum kasa, 48MP kamera sistemi',
-    image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&h=400&fit=crop' 
-  },
-  { 
-    id: 2, 
-    name: 'Samsung Galaxy S24 Ultra', 
-    brand: 'Samsung',
-    price: '49999.99', 
-    rating: 5, 
-    reviews: 187,
-    description: 'Snapdragon 8 Gen 3, 200MP kamera, S Pen desteği',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop' 
-  },
-  { 
-    id: 3, 
-    name: 'MacBook Air M3 13"', 
-    brand: 'Apple',
-    price: '44999.99', 
-    oldPrice: '47999.99',
-    discount: 6,
-    rating: 5, 
-    reviews: 156,
-    description: 'M3 çip, 8GB RAM, 256GB SSD, Liquid Retina ekran',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop' 
-  },
-  { 
-    id: 4, 
-    name: 'Sony WH-1000XM5', 
-    brand: 'Sony',
-    price: '12999.99', 
-    rating: 5, 
-    reviews: 421,
-    description: 'Aktif gürültü engelleme, 30 saat pil ömrü',
-    image: 'https://images.unsplash.com/photo-1545127398-14699f92334b?w=400&h=400&fit=crop' 
-  },
-  { 
-    id: 5, 
-    name: 'iPad Air 11" M2', 
-    brand: 'Apple',
-    price: '24999.99', 
-    rating: 4, 
-    reviews: 98,
-    description: 'M2 çip, 128GB, WiFi + Cellular, Magic Keyboard uyumlu',
-    image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop' 
-  },
-  { 
-    id: 6, 
-    name: 'Xiaomi 14 Pro', 
-    brand: 'Xiaomi',
-    price: '34999.99', 
-    oldPrice: '37999.99',
-    discount: 8,
-    rating: 4, 
-    reviews: 145,
-    description: 'Snapdragon 8 Gen 3, Leica optik, 120W hızlı şarj',
-    image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop' 
-  }
-])
+const brands = ref<any[]>([])
+const products = ref<any[]>([])
 
 const activeFilters = computed(() => {
   const result = []
@@ -507,6 +435,69 @@ const visiblePages = computed(() => {
   return pages
 })
 
+const fetchProducts = async () => {
+  loading.value = true
+  
+  try {
+    const params: any = {
+      page: currentPage.value,
+      per_page: perPage.value,
+      sort_by: sortBy.value
+    }
+    
+    // Add category filter if available
+    const categoryId = route.params.id || route.query.category
+    if (categoryId) {
+      params.category_id = categoryId
+    }
+    
+    // Add filters
+    if (filters.value.priceMin) params.price_min = filters.value.priceMin
+    if (filters.value.priceMax) params.price_max = filters.value.priceMax
+    if (filters.value.brands.length > 0) params.brands = filters.value.brands.join(',')
+    if (filters.value.minRating) params.min_rating = filters.value.minRating
+    
+    const response = await axios.get('/api/products', { params })
+    
+    const data = response.data
+    products.value = data.data || data
+    totalProducts.value = data.total || products.value.length
+    currentPage.value = data.current_page || 1
+    totalPages.value = data.last_page || 1
+    
+    // Update category name if available
+    if (data.category) {
+      categoryName.value = data.category.name
+    }
+    
+  } catch (error) {
+    console.error('Failed to fetch products:', error)
+    products.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+const fetchBrands = async () => {
+  try {
+    const categoryId = route.params.id || route.query.category
+    const params = categoryId ? { category_id: categoryId } : {}
+    
+    const response = await axios.get('/api/brands', { params })
+    brands.value = response.data.data || response.data
+  } catch (error) {
+    console.error('Failed to fetch brands:', error)
+    // Use mock brands if API fails
+    brands.value = [
+      { id: 1, name: 'Apple', count: 45 },
+      { id: 2, name: 'Samsung', count: 38 },
+      { id: 3, name: 'Xiaomi', count: 27 },
+      { id: 4, name: 'Huawei', count: 19 },
+      { id: 5, name: 'LG', count: 15 }
+    ]
+  }
+}
+
 const removeFilter = (filterId: string) => {
   if (filterId === 'price') {
     filters.value.priceMin = null
@@ -517,6 +508,7 @@ const removeFilter = (filterId: string) => {
     const brandId = parseInt(filterId.replace('brand-', ''))
     filters.value.brands = filters.value.brands.filter(id => id !== brandId)
   }
+  fetchProducts()
 }
 
 const clearAllFilters = () => {
@@ -524,23 +516,33 @@ const clearAllFilters = () => {
   filters.value.priceMax = null
   filters.value.brands = []
   filters.value.minRating = null
+  fetchProducts()
 }
 
 const applyPriceFilter = () => {
-  // Apply filter logic
-  console.log('Applying price filter:', filters.value.priceMin, filters.value.priceMax)
+  fetchProducts()
 }
 
 const applyFilters = () => {
-  // Apply all filters
-  console.log('Applying filters:', filters.value)
+  fetchProducts()
 }
 
+// Watch for changes
+watch([sortBy, currentPage], () => {
+  fetchProducts()
+})
+
+watch(() => route.params.id, () => {
+  if (route.name === 'category') {
+    currentPage.value = 1
+    fetchProducts()
+    fetchBrands()
+  }
+})
+
 onMounted(() => {
-  // Simulate loading
-  setTimeout(() => {
-    loading.value = false
-  }, 1000)
+  fetchProducts()
+  fetchBrands()
 })
 </script>
 
