@@ -98,7 +98,6 @@ jobs:
       - name: Run PHPStan
         run: |
           vendor/bin/phpstan analyse --error-format=github --memory-limit=2G
-        continue-on-error: true
 
   # ============================================
   # PHP Code Formatting (Laravel Pint)
@@ -123,7 +122,6 @@ jobs:
       - name: Run Laravel Pint
         run: |
           vendor/bin/pint --test --format=github
-        continue-on-error: true
 
   # ============================================
   # SonarCloud Analysis

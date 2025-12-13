@@ -47,25 +47,31 @@ src/views/seller/SellerCampaignEnhanced.vue
 ```php
 // Current (tightly coupled)
 \Mail::to($email)->queue($mailable);
+\Log::info('Action completed');
 
 // Better (testable)
 public function __construct(
-    private Mailer $mailer
+    private Mailer $mailer,
+    private LoggerInterface $logger
 ) {}
 
 $this->mailer->to($email)->queue($mailable);
+$this->logger->info('Action completed');
 ```
 
 **Benefits:**
-- Better testability
+- Better testability (easier mocking)
 - SOLID principles compliance
-- Easier mocking in tests
+- Explicit dependencies
+- Type safety
 
 **Affected Controllers:**
-- `SellerReturnController.php`
-- `AuthController.php` (uses `\Cache`)
+- `app/Http/Controllers/Seller/SellerReturnController.php` (lines 125-140)
+- `app/Http/Controllers/AuthController.php` (uses `\Cache`, `\DB`, `\Mail`)
 
 **Estimated Effort:** 4-6 hours
+
+**Note:** This is currently accepted as technical debt to minimize changes in this PR. The facades work correctly but reduce testability.
 
 ---
 
@@ -198,6 +204,25 @@ class ConfigValidator
 ### CORS Configuration
 **Status:** Exists in `config/cors.php`
 **Recommendation:** Review allowed origins for production
+
+---
+
+## 🔄 CI/CD Quality Gates
+
+### Current Status
+**PHPStan & Laravel Pint:** Now block pipeline on failure (strict mode)
+**ESLint & Prettier:** Continue-on-error (warnings only)
+**TypeScript:** Blocks pipeline on compilation errors
+**Tests:** Block pipeline on failures
+
+**Rationale:**
+- Code style issues (ESLint/Prettier) don't break functionality
+- Type errors and static analysis issues should block merges
+- All tests must pass before merge
+
+**Future Enhancement:**
+- Add ESLint as blocking once all existing issues are resolved
+- Add required status checks in GitHub branch protection
 
 ---
 
