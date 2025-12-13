@@ -85,7 +85,7 @@
         </ol>
         
         <p style="margin-top: 20px;">
-            <a href="{{ config('app.url') }}/user/returns/{{ $return->id }}" class="button">
+            <a href="{{ config('app.url') }}/user/returns/{{ (int)$return->id }}" class="button">
                 İade Detayını Görüntüle
             </a>
         </p>

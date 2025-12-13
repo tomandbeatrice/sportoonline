@@ -61,9 +61,6 @@ export function useAuth() {
       if (token.value) {
         await authService.logout()
       }
-    } catch (err: any) {
-      // Continue with logout even if API call fails
-      console.error('Logout error:', err)
     } finally {
       token.value = null
       user.value = null

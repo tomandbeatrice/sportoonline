@@ -78,7 +78,7 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['password_confirmation']);
+            ->assertJsonValidationErrors(['password']);
     }
 
     public function test_registration_requires_terms_acceptance(): void

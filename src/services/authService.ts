@@ -73,7 +73,9 @@ export async function changePassword(request: ChangePasswordRequest): Promise<{ 
 }
 
 /**
- * Check if user is authenticated by verifying token
+ * Check if user is authenticated by verifying token exists
+ * Note: This only checks for token presence, not validity
+ * The API will validate the actual token on requests
  */
 export function hasValidToken(): boolean {
   const token = localStorage.getItem('token')
