@@ -81,6 +81,8 @@ jobs:
   phpstan:
     name: PHPStan Analysis
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - uses: actions/checkout@v4
@@ -105,6 +107,8 @@ jobs:
   pint:
     name: Laravel Pint Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - uses: actions/checkout@v4
