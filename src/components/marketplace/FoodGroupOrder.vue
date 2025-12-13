@@ -298,10 +298,22 @@
       </div>
     </div>
   </div>
+  
+  <!-- Confirmation Modal -->
+  <ConfirmModal 
+    v-model="showCancelConfirm"
+    title="Grup Siparişini İptal Et"
+    message="Grup siparişini iptal etmek istediğinizden emin misiniz? Tüm ekle ürünler ve misafirler silinecektir."
+    confirm-text="İptal Et"
+    cancel-text="Vazgeç"
+    type="danger"
+    @confirm="confirmCancelOrder"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 // Types
 interface CartItem {
@@ -318,6 +330,7 @@ interface Guest {
 }
 
 // State
+const showCancelConfirm = ref(false)
 const isActive = ref(false)
 const groupName = ref('')
 const groupId = ref('')
@@ -367,15 +380,16 @@ const startGroupOrder = () => {
 }
 
 const closeGroupOrder = () => {
-  // TODO: Replace with a proper confirmation modal component
-  if (confirm('Grup siparişini iptal etmek istediğinizden emin misiniz?')) {
-    isActive.value = false
-    groupName.value = ''
-    groupId.value = ''
-    guests.value = []
-    nextGuestId = 1
-    nextItemId = 1
-  }
+  showCancelConfirm.value = true
+}
+
+const confirmCancelOrder = () => {
+  isActive.value = false
+  groupName.value = ''
+  groupId.value = ''
+  guests.value = []
+  nextGuestId = 1
+  nextItemId = 1
 }
 
 const copyLink = async () => {

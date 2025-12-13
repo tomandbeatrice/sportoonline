@@ -455,15 +455,94 @@ const performSearch = () => {
 const toggleVoiceAssistant = () => {
   voiceAssistantActive.value = !voiceAssistantActive.value
   if (voiceAssistantActive.value) {
-    // TODO: Start voice recognition
-    console.log('Voice assistant activated')
+    startVoiceRecognition()
+  } else {
+    stopVoiceRecognition()
+  }
+}
+
+// Voice Recognition using Web Speech API
+let recognition: any = null
+
+const startVoiceRecognition = () => {
+  // Check if browser supports Web Speech API
+  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+  
+  if (!SpeechRecognition) {
+    alert('Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen Chrome veya Edge kullanın.')
+    voiceAssistantActive.value = false
+    return
+  }
+  
+  try {
+    recognition = new SpeechRecognition()
+    recognition.lang = currentLanguage.value === 'tr' ? 'tr-TR' : 'en-US'
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+    
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript
+      searchQuery.value = transcript
+      console.log('Voice search:', transcript)
+      
+      // Automatically perform search
+      setTimeout(() => {
+        performSearch()
+        voiceAssistantActive.value = false
+      }, 500)
+    }
+    
+    recognition.onerror = (event: any) => {
+      console.error('Voice recognition error:', event.error)
+      voiceAssistantActive.value = false
+      
+      if (event.error === 'no-speech') {
+        alert('Ses algılanamadı. Lütfen tekrar deneyin.')
+      } else if (event.error === 'not-allowed') {
+        alert('Mikrofon erişimi reddedildi. Lütfen tarayıcı ayarlarından mikrofon iznini açın.')
+      }
+    }
+    
+    recognition.onend = () => {
+      voiceAssistantActive.value = false
+    }
+    
+    recognition.start()
+  } catch (error) {
+    console.error('Failed to start voice recognition:', error)
+    voiceAssistantActive.value = false
+  }
+}
+
+const stopVoiceRecognition = () => {
+  if (recognition) {
+    recognition.stop()
+    recognition = null
   }
 }
 
 const changeLanguage = (code: string) => {
   currentLanguage.value = code
   showLanguageMenu.value = false
-  // TODO: Update i18n locale
+  
+  // Update i18n locale
+  const { locale } = useI18n()
+  locale.value = code
+  
+  // Store preference in localStorage
+  localStorage.setItem('language', code)
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = code
+  
+  // If voice recognition is active, restart with new language
+  if (voiceAssistantActive.value && recognition) {
+    stopVoiceRecognition()
+    setTimeout(() => startVoiceRecognition(), 100)
+  }
+  
+  console.log('Language changed to:', code)
 }
 
 const selectService = (serviceId: string) => {
@@ -543,6 +622,15 @@ const loadCartCount = async () => {
 // ═══════════════════════════════════════════════════════════════════
 
 onMounted(async () => {
+  // Restore language preference
+  const savedLanguage = localStorage.getItem('language')
+  if (savedLanguage && ['tr', 'en', 'ar', 'de'].includes(savedLanguage)) {
+    currentLanguage.value = savedLanguage
+    const { locale } = useI18n()
+    locale.value = savedLanguage
+    document.documentElement.lang = savedLanguage
+  }
+  
   // Load all data in parallel
   await Promise.all([
     fetchServices(),
@@ -554,7 +642,8 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  // Cleanup
+  // Cleanup voice recognition
+  stopVoiceRecognition()
 })
 </script>
 

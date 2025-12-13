@@ -108,11 +108,26 @@ const formatMoney = (amount) => {
 
 const handleAddTransfer = async (option) => {
   try {
-    // TODO: Add transfer to order via API
-    console.log('Adding transfer to order:', orderId.value, option)
+    // Add transfer to order via API
+    const response = await fetch('/api/orders/' + orderId.value + '/add-transfer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        transfer_option_id: option?.id,
+        from_location: 'airport',
+        to_location: hotelLocation.value,
+        service_type: option?.type || 'standard'
+      })
+    })
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500))
+    if (!response.ok) {
+      throw new Error('API request failed')
+    }
+    
+    const data = await response.json()
     
     // Navigate to rides/transfer page with pre-filled data
     router.push({
@@ -121,7 +136,8 @@ const handleAddTransfer = async (option) => {
         from: 'airport',
         to: hotelLocation.value,
         booking_ref: orderId.value,
-        service_type: option?.id || 1
+        service_type: option?.id || 1,
+        transfer_id: data.transfer_id
       }
     })
   } catch (error) {
