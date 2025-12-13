@@ -121,6 +121,7 @@ export default defineConfig({
           // i18n and localization
           'vendor-i18n': ['vue-i18n'],
           // UI libraries
+          // Note: Both vue-toastification and vue3-toastify are used (redundancy to be addressed)
           'vendor-ui': ['vue-toastification', 'vue3-toastify', '@vueuse/core', '@vueuse/head'],
           // Charts
           'vendor-chart': ['chart.js', 'vue-chartjs'],

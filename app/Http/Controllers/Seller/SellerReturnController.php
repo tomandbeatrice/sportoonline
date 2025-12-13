@@ -132,7 +132,7 @@ class SellerReturnController extends Controller
             
             \Log::info('Return shipping code email queued', [
                 'return_id' => $return->id,
-                'user_email' => $return->user->email,
+                'user_id' => $return->user_id,
             ]);
         } catch (\Exception $e) {
             \Log::error('Failed to queue return shipping code email', [
