@@ -601,7 +601,6 @@ class ReturnService
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
             $pdf->setPaper('A4', 'portrait');
             $pdf->save($filepath);
-            $filename = $returnRequest->return_number . '.pdf';
         } else {
             // Fallback: Basit bir HTML dosyası oluştur
             $filename = $returnRequest->return_number . '.html';

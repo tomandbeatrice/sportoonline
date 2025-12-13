@@ -294,7 +294,7 @@ import { useCurrencyStore } from '@/stores/currency'
 // Tracking system
 const { getTrendingProducts: fetchTrendingFromAI, getPopularSearches } = useTracking()
 const { flags } = useFeatureFlags()
-const { t } = useI18n()
+const { t, locale } = useI18n()  // Extract locale here for reuse
 const currencyStore = useCurrencyStore()
 
 // Simple i18n helpers
@@ -527,7 +527,6 @@ const changeLanguage = (code: string) => {
   showLanguageMenu.value = false
   
   // Update i18n locale
-  const { locale } = useI18n()
   locale.value = code
   
   // Store preference in localStorage
@@ -626,7 +625,6 @@ onMounted(async () => {
   const savedLanguage = localStorage.getItem('language')
   if (savedLanguage && ['tr', 'en', 'ar', 'de'].includes(savedLanguage)) {
     currentLanguage.value = savedLanguage
-    const { locale } = useI18n()
     locale.value = savedLanguage
     document.documentElement.lang = savedLanguage
   }
