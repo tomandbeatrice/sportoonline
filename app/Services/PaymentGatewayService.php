@@ -13,7 +13,7 @@ class PaymentGatewayService
     /**
      * Process refund based on payment gateway
      */
-    public function refund(Payment $payment, float $amount): array
+    public function refund(Payment $payment, float $amount, ?string $ipAddress = null): array
     {
         Log::info('Processing refund', [
             'payment_id' => $payment->id,
@@ -22,7 +22,7 @@ class PaymentGatewayService
         ]);
 
         return match($payment->payment_method) {
-            'iyzico' => $this->refundIyzico($payment, $amount),
+            'iyzico' => $this->refundIyzico($payment, $amount, $ipAddress),
             'paytr' => $this->refundPayTR($payment, $amount),
             'stripe' => $this->refundStripe($payment, $amount),
             default => throw new Exception('Desteklenmeyen ödeme yöntemi: ' . $payment->payment_method)
@@ -32,7 +32,7 @@ class PaymentGatewayService
     /**
      * Refund via Iyzico
      */
-    protected function refundIyzico(Payment $payment, float $amount): array
+    protected function refundIyzico(Payment $payment, float $amount, ?string $ipAddress = null): array
     {
         if (!$payment->transaction_id) {
             throw new Exception('İade için gerekli işlem ID bulunamadı.');
@@ -49,7 +49,7 @@ class PaymentGatewayService
             $request->setConversationId($payment->id);
             $request->setPaymentTransactionId($payment->transaction_id);
             $request->setPrice($amount);
-            $request->setIp(request()->ip() ?? '127.0.0.1');
+            $request->setIp($ipAddress ?? '127.0.0.1');
             $request->setCurrency(\Iyzipay\Model\Currency::TL);
 
             $refund = \Iyzipay\Model\Refund::create($request, $options);
@@ -106,7 +106,8 @@ class PaymentGatewayService
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, config('app.env') === 'production');
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, config('app.env') === 'production' ? 2 : 0);
 
             $result = curl_exec($ch);
             curl_close($ch);

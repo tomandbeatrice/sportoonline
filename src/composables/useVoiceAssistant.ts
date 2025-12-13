@@ -49,10 +49,15 @@ export function useVoiceAssistant() {
     };
 
     recognition.onend = () => {
+      const wasListening = isListening.value;
       isListening.value = false;
-      if (isListening.value) {
+      if (wasListening) {
         // Restart if it was supposed to be listening
-        recognition.start();
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error("Failed to restart recognition:", error);
+        }
       }
     };
 

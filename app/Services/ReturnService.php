@@ -326,7 +326,8 @@ class ReturnService
         }
 
         try {
-            $result = $this->paymentGatewayService->refund($payment, $returnRequest->refund_amount);
+            $ipAddress = request()->ip() ?? '127.0.0.1';
+            $result = $this->paymentGatewayService->refund($payment, $returnRequest->refund_amount, $ipAddress);
 
             if ($result['success']) {
                 // Update payment record with refund information
