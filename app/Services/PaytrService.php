@@ -244,13 +244,68 @@ class PaytrService implements PaymentGatewayInterface
      */
     public function refund(string $transactionId, float $amount, ?string $reason = null): array
     {
-        // PayTR refund implementation would go here
-        // For now, return a placeholder
-        return [
-            'success' => false,
-            'refund_id' => null,
-            'error' => 'Refund not implemented for PayTR',
-        ];
+        try {
+            // PayTR İade API parametreleri
+            $merchantId = $this->merchantId;
+            $merchantKey = $this->merchantKey;
+            $merchantSalt = $this->merchantSalt;
+            
+            // İade tutarı kuruş cinsinden
+            $refundAmount = intval($amount * 100);
+            
+            // Hash oluştur
+            $hashStr = $merchantId . $transactionId . $refundAmount . $merchantSalt;
+            $token = base64_encode(hash_hmac('sha256', $hashStr, $merchantKey, true));
+            
+            // İade isteği parametreleri
+            $postData = [
+                'merchant_id' => $merchantId,
+                'merchant_oid' => $transactionId,
+                'return_amount' => $refundAmount,
+                'paytr_token' => $token,
+                'reference_no' => $reason ?? 'İade talebi',
+            ];
+            
+            // API isteği gönder
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://www.paytr.com/odeme/iade");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+            curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            
+            $result = curl_exec($ch);
+            
+            if (curl_errno($ch)) {
+                throw new \Exception(curl_error($ch));
+            }
+            
+            curl_close($ch);
+            
+            $response = json_decode($result, true);
+            
+            if ($response && $response['status'] === 'success') {
+                return [
+                    'success' => true,
+                    'refund_id' => $transactionId,
+                    'error' => null,
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'refund_id' => null,
+                'error' => $response['reason'] ?? 'PayTR refund failed',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'refund_id' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
     }
 
     /**

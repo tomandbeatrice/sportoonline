@@ -154,4 +154,35 @@ class TurboCompetitionController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Update winner rewards (Admin only)
+     */
+    public function updateWinnerRewards(Request $request, $winnerId)
+    {
+        try {
+            $validated = $request->validate([
+                'reward_money' => 'nullable|numeric|min:0',
+                'reward_points' => 'nullable|integer|min:0',
+            ]);
+
+            $winner = \App\Models\TurboWinner::findOrFail($winnerId);
+            $winner->update([
+                'reward_money' => $validated['reward_money'] ?? $winner->reward_money,
+                'reward_points' => $validated['reward_points'] ?? $winner->reward_points,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ödüller güncellendi.',
+                'data' => $winner
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ödüller güncellenemedi.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

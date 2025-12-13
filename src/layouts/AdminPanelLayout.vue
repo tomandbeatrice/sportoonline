@@ -168,9 +168,9 @@ const markAllRead = () => {
   unreadNotifications.value = 0
 }
 
-const handleLogout = () => {
-  // TODO: Implement proper logout logic with auth store
-  router.push('/login')
+const handleLogout = async () => {
+  const authStore = await import('@/stores/auth').then(m => m.useAuthStore())
+  await authStore.logout()
 }
 </script>
 

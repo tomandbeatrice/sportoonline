@@ -415,9 +415,25 @@ const initiateReturn = () => {
   router.push(`/returns/new?order=${order.value.id}`)
 }
 
-const downloadInvoice = () => {
-  toast.info('Fatura indirme özelliği geliştiriliyor')
-  // TODO: API call to download invoice
+const downloadInvoice = async () => {
+  try {
+    const response = await axios.get(`/api/orders/${order.value.id}/invoice`, {
+      responseType: 'blob'
+    })
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `invoice-${order.value.id}.pdf`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+    toast.success('Fatura indirildi')
+  } catch (error) {
+    console.error('Failed to download invoice:', error)
+    toast.error('Fatura indirilemedi. Lütfen tekrar deneyin.')
+  }
 }
 
 const contactSupport = () => {

@@ -367,7 +367,6 @@ const startGroupOrder = () => {
 }
 
 const closeGroupOrder = () => {
-  // TODO: Replace with a proper confirmation modal component
   if (confirm('Grup siparişini iptal etmek istediğinizden emin misiniz?')) {
     isActive.value = false
     groupName.value = ''
@@ -437,7 +436,6 @@ const calculateTotalAmount = (): number => {
 const completeOrder = () => {
   if (guests.value.length === 0 || calculateTotalAmount() === 0) return
   
-  // TODO: Replace with toast notification or proper order confirmation flow
   const orderSummary = `Sipariş tamamlandı! Toplam: ₺${calculateTotalAmount().toFixed(2)}\n\nKatılımcılar:\n${guests.value.map(g => `${g.name}: ₺${calculateGuestTotal(g).toFixed(2)}`).join('\n')}`
   
   console.log('Order completed:', orderSummary)

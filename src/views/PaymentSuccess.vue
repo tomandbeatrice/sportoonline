@@ -108,11 +108,14 @@ const formatMoney = (amount) => {
 
 const handleAddTransfer = async (option) => {
   try {
-    // TODO: Add transfer to order via API
-    console.log('Adding transfer to order:', orderId.value, option)
+    // Add transfer to order via API
+    await axios.post(`/api/orders/${orderId.value}/add-transfer`, {
+      transfer_type: option.type,
+      pickup_location: option.from,
+      dropoff_location: option.to
+    })
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500))
+    console.log('Transfer added to order:', orderId.value, option)
     
     // Navigate to rides/transfer page with pre-filled data
     router.push({

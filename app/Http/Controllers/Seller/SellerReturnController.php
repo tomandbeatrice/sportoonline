@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Models\ReturnRequest;
 use App\Services\ReturnService;
+use App\Mail\ReturnShippingCode;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
 
 class SellerReturnController extends Controller
 {
@@ -120,7 +122,10 @@ class SellerReturnController extends Controller
             'notes' => "Kargo kodu gönderildi: {$validated['return_shipping_code']} ({$validated['return_shipping_carrier']})",
         ]);
 
-        // TODO: Müşteriye bildirim gönder (e-posta, SMS)
+        // Send notification to customer via email
+        if ($return->user && $return->user->email) {
+            Mail::to($return->user->email)->send(new ReturnShippingCode($return));
+        }
 
         return response()->json([
             'message' => 'Kargo kodu müşteriye gönderildi.',

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Mail\OrderStatusChanged;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminOrderController extends Controller
 {
@@ -107,7 +109,13 @@ class AdminOrderController extends Controller
 
         $order->update(['status' => $request->status]);
 
-        // TODO: Send email notification to customer
+        // Send email notification to customer
+        if ($order->user && $order->user->email) {
+            $order->load('orderItems');
+            foreach ($order->orderItems as $orderItem) {
+                Mail::to($order->user->email)->send(new OrderStatusChanged($orderItem, 'buyer'));
+            }
+        }
 
         return response()->json([
             'message' => 'Sipariş durumu güncellendi',

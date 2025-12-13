@@ -10,19 +10,15 @@ export function useAuth() {
   const isAuthenticated = computed(() => !!token.value)
 
   const login = async (credentials: { email: string; password: string }) => {
-    // TODO: Implement actual API call
-    console.log('Login attempt:', credentials)
-    token.value = 'mock-token'
-    localStorage.setItem('token', token.value)
-    user.value = { name: 'Mock User', email: credentials.email }
+    // Use auth store for authentication
+    const authStore = await import('@/stores/auth').then(m => m.useAuthStore())
+    return await authStore.login(credentials)
   }
 
   const register = async (userData: any) => {
-    // TODO: Implement actual API call
-    console.log('Register attempt:', userData)
-    token.value = 'mock-token'
-    localStorage.setItem('token', token.value)
-    user.value = { name: userData.name, email: userData.email }
+    // Use auth store for registration
+    const authStore = await import('@/stores/auth').then(m => m.useAuthStore())
+    return await authStore.register(userData)
   }
 
   const logout = () => {

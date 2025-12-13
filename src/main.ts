@@ -63,6 +63,27 @@ const head = createHead()
 // Store Vue app globally for error tracking
 window.__VUE_APP__ = app
 
+// Global error handler
+app.config.errorHandler = (err, instance, info) => {
+  console.error('Global error:', err, info)
+  
+  // Track error in production
+  if (import.meta.env.PROD) {
+    errorTracking.captureError(err as Error, {
+      context: 'vue-error-handler',
+      componentName: instance?.$options?.name || 'Unknown',
+      errorInfo: info
+    })
+  }
+}
+
+// Global warning handler (dev only)
+if (import.meta.env.DEV) {
+  app.config.warnHandler = (msg, instance, trace) => {
+    console.warn('Vue warning:', msg, trace)
+  }
+}
+
 // Expose services globally for console testing (dev only)
 if (import.meta.env.DEV) {
   window.__ANALYTICS__ = analytics

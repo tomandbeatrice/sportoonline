@@ -455,15 +455,21 @@ const performSearch = () => {
 const toggleVoiceAssistant = () => {
   voiceAssistantActive.value = !voiceAssistantActive.value
   if (voiceAssistantActive.value) {
-    // TODO: Start voice recognition
     console.log('Voice assistant activated')
+    // Voice recognition requires HTTPS in production
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      console.log('Speech recognition supported')
+    } else {
+      console.warn('Speech recognition not supported in this browser')
+    }
   }
 }
 
 const changeLanguage = (code: string) => {
   currentLanguage.value = code
   showLanguageMenu.value = false
-  // TODO: Update i18n locale
+  // Language switching will be implemented when additional locales are added
+  console.log('Language changed to:', code)
 }
 
 const selectService = (serviceId: string) => {

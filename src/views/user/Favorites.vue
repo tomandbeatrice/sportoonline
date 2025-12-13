@@ -277,8 +277,16 @@ const togglePriceAlert = (id: number, enabled: boolean) => {
   }
 }
 
-const addToCart = (product: any) => {
-  toast.success(`${product.name} sepete eklendi`)
-  // TODO: API call to add to cart
+const addToCart = async (product: any) => {
+  try {
+    await axios.post('/api/cart/add', {
+      product_id: product.id,
+      quantity: 1
+    })
+    toast.success(`${product.name} sepete eklendi`)
+  } catch (error) {
+    console.error('Failed to add to cart:', error)
+    toast.error('Sepete eklenemedi. Lütfen tekrar deneyin.')
+  }
 }
 </script>
