@@ -59,20 +59,24 @@
 ## 🚀 Tech Stack
 
 ### Backend
-- **Laravel 10+** - PHP framework
+- **Laravel 11+** - PHP framework
 - **MySQL/PostgreSQL** - Database
 - **Laravel Sanctum** - API authentication
 - **Laravel Mail** - Email system
 - **Queue Workers** - Background jobs
+- **Pest/PHPUnit** - Testing framework
+- **PHPStan** - Static analysis
+- **Laravel Pint** - Code formatting
 
 ### Frontend
 - **Vue 3.5** - Progressive JavaScript framework
 - **TypeScript 5.9** - Type-safe development
 - **Vite 7.1** - Build tool & dev server
 - **Pinia 3.0** - State management
-- **vue-i18n 9.14** - Internationalization
+- **vue-i18n 11.2** - Internationalization
 - **DaisyUI 5.0** - UI components
 - **Tailwind CSS 4.1** - Utility-first CSS
+- **Vitest** - Unit testing framework
 
 ### APIs & Services
 - **Google Cloud Vision** - Visual search
