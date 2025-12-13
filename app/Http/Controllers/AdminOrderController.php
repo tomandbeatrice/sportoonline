@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderStatusChanged;
 
 class AdminOrderController extends Controller
 {
@@ -105,9 +107,17 @@ class AdminOrderController extends Controller
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
         ]);
 
+        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
-        // TODO: Send email notification to customer
+        // Send email notification to customer
+        if ($order->user && $order->user->email && $oldStatus !== $request->status) {
+            // Get first order item for email (or create a separate Order email)
+            $orderItem = $order->orderItems()->first();
+            if ($orderItem) {
+                Mail::to($order->user->email)->send(new OrderStatusChanged($orderItem, 'buyer'));
+            }
+        }
 
         return response()->json([
             'message' => 'Sipariş durumu güncellendi',

@@ -13,6 +13,14 @@ use Exception;
 
 class ReturnService
 {
+    protected PaymentGatewayService $paymentGatewayService;
+    protected ShippingService $shippingService;
+
+    public function __construct(PaymentGatewayService $paymentGatewayService, ShippingService $shippingService)
+    {
+        $this->paymentGatewayService = $paymentGatewayService;
+        $this->shippingService = $shippingService;
+    }
     /**
      * Yeni iade talebi oluştur
      */
@@ -311,11 +319,41 @@ class ReturnService
         if (!$payment) {
             throw new Exception('Orijinal ödeme bulunamadı.');
         }
-        
-        // Ödeme servisini kullanarak iade yap
-        // TODO: Payment gateway'e göre refund işlemi
-        
-        $this->completeRefund($returnRequest);
+
+        // Check if gateway supports refund
+        if (!$this->paymentGatewayService->supportsRefund($payment->payment_method)) {
+            throw new Exception('Bu ödeme yöntemi için otomatik iade desteklenmiyor.');
+        }
+
+        try {
+            $ipAddress = request()->ip() ?? '127.0.0.1';
+            $result = $this->paymentGatewayService->refund($payment, $returnRequest->refund_amount, $ipAddress);
+
+            if ($result['success']) {
+                // Update payment record with refund information
+                $payment->update([
+                    'refund_id' => $result['refund_id'],
+                    'refund_amount' => $returnRequest->refund_amount,
+                    'refund_status' => 'processing',
+                ]);
+
+                Log::info('Refund processed successfully', [
+                    'return_id' => $returnRequest->id,
+                    'payment_id' => $payment->id,
+                    'refund_id' => $result['refund_id'],
+                    'amount' => $result['amount']
+                ]);
+
+                $this->completeRefund($returnRequest);
+            }
+        } catch (Exception $e) {
+            Log::error('Payment gateway refund failed', [
+                'return_id' => $returnRequest->id,
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
     
     /**
@@ -385,12 +423,21 @@ class ReturnService
      */
     protected function generateShippingLabel(ReturnRequest $returnRequest): void
     {
-        // ShippingService kullanarak kargo etiketi oluştur
-        // TODO: Implement shipping label generation
-        
-        // Örnek URL
-        $labelUrl = '/storage/return-labels/' . $returnRequest->return_number . '.pdf';
-        $returnRequest->update(['shipping_label_url' => $labelUrl]);
+        try {
+            $labelUrl = $this->shippingService->generateReturnLabel($returnRequest);
+            $returnRequest->update(['shipping_label_url' => $labelUrl]);
+            
+            Log::info('Shipping label generated', [
+                'return_id' => $returnRequest->id,
+                'label_url' => $labelUrl
+            ]);
+        } catch (Exception $e) {
+            Log::error('Failed to generate shipping label', [
+                'return_id' => $returnRequest->id,
+                'error' => $e->getMessage()
+            ]);
+            // Don't throw - label generation failure shouldn't block the return process
+        }
     }
     
     /**

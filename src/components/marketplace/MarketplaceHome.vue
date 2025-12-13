@@ -288,6 +288,8 @@ import FoodGroupOrder from './FoodGroupOrder.vue'
 import { useTracking } from '@/composables/useTracking'
 import { useFeatureFlags } from '@/services/featureFlags'
 import { useI18n } from 'vue-i18n'
+import { useVoiceAssistant } from '@/composables/useVoiceAssistant'
+import { useLocale } from '@/composables/useLocale'
 import LazySection from '@/components/common/LazySection.vue'
 import { useCurrencyStore } from '@/stores/currency'
 
@@ -309,6 +311,12 @@ import { useAuthStore } from '@/stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
+// Voice Assistant
+const voiceAssistant = useVoiceAssistant()
+
+// Locale Management
+const locale = useLocale()
+
 // ═══════════════════════════════════════════════════════════════════
 // State
 // ═══════════════════════════════════════════════════════════════════
@@ -320,20 +328,15 @@ const userInitials = computed(() => {
   const name = authStore.user?.name || ''
   return name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
 })
-const voiceAssistantActive = ref(false)
+const voiceAssistantActive = computed(() => voiceAssistant.isListening.value)
 const showLanguageMenu = ref(false)
-const currentLanguage = ref('tr')
+const currentLanguage = computed(() => locale.currentLocale.value)
 
 // Languages
-const languages = [
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' }
-]
+const languages = computed(() => locale.availableLocales.value)
 
-const currentLanguageFlag = computed(() => languages.find(l => l.code === currentLanguage.value)?.flag || '🌐')
-const currentLanguageCode = computed(() => currentLanguage.value.toUpperCase())
+const currentLanguageFlag = computed(() => locale.currentLocaleOption.value.flag || '🌐')
+const currentLanguageCode = computed(() => locale.currentLocale.value.toUpperCase())
 
 // Main Services
 const activeService = ref('marketplace')
@@ -453,17 +456,41 @@ const performSearch = () => {
 }
 
 const toggleVoiceAssistant = () => {
-  voiceAssistantActive.value = !voiceAssistantActive.value
-  if (voiceAssistantActive.value) {
-    // TODO: Start voice recognition
-    console.log('Voice assistant activated')
+  voiceAssistant.toggle()
+  
+  // Register voice commands if this is the first activation
+  if (voiceAssistant.isListening.value && voiceAssistant.commands.value.length === 0) {
+    voiceAssistant.registerCommands([
+      {
+        command: 'ara',
+        action: () => {
+          const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement
+          searchInput?.focus()
+        },
+        aliases: ['arama', 'bul']
+      },
+      {
+        command: 'sepet',
+        action: () => router.push('/cart'),
+        aliases: ['sepete git', 'alışveriş sepeti']
+      },
+      {
+        command: 'favoriler',
+        action: () => router.push('/favorites'),
+        aliases: ['favori ürünler']
+      },
+      {
+        command: 'sipariş',
+        action: () => router.push('/orders'),
+        aliases: ['siparişlerim']
+      }
+    ])
   }
 }
 
 const changeLanguage = (code: string) => {
-  currentLanguage.value = code
+  locale.setLocale(code as any)
   showLanguageMenu.value = false
-  // TODO: Update i18n locale
 }
 
 const selectService = (serviceId: string) => {
