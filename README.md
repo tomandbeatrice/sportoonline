@@ -313,10 +313,17 @@ npm run test:e2e
 
 ## 📚 Documentation
 
+### Development & Setup
 - **[CI/CD Pipeline](docs/CI_CD_DOCUMENTATION.md)** - Automated testing & deployment
 - **[GitHub Secrets Setup](docs/GITHUB_SECRETS_SETUP.md)** - Token configuration guide
 - **[SonarQube Setup](docs/SONARQUBE_SETUP.md)** - Code quality analysis
 - **[Code Improvements](docs/SONARQUBE_IMPROVEMENTS.md)** - Quality improvement guide
+
+### Project Management
+- **[PR Cleanup Guide](docs/PR_CLEANUP_2025.md)** - Dec 2025 PR consolidation documentation
+- **[PR Cleanup Quick Start](docs/PR_CLEANUP_QUICK_START.md)** - Quick reference for cleanup execution
+
+### Deployment & Testing
 - **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production setup
 - **[Test Results](TEST_RESULTS.md)** - Comprehensive testing
 - **[Code Cleanup](CODE_CLEANUP.md)** - Code quality recommendations
