@@ -329,12 +329,6 @@ export default {
         alert('Ödül güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
       }
     };
-        //   reward_points: winner.reward_points
-        // });
-      } catch (error) {
-        console.error('Ödül güncellenemedi:', error);
-      }
-    };
 
     const copyCoupon = (code) => {
       navigator.clipboard.writeText(code).then(() => {

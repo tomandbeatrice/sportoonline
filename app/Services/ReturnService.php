@@ -601,10 +601,12 @@ class ReturnService
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
             $pdf->setPaper('A4', 'portrait');
             $pdf->save($filepath);
+            $filename = $returnRequest->return_number . '.pdf';
         } else {
             // Fallback: Basit bir HTML dosyası oluştur
-            file_put_contents($filepath . '.html', $html);
-            $filename = $returnRequest->return_number . '.pdf.html';
+            $filename = $returnRequest->return_number . '.html';
+            $filepath = $labelDir . '/' . $filename;
+            file_put_contents($filepath, $html);
         }
         
         return '/storage/return-labels/' . $filename;
@@ -646,6 +648,14 @@ class ReturnService
     
     /**
      * QR Code oluştur
+     * 
+     * Note: Currently using Google Charts API for QR code generation.
+     * This exposes the return request number to Google's servers.
+     * For production, consider using a local QR code library like:
+     * - bacon/bacon-qr-code
+     * - endroid/qr-code
+     * 
+     * Alternative: Generate QR codes on the server side and embed as data URI
      */
     protected function generateQRCode(string $data): string
     {
