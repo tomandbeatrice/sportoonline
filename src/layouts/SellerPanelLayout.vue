@@ -130,19 +130,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import SellerSidebar from '@/components/seller/SellerSidebar.vue'
 import { Menu, Bell, ChevronRight, ChevronDown, Store, MessageSquare, Megaphone } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const isSidebarOpen = ref(false)
 const showNotifications = ref(false)
 const showUserMenu = ref(false)
 const unreadNotifications = ref(3)
 const unreadMessages = ref(1)
 
-// Store data - can be connected to auth store
-const storeName = ref('Mağazam')
+// Store data from auth store
+const storeName = computed(() => authStore.user?.store_name || authStore.user?.name || 'Mağazam')
 const storeInitials = computed(() => {
   return storeName.value.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 })
@@ -185,9 +187,15 @@ const markAllRead = () => {
   unreadNotifications.value = 0
 }
 
-const handleLogout = () => {
-  // TODO: Implement proper logout logic with auth store
-  router.push('/seller/login')
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/seller/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+    // Force redirect even if logout fails
+    router.push('/seller/login')
+  }
 }
 </script>
 

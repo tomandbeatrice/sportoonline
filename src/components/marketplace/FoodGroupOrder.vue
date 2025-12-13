@@ -302,6 +302,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useModal } from '@/composables/useModal'
 
 // Types
 interface CartItem {
@@ -316,6 +317,9 @@ interface Guest {
   name: string
   items: CartItem[]
 }
+
+// Modal composable
+const modal = useModal()
 
 // State
 const isActive = ref(false)
@@ -366,9 +370,16 @@ const startGroupOrder = () => {
   isActive.value = true
 }
 
-const closeGroupOrder = () => {
-  // TODO: Replace with a proper confirmation modal component
-  if (confirm('Grup siparişini iptal etmek istediğinizden emin misiniz?')) {
+const closeGroupOrder = async () => {
+  const confirmed = await modal.confirm({
+    title: 'Grup Siparişini İptal Et',
+    message: 'Grup siparişini iptal etmek istediğinizden emin misiniz?',
+    type: 'warning',
+    confirmText: 'Evet, İptal Et',
+    cancelText: 'Vazgeç'
+  })
+  
+  if (confirmed) {
     isActive.value = false
     groupName.value = ''
     groupId.value = ''
@@ -434,17 +445,25 @@ const calculateTotalAmount = (): number => {
   return guests.value.reduce((sum, guest) => sum + calculateGuestTotal(guest), 0)
 }
 
-const completeOrder = () => {
+const completeOrder = async () => {
   if (guests.value.length === 0 || calculateTotalAmount() === 0) return
   
-  // TODO: Replace with toast notification or proper order confirmation flow
-  const orderSummary = `Sipariş tamamlandı! Toplam: ₺${calculateTotalAmount().toFixed(2)}\n\nKatılımcılar:\n${guests.value.map(g => `${g.name}: ₺${calculateGuestTotal(g).toFixed(2)}`).join('\n')}`
+  const orderSummary = `Toplam: ₺${calculateTotalAmount().toFixed(2)}\n\nKatılımcılar:\n${guests.value.map(g => `${g.name}: ₺${calculateGuestTotal(g).toFixed(2)}`).join('\n')}`
+  
+  await modal.success(
+    `Sipariş başarıyla tamamlandı!\n\n${orderSummary}`,
+    'Sipariş Tamamlandı'
+  )
   
   console.log('Order completed:', orderSummary)
-  alert(orderSummary)
   
   // Reset after completion
-  closeGroupOrder()
+  isActive.value = false
+  groupName.value = ''
+  groupId.value = ''
+  guests.value = []
+  nextGuestId = 1
+  nextItemId = 1
 }
 </script>
 

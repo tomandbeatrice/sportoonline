@@ -113,19 +113,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import AdminSidebar from '@/components/admin/AdminSidebar.vue'
 import { Menu, Bell, ChevronRight, ChevronDown, LayoutDashboard } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const isSidebarOpen = ref(false)
 const showNotifications = ref(false)
 const showUserMenu = ref(false)
 const unreadNotifications = ref(2)
 
-// User data - can be connected to auth store
-const userName = ref('Admin User')
-const userEmail = ref('admin@sportoonline.com')
+// User data from auth store
+const userName = computed(() => authStore.user?.name || 'Admin User')
+const userEmail = computed(() => authStore.user?.email || 'admin@sportoonline.com')
 
 const userInitials = computed(() => {
   return userName.value.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -168,9 +170,15 @@ const markAllRead = () => {
   unreadNotifications.value = 0
 }
 
-const handleLogout = () => {
-  // TODO: Implement proper logout logic with auth store
-  router.push('/login')
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+    // Force redirect even if logout fails
+    router.push('/login')
+  }
 }
 </script>
 

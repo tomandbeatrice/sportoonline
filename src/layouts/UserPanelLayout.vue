@@ -217,6 +217,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { 
   Menu, Bell, ChevronRight, ChevronDown, Home, Star, ShoppingBag, Heart, 
   ShoppingCart, Package, User, MapPin, Settings, Gift, CreditCard
@@ -302,9 +303,15 @@ const markAllRead = () => {
   unreadNotifications.value = 0
 }
 
-const handleLogout = () => {
-  // TODO: Implement proper logout logic with auth store
-  router.push('/login')
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+    // Force redirect even if logout fails
+    router.push('/login')
+  }
 }
 </script>
 
