@@ -407,8 +407,11 @@ class ReturnService
      */
     protected function refundViaIyzico($payment, float $amount): void
     {
-        // TODO: Implement Iyzico refund logic
-        throw new Exception('Iyzico refund not yet implemented');
+        Log::warning('Iyzico refund not yet implemented', [
+            'payment_id' => $payment->id,
+            'amount' => $amount
+        ]);
+        throw new Exception('Iyzico refund not yet implemented. Please use wallet refund method instead.');
     }
     
     /**
@@ -416,8 +419,11 @@ class ReturnService
      */
     protected function refundViaStripe($payment, float $amount): void
     {
-        // TODO: Implement Stripe refund logic
-        throw new Exception('Stripe refund not yet implemented');
+        Log::warning('Stripe refund not yet implemented', [
+            'payment_id' => $payment->id,
+            'amount' => $amount
+        ]);
+        throw new Exception('Stripe refund not yet implemented. Please use wallet refund method instead.');
     }
     
     /**

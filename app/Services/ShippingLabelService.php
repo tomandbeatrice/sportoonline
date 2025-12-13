@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\ReturnRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class ShippingLabelService
 {
-    public function generateLabel($returnRequest)
+    public function generateLabel(ReturnRequest $returnRequest): string
     {
         try {
             $pdf = Pdf::loadView('pdfs.shipping-label', [
