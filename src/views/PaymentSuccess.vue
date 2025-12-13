@@ -117,6 +117,12 @@ const showError = (message) => {
 
 const handleAddTransfer = async (option) => {
   try {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      showError('Authentication required. Please log in first.')
+      return
+    }
+
     const response = await axios.post('/api/v1/orders/add-transfer', {
       order_id: orderId.value,
       transfer_type: option?.id || 1,
@@ -124,7 +130,7 @@ const handleAddTransfer = async (option) => {
       dropoff_location: hotelLocation.value
     }, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${token}`
       }
     });
 

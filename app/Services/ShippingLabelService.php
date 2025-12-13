@@ -48,11 +48,7 @@ class ShippingLabelService
     protected function generateBarcode(string $returnNumber): string
     {
         $escapedNumber = htmlspecialchars($returnNumber, ENT_QUOTES | ENT_XML1, 'UTF-8');
-        return 'data:image/svg+xml;base64,' . base64_encode('
-            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="60">
-                <rect width="200" height="60" fill="white"/>
-                <text x="100" y="40" font-family="monospace" font-size="14" text-anchor="middle">' . $escapedNumber . '</text>
-            </svg>
-        ');
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60"><rect width="200" height="60" fill="white"/><text x="100" y="40" font-family="monospace" font-size="14" text-anchor="middle">' . $escapedNumber . '</text></svg>';
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 }
