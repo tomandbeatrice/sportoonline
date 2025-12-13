@@ -305,17 +305,119 @@ class ReturnService
      */
     protected function refundToOriginalPayment(ReturnRequest $returnRequest): void
     {
-        $order = $returnRequest->order;
-        $payment = $order->payments()->where('status', 'completed')->first();
+        $payment = $returnRequest->order->payment;
         
         if (!$payment) {
-            throw new Exception('Orijinal ödeme bulunamadı.');
+            throw new Exception('Payment information not found');
         }
         
-        // Ödeme servisini kullanarak iade yap
-        // TODO: Payment gateway'e göre refund işlemi
+        $paymentGateway = $payment->payment_method;
         
-        $this->completeRefund($returnRequest);
+        if (!$paymentGateway) {
+            throw new Exception('Payment gateway not found');
+        }
+        
+        try {
+            switch ($paymentGateway) {
+                case 'iyzico':
+                    $this->refundViaIyzico($payment, $returnRequest->refund_amount);
+                    break;
+                case 'paytr':
+                    $this->refundViaPayTR($payment, $returnRequest->refund_amount);
+                    break;
+                case 'stripe':
+                    $this->refundViaStripe($payment, $returnRequest->refund_amount);
+                    break;
+                default:
+                    throw new Exception('Unsupported payment method: ' . $paymentGateway);
+            }
+            
+            Log::info('Refund processed successfully', [
+                'return_id' => $returnRequest->id,
+                'payment_id' => $payment->id,
+                'amount' => $returnRequest->refund_amount,
+                'gateway' => $paymentGateway
+            ]);
+            
+            $this->completeRefund($returnRequest);
+            
+        } catch (Exception $e) {
+            Log::error('Refund failed', [
+                'return_id' => $returnRequest->id,
+                'payment_id' => $payment->id,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+    
+    /**
+     * PayTR üzerinden iade işlemi
+     */
+    protected function refundViaPayTR($payment, float $amount): void
+    {
+        $merchantId = config('services.paytr.merchant_id');
+        $merchantKey = config('services.paytr.merchant_key');
+        $merchantSalt = config('services.paytr.merchant_salt');
+        
+        if (!$merchantId || !$merchantKey || !$merchantSalt) {
+            throw new Exception('PayTR configuration missing');
+        }
+        
+        $referenceNo = $payment->transaction_id;
+        $amountInKurus = (int)($amount * 100);
+        
+        $hashStr = $merchantId . $referenceNo . $amountInKurus . $merchantSalt;
+        $token = base64_encode(hash_hmac('sha256', $hashStr, $merchantKey, true));
+        
+        $postData = [
+            'merchant_id' => $merchantId,
+            'reference_no' => $referenceNo,
+            'amount' => $amountInKurus,
+            'token' => $token
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://www.paytr.com/odeme/iade');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        
+        $response = curl_exec($ch);
+        
+        if ($response === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new Exception('PayTR refund request failed: ' . $error);
+        }
+        
+        curl_close($ch);
+        $result = json_decode($response, true);
+        
+        if (!$result || $result['status'] !== 'success') {
+            throw new Exception('PayTR refund failed: ' . ($result['error_message'] ?? 'Unknown error'));
+        }
+    }
+    
+    /**
+     * Iyzico üzerinden iade işlemi
+     */
+    protected function refundViaIyzico($payment, float $amount): void
+    {
+        // TODO: Implement Iyzico refund logic
+        throw new Exception('Iyzico refund not yet implemented');
+    }
+    
+    /**
+     * Stripe üzerinden iade işlemi
+     */
+    protected function refundViaStripe($payment, float $amount): void
+    {
+        // TODO: Implement Stripe refund logic
+        throw new Exception('Stripe refund not yet implemented');
     }
     
     /**
@@ -385,12 +487,8 @@ class ReturnService
      */
     protected function generateShippingLabel(ReturnRequest $returnRequest): void
     {
-        // ShippingService kullanarak kargo etiketi oluştur
-        // TODO: Implement shipping label generation
-        
-        // Örnek URL
-        $labelUrl = '/storage/return-labels/' . $returnRequest->return_number . '.pdf';
-        $returnRequest->update(['shipping_label_url' => $labelUrl]);
+        $shippingLabelService = new ShippingLabelService();
+        $shippingLabelService->generateLabel($returnRequest);
     }
     
     /**

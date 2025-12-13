@@ -79,6 +79,19 @@ app.use(Toastify, {
   position: 'top-right'
 })
 
+// Global error handler
+app.config.errorHandler = (err, instance, info) => {
+  console.error('Global error:', err, info);
+  
+  if (import.meta.env.PROD) {
+    // Log to error tracking service
+    errorTracking.captureException(err, {
+      context: info,
+      component: instance?.$options?.name || 'Unknown'
+    });
+  }
+};
+
 // Track page views
 router.afterEach((to) => {
   analytics.pageView({

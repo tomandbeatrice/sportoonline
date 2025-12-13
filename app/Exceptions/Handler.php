@@ -20,7 +20,21 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            if (app()->environment('production')) {
+                Log::critical($e->getMessage(), ['exception' => $e]);
+            }
+        });
+
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+            return response()->json(['error' => 'Resource not found'], 404);
+        });
+        
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException $e) {
+            return response()->json(['error' => 'Method not allowed'], 405);
+        });
+        
+        $this->renderable(function (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => 'Validation failed', 'errors' => $e->errors()], 422);
         });
     }
 
