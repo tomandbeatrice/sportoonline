@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderStatusNotification;
 
 class AdminOrderController extends Controller
 {
@@ -105,9 +107,15 @@ class AdminOrderController extends Controller
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
         ]);
 
+        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
-        // TODO: Send email notification to customer
+        // Send email notification to customer
+        try {
+            Mail::to($order->user->email)->send(new OrderStatusNotification($order, $oldStatus));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send order status notification: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Sipariş durumu güncellendi',

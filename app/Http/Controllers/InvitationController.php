@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Mail\InvitationEmail;
 
 class InvitationController extends Controller
 {
@@ -76,7 +78,12 @@ class InvitationController extends Controller
             'expires_at' => now()->addDays(7)
         ]);
 
-        // TODO: Send invitation email
+        // Send invitation email
+        try {
+            Mail::to($validated['email'])->send(new InvitationEmail($invitation));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send invitation email: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Davet gönderildi',

@@ -7,6 +7,8 @@ use App\Models\ReturnRequest;
 use App\Services\ReturnService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReturnShippingCodeNotification;
 
 class SellerReturnController extends Controller
 {
@@ -120,7 +122,12 @@ class SellerReturnController extends Controller
             'notes' => "Kargo kodu gönderildi: {$validated['return_shipping_code']} ({$validated['return_shipping_carrier']})",
         ]);
 
-        // TODO: Müşteriye bildirim gönder (e-posta, SMS)
+        // Send notification to customer (e-posta, SMS)
+        try {
+            Mail::to($return->user->email)->send(new ReturnShippingCodeNotification($return));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send return shipping code notification: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Kargo kodu müşteriye gönderildi.',
