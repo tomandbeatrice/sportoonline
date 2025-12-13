@@ -6,6 +6,7 @@ use App\Models\ReturnRequest;
 use App\Models\ReturnLog;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -354,7 +355,7 @@ class ReturnService
     /**
      * PayTR üzerinden iade işlemi
      */
-    protected function refundViaPayTR($payment, float $amount): void
+    protected function refundViaPayTR(Payment $payment, float $amount): void
     {
         $merchantId = config('services.paytr.merchant_id');
         $merchantKey = config('services.paytr.merchant_key');
@@ -405,7 +406,7 @@ class ReturnService
     /**
      * Iyzico üzerinden iade işlemi
      */
-    protected function refundViaIyzico($payment, float $amount): void
+    protected function refundViaIyzico(Payment $payment, float $amount): void
     {
         Log::warning('Iyzico refund not yet implemented', [
             'payment_id' => $payment->id,
@@ -417,7 +418,7 @@ class ReturnService
     /**
      * Stripe üzerinden iade işlemi
      */
-    protected function refundViaStripe($payment, float $amount): void
+    protected function refundViaStripe(Payment $payment, float $amount): void
     {
         Log::warning('Stripe refund not yet implemented', [
             'payment_id' => $payment->id,

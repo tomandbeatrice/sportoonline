@@ -21,7 +21,7 @@ class ShippingLabelService
             
             $labelDir = storage_path('app/public/return-labels');
             if (!file_exists($labelDir)) {
-                mkdir($labelDir, 0755, true);
+                mkdir($labelDir, 0750, true);
             }
             
             $filename = 'return-label-' . $returnRequest->return_number . '.pdf';
