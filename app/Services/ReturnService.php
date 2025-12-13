@@ -354,8 +354,11 @@ class ReturnService
     protected function processIyzicoRefund($payment, float $amount): void
     {
         if (!class_exists(\Iyzipay\Model\Refund::class)) {
-            Log::warning('Iyzico library not installed, marking refund as pending manual processing');
-            return;
+            Log::error('Iyzico library not installed, cannot process refund automatically', [
+                'payment_id' => $payment->id,
+                'amount' => $amount
+            ]);
+            throw new Exception('Iyzico kütüphanesi yüklü değil. Manuel iade gerekiyor.');
         }
         
         try {
@@ -420,7 +423,8 @@ class ReturnService
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);  // Always verify SSL certificates in production
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);  // Verify hostname matches certificate
             
             $response = curl_exec($ch);
             
@@ -453,8 +457,11 @@ class ReturnService
     protected function processStripeRefund($payment, float $amount): void
     {
         if (!class_exists(\Stripe\Stripe::class)) {
-            Log::warning('Stripe library not installed, marking refund as pending manual processing');
-            return;
+            Log::error('Stripe library not installed, cannot process refund automatically', [
+                'payment_id' => $payment->id,
+                'amount' => $amount
+            ]);
+            throw new Exception('Stripe kütüphanesi yüklü değil. Manuel iade gerekiyor.');
         }
         
         try {

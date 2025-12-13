@@ -383,6 +383,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import { debounce } from 'lodash'
 
 const route = useRoute()
 const viewMode = ref<'grid' | 'list'>('grid')
@@ -508,7 +509,7 @@ const removeFilter = (filterId: string) => {
     const brandId = parseInt(filterId.replace('brand-', ''))
     filters.value.brands = filters.value.brands.filter(id => id !== brandId)
   }
-  fetchProducts()
+  debouncedFetchProducts()
 }
 
 const clearAllFilters = () => {
@@ -516,16 +517,19 @@ const clearAllFilters = () => {
   filters.value.priceMax = null
   filters.value.brands = []
   filters.value.minRating = null
-  fetchProducts()
+  debouncedFetchProducts()
 }
 
 const applyPriceFilter = () => {
-  fetchProducts()
+  debouncedFetchProducts()
 }
 
 const applyFilters = () => {
-  fetchProducts()
+  debouncedFetchProducts()
 }
+
+// Debounced version to prevent excessive API calls
+const debouncedFetchProducts = debounce(fetchProducts, 300)
 
 // Watch for changes
 watch([sortBy, currentPage], () => {
