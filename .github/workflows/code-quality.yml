@@ -76,6 +76,58 @@ jobs:
         continue-on-error: true
 
   # ============================================
+  # PHP Static Analysis (PHPStan)
+  # ============================================
+  phpstan:
+    name: PHPStan Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
+          coverage: none
+      
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress
+      
+      - name: Run PHPStan
+        run: |
+          vendor/bin/phpstan analyse --error-format=github --memory-limit=2G
+
+  # ============================================
+  # PHP Code Formatting (Laravel Pint)
+  # ============================================
+  pint:
+    name: Laravel Pint Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv
+          coverage: none
+      
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress
+      
+      - name: Run Laravel Pint
+        run: |
+          vendor/bin/pint --test --format=github
+
+  # ============================================
   # SonarCloud Analysis
   # ============================================
   sonarcloud:

@@ -116,14 +116,33 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Vendor chunks - büyük kütüphaneleri ayır
+          // Core Vue ecosystem
           'vendor-vue': ['vue', 'vue-router', 'pinia'],
-          'vendor-chart': ['chart.js'],
-          'vendor-utils': ['axios', 'lodash']
+          // i18n and localization
+          'vendor-i18n': ['vue-i18n'],
+          // UI libraries
+          // Note: Both vue-toastification and vue3-toastify are used (redundancy to be addressed)
+          'vendor-ui': ['vue-toastification', 'vue3-toastify', '@vueuse/core', '@vueuse/head'],
+          // Charts
+          'vendor-chart': ['chart.js', 'vue-chartjs'],
+          // Utilities
+          'vendor-utils': ['axios', 'lodash'],
+          // Icons
+          'vendor-icons': ['lucide-vue-next'],
+          // Large dependencies
+          'vendor-misc': ['marked', 'html2pdf.js', 'vuedraggable']
         }
       }
     },
-    chunkSizeWarningLimit: 600
+    chunkSizeWarningLimit: 1000,
+    sourcemap: false, // Disable in production for smaller bundle
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.log in production
+        drop_debugger: true
+      }
+    }
   },
   server: {
     host: '127.0.0.1',

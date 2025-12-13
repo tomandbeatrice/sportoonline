@@ -120,7 +120,29 @@ class SellerReturnController extends Controller
             'notes' => "Kargo kodu gönderildi: {$validated['return_shipping_code']} ({$validated['return_shipping_carrier']})",
         ]);
 
-        // TODO: Müşteriye bildirim gönder (e-posta, SMS)
+        // Müşteriye bildirim gönder (e-posta)
+        if ($return->user && $return->user->email) {
+            try {
+                \Mail::to($return->user->email)->queue(
+                    new \App\Mail\ReturnShippingCodeMail(
+                        $return,
+                        $validated['return_shipping_code'],
+                        $validated['return_shipping_carrier']
+                    )
+                );
+                
+                \Log::info('Return shipping code email queued', [
+                    'return_id' => $return->id,
+                    'user_id' => $return->user_id,
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to queue return shipping code email', [
+                    'return_id' => $return->id,
+                    'error' => $e->getMessage(),
+                ]);
+                // Don't fail the request if email fails - log it instead
+            }
+        }
 
         return response()->json([
             'message' => 'Kargo kodu müşteriye gönderildi.',
